@@ -1,0 +1,11 @@
+{
+  "name": "gradutree",
+  "version": "1.0.0",
+  "description": "backend components for gradutree",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "twice",
+  "license": "ISC"
+}

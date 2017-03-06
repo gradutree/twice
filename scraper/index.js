@@ -83,7 +83,7 @@ var Class = function (code, title) {
     this.preq = [];
 };
 
-if (process.argv.length == 2) {
+if (process.argv.length != 3) {
     console.log("Usage: index.js [Database Name]");
 } else {
     addCourses(process.argv[2]);
