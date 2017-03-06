@@ -6,6 +6,7 @@ var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Sc
 var dbURL = "mongodb://localhost:27017/";
 
 var addCourses = function(dbName) {
+
     dbURL += dbName;
 
     MongoClient.connect(dbURL, function (err, db) {
@@ -82,8 +83,8 @@ var Class = function (code, title) {
     this.preq = [];
 };
 
-if (process.argv.length == 0) {
+if (process.argv.length == 2) {
     console.log("Usage: index.js [Database Name]");
 } else {
-    addCourses(process.argv[0]);
+    addCourses(process.argv[2]);
 }
