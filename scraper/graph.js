@@ -110,8 +110,8 @@ var findconnected = function(node){
             return;
         }
             
-        if(i==connectedEdges.size()){
-            ele.edgesTo
+        if(i==connectedEdges.size() ){
+            source.addClass('highlighted');
         }
 
 
