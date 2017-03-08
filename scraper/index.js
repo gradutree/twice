@@ -45,11 +45,7 @@ var addCourses = function(dbName) {
 
                 while (node.name !== "br") {
 
-                    if (node.data == " or ") {
-
-                        if (course.preq.length != 0) course.preq[course.preq.length - 1].or = true;
-                    }
-                    else if (node.name === "a") {
+                    if (node.name === "a") {
                         var preq = [];
                         preq.push(node.children[0].data);
                         while (node.next.data == " or ") {
