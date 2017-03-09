@@ -44,8 +44,7 @@ var addCourses = function(dbName) {
                 // console.log("Prerequisites: ");
 
                 while (node.name !== "br") {
-
-                    if (node.name === "a") {
+                    if (node.name === "a" && node.data !== " or ") {
                         var preq = [];
                         preq.push(node.children[0].data);
                         while (node.next.data == " or ") {
@@ -59,6 +58,7 @@ var addCourses = function(dbName) {
                     if (!node) {
                         break;
                     }
+				
                 }
                 db.collection("courses").insertOne(course, function (err, r) {
                     if (err) {
