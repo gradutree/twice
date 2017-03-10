@@ -42,23 +42,23 @@ var addCourses = function(dbName) {
                 var node = data.next()[0].next;
 
                 // console.log("Prerequisites: ");
-                var or = false;
+
                 while (node.name !== "br") {
-
-                    if (node.data == " or ") {
-                        or = true;
-                        if (course.preq.length != 0) course.preq[course.preq.length - 1].or = true;
-                    }
-                    else if (node.name === "a") {
-
-                        course.preq.push({course: node.children[0].data, or: or});
-                        or = false;
+                    if (node.name === "a" && node.data !== " or ") {
+                        var preq = [];
+                        preq.push(node.children[0].data);
+                        while (node.next.data == " or ") {
+                            preq.push(node.next.next.children[0].data);
+                            node = node.next.next;
+                        }
+                        course.preq.push(preq);
                     }
                     node = node.next;
 
                     if (!node) {
                         break;
                     }
+				
                 }
                 db.collection("courses").insertOne(course, function (err, r) {
                     if (err) {
@@ -69,6 +69,8 @@ var addCourses = function(dbName) {
                 });
                 // console.log("-----");
                 if (count == i + 1) {
+                    console.log("Total: "+hit+" courses added");
+                    console.log("Total: "+ref+" elements inspected");
                     db.close();
                 }
             });

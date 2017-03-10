@@ -1,3 +1,4 @@
 /scraper/node_modules
 *.iml
 *.xml
+/backend/node_modules
