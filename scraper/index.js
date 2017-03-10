@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var MongoClient = require('mongodb').MongoClient;
 
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
-var dbURL = "mongodb://localhost:27017/";
+var dbURL = "mongodb://35.167.141.109:8000/";
 
 var addCourses = function(dbName) {
 

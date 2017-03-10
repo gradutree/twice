@@ -1,4 +1,4 @@
-var dbURL = "mongodb://localhost:27017/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09";
 var MongoClient = require('mongodb').MongoClient;
 var start = "CSCA08H3";
 
@@ -6,8 +6,6 @@ var visualizePreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
-
-    // for now it will only work backwards, but il make one from a root soon
 
     var deferred = Promise.defer();
 
@@ -53,8 +51,6 @@ var visualizePostreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
-
-    // for now it will only work backwards, but il make one from a root soon
 
     var deferred = Promise.defer();
 
@@ -148,4 +144,9 @@ var setPostReq = function () {
     });
 };
 
+// proper setup order:
+// -create c09 database
+// -use scraper to get course data
+// -run setPostReq
+// -then run the build functions
 buildPostreq();

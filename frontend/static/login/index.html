@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Assignment 3: Login</title>
+<link href="../style/login.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div class="container">
+  <h2 class="heading">Login</h2>
+  <form id="signup_form">
+	<div id="login_err"></div>
+    <div class="flex_col">
+     	<label>Username:</label>
+      	<input id="uname_input" type="text" required="required" placeholder="Username">
+    </div>
+    
+    <div class="flex_col">
+		<label>Password:</label>
+      <input id="pwd_input" type="password" required="required" placeholder="Password">
+    </div>
+    
+    <div>
+   	  <input class="form_input" type="submit" value="Login">
+    </div>
+  </form>
+  <div class="div_box">
+  	Don't have an account yet? <a href="/signup">Sign up</a>.
+  </div>
+  <script src="../js/login/view.js"></script> 
+  <script src="../js/login/model.js"></script> 
+  <script src="../js/login/test.js"></script> 
+  <script src="../js/login/controller.js"></script> 
+</div>
+
+</body>
+</html>
