@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var MongoClient = require('mongodb').MongoClient;
 
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
-var dbURL = "mongodb://35.167.141.109:8000/";
+var dbURL = "mongodb://localhost:27017/c09";
 
 var addCourses = function(dbName) {
 
@@ -162,8 +162,8 @@ var Program = function (name) {
     this.minor = [];
 };
 
-['CSCC01H3','CSCC09H3','CSCC10H3','CSCC11H3','CSCC24H3','CSCC37H3','CSCC43H3','CSCC63H3','CSCC69H3','CSCC73H3','CSCC85H3',
-'CSCD01H3','CSCD03H3','CSCD18H3','CSCD27H3','CSCD37H3','CSCD43H3','CSCD54H3','CSCD58H3',,'CSCD71H3','CSCD72H3','CSCD84H3','CSCD90H3','CSCD92H3','CSCD94H3','CSCD95H3']
+// ['CSCC01H3','CSCC09H3','CSCC10H3','CSCC11H3','CSCC24H3','CSCC37H3','CSCC43H3','CSCC63H3','CSCC69H3','CSCC73H3','CSCC85H3',
+// 'CSCD01H3','CSCD03H3','CSCD18H3','CSCD27H3','CSCD37H3','CSCD43H3','CSCD54H3','CSCD58H3',,'CSCD71H3','CSCD72H3','CSCD84H3','CSCD90H3','CSCD92H3','CSCD94H3','CSCD95H3']
 
 var compSci = new Program("Computer Science");
 var compSciCore = [{"credits": 3.0, "courses": [['CSCA08H3'],['CSCA48H3'],['CSCA67H3'],['MATHA23H3'],['MATHA31H3'],['MATHA37H3']]},
@@ -214,14 +214,29 @@ compSci.minor = [{"credits": 1.0, "courses": [['CSCA08H3','CSCA20H3'],['CSCA48H3
                                             ['CSCC73H3'],['CSCC85H3'],['CSCD01H3'],['CSCD03H3'],['CSCD18H3'],['CSCD27H3'],['CSCD37H3'],['CSCD43H3'],['CSCD54H3'],
                                             ['CSCD58H3'],,['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
 
-console.log(compSci);
+// console.log(compSci);
 
+var addProgram = function(dbName){
+    dbURL += dbName;
+    MongoClient.connect(dbURL, function (err, db) {
+        if (err) {
+            console.log(err);
+            return;
+        }
 
-// console.log(compSciCore.concat(compSciComprehensive));
+        db.collection("programs").insertOne(compSci, function (err, r) {
+            if (err) {
+                console.log("Failed to insert document: " + compSci.name);
+                return;
+            }
+            console.log("Added course: " + compSci.name);
+        });
+        db.close();
+    });
+};
 
-
-// if (process.argv.length != 3) {
-//     console.log("Usage: index.js [Database Name]");
-// } else {
-//     addCourses(process.argv[2]);
-// }
+if (process.argv.length != 3) {
+    console.log("Usage: prog_scraper.js [Database Name]");
+} else {
+    addCourses(process.argv[2]);
+}
