@@ -95,6 +95,10 @@ app.get('/api/courses/query/', function (req, res) {
     });
 });
 
+app.get('*', function (request, response){
+    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
+});
+
 
 app.post('/api/login/', function (req, res) {
     req.checkBody("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
