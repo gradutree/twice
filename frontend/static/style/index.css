@@ -78,13 +78,13 @@ footer a:hover {
 	/*width: 89%;*/
 	margin-left: auto;
 	margin-right: auto;
-	background-color: #543239;
+	background-color: #d8f0ff;
 	z-index: 25;
 	padding: 0;
 }
 
 .header_container {
-	background-image: URL(../media/stock_placeholder.jpeg);
+	background-image: URL(../media/stock_test.jpg);
 	background-size: cover;
 	background-repeat: no-repeat;
 	height: 100vh;
@@ -489,6 +489,8 @@ footer {
 	margin: 0px 25px;
 	font-weight: normal;
 }
+
+
 
 @media (min-width: 0px) and (max-width: 1291px) {
 	.container {
