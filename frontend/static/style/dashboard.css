@@ -2,6 +2,7 @@
 	font-family: 'Open Sans', sans-serif;
 	margin:0;
 	padding:0;
+    color: #414141;
 }
 
 a {
@@ -490,9 +491,37 @@ footer {
 
 #content_container {
 	background-color: #fafafa;
-	padding: 20px;
+
+}
+
+#program_box {
+	width: auto;
+}
+
+#content_container .box {
+	background-color: #fff;
+	padding: 10px;
+	border-radius: 3px;
+	border: 1px solid #DADADA;
+    margin: 5px 20px;
+	width: auto;
+	text-align: center;
+    display: inline-block;
+}
+
+#content_container h4 {
+    margin: 5px 20px;
+}
+
+.dash_banner {
+    font-size: 23px;
+    font-weight: normal;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 #content_container h3 {
 	margin: 0;
 }
+

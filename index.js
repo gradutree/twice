@@ -28,6 +28,8 @@ var User = function(user){
     var hash = crypto.createHmac('sha512', salt);
     hash.update(user.password);
     this.username = user.username;
+    this.program = user.program;
+    this.spec = user.spec;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -38,6 +40,11 @@ var checkPassword = function(user, password){
     var value = hash.digest('base64');
     return (user.saltedHash === value);
 };
+
+app.get("/dashboard", function(req, res, next) {
+    if (!req.session.user) return res.redirect("/login");
+    return next();
+});
 
 app.get("/", function(req, res, next) {
     if (req.session.user) return res.redirect("/dashboard");
@@ -61,15 +68,6 @@ app.use(function (req, res, next){
 });
 
 app.use(express.static('frontend/static'));
-
-app.get("/test", function (req, res) {
-   res.end("Yup its working");
-});
-
-// app.get('*', function (request, response){
-//     response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
-// });
-
 
 // API
 
@@ -95,9 +93,9 @@ app.get('/api/courses/query/', function (req, res) {
     });
 });
 
-app.get('*', function (request, response){
-    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
-});
+// app.get('*', function (request, response){
+//     response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
+// });
 
 
 app.post('/api/login/', function (req, res) {
@@ -144,6 +142,20 @@ app.post("/api/user", function(req, res) {
                     res.json({id: newUser._id});
                 });
             });
+        });
+    });
+});
+
+
+app.get("/api/user/:username/info", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("users").findOne({username: req.params.username}, function (err, data) {
+            if (err) return res.status(500).end("Server error, could not resolve request");
+            var info = {};
+            info.username = data.username;
+            info.program = data.program;
+            info.spec = data.spec;
+            res.json(info);
         });
     });
 });

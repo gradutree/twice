@@ -46,13 +46,14 @@ var view = (function(){
 		var pwd = document.getElementById("pwd_input");
 		var pwdc = document.getElementById("pwdc_input");
 		var uname = document.getElementById("uname_input");
+		var prog = document.getElementById("prog_input");
 		if (pwd.value !== pwdc.value) {
 			pwd.parentElement.classList.add("error");
 			pwdc.parentElement.classList.add("error");
 			return;
 		}
 		
-		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {username: uname.value, password: pwd.value}}));
+		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {username: uname.value, password: pwd.value, program: "Computer Science", spec: prog.value}}));
 		
 	});
 	
