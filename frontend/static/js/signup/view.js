@@ -52,7 +52,7 @@ var view = (function(){
 			return;
 		}
 		
-		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {uname: uname.value, pass: pwd.value}}));
+		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {username: uname.value, password: pwd.value}}));
 		
 	});
 	

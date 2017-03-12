@@ -42,8 +42,8 @@ var view = (function () {
 
 		document.dispatchEvent(new CustomEvent("onLoginSubmit", {
 			detail: {
-				uname: uname.value,
-				pass: pwd.value
+				username: uname.value,
+				password: pwd.value
 			}
 		}));
 

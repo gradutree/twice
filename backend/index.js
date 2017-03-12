@@ -85,7 +85,7 @@ var visualizePostreq = function (db, courseCode, node) {
     return deferred.promise;
 };
 
-var buildPostreq = function () {
+var buildPostReq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
         visualizePostreq(db, start, courses).then(function () {
@@ -99,36 +99,43 @@ var buildPostreq = function () {
 var findPostReq = function (db, callback) {
 
     db.collection("courses").find({}).toArray(function (err, data) {
-        if (!data) callback();
+        if (err) {
+            callback();
+            return;
+        }
 
-        var count = data.length;
-        console.log(count);
-        if (count == 0) callback();
+        Promise.all(data.map(function (item, i) {
+            return new Promise(function (resolve, reject) {
+                db.collection("courses").find({ preq : { $in: [[item.code]] }}).toArray(function (err, courses) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return;
+                    }
+                    if (!item.postreq) {
+                        item.postreq = [];
+                    }
 
-        data.forEach(function (item, i) {
+                    Promise.all(courses.map(function (course) {
 
-            db.collection("courses").find({ preq : { $in: [[item.code]] }}).toArray(function (err, courses) {
-                if (err) {
-                    console.log(err);
-                    count--;
-                    return;
-                }
-                if (!item.postreq) {
-                    item.postreq = [];
-                }
-                var count2 = courses.length;
-                if (courses.length == 0) count--;
-                if (count == 0) callback();
-                for (var i = 0; i < courses.length; i++) {
-                    item.postreq.push(courses[i].code);
-                    console.log(item.postreq.toString());
-                    db.collection("courses").updateOne({ code: item.code }, item, function (err, num) {
-                        count2--;
-                        if (count2 == 0) count--;
-                        if (count == 0) callback();
+                        return new Promise(function (resolve2, reject2) {
+                            item.postreq.push(course.code);
+                            //console.log(item.postreq.toString());
+                            resolve2();
+                        });
+                    })).then(function () {
+                        db.collection("courses").updateOne({ code: item.code }, item, function (err, num) {
+                            console.log("Finished adding postreqs for "+item.code);
+                            resolve();
+                        });
+
                     });
-                }
+
+                });
             });
+        })).then(function () {
+
+            callback();
         });
     });
 };
@@ -149,4 +156,4 @@ var setPostReq = function () {
 // -use scraper to get course data
 // -run setPostReq
 // -then run the build functions
-buildPostreq();
+buildPostReq();
