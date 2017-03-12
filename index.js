@@ -74,9 +74,10 @@ app.get("/test", function (req, res) {
 // API
 
 // Enter query as a parameter 
-// Ex. curl http://localhost:8000/api/courses/query/code=CSCC09H3
+// Ex. curl http://localhost:8000/api/courses/query?code=CSCC09H3
+// Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
-    console.log(req.query);
+    // console.log(req.query);
     var result = [];
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").find(req.query).toArray(function (err, data) {
@@ -93,6 +94,7 @@ app.get('/api/courses/query/', function (req, res) {
         });
     });
 });
+
 
 app.post('/api/login/', function (req, res) {
     req.checkBody("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
