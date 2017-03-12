@@ -7,6 +7,7 @@ var DashConstants = require('./dashboardConstants.jsx');
 var userData = {};
 
 function loadUserData(data) {
+
     userData = data;
 }
 
@@ -19,6 +20,11 @@ var DashStore = merge(EventEmitter.prototype, {
 
     getUserProgram: function() {
         return userData.program;
+    },
+
+    getUserSpec: function() {
+
+        return userData.spec;
     },
 
     emitChange: function() {

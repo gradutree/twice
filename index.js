@@ -29,6 +29,7 @@ var User = function(user){
     hash.update(user.password);
     this.username = user.username;
     this.program = user.program;
+    this.spec = user.spec;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -109,6 +110,20 @@ app.post("/api/user", function(req, res) {
                     res.json({id: newUser._id});
                 });
             });
+        });
+    });
+});
+
+
+app.get("/api/user/:username/info", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("users").findOne({username: req.params.username}, function (err, data) {
+            if (err) return res.status(500).end("Server error, could not resolve request");
+            var info = {};
+            info.username = data.username;
+            info.program = data.program;
+            info.spec = data.spec;
+            res.json(info);
         });
     });
 });

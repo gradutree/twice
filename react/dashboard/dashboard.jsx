@@ -24,11 +24,14 @@ class Dashboard extends Component {
     }
 
 	render() {
-        console.log("render");
+
 		return <div>
+                    <div className="dash_banner">
+                        Your GraduTree Dashboard
+                    </div>
 					<Program />
 
-                    <h3>{JSON.stringify(this.state)}</h3>
+                    <Spec />
 				</div>;
 	}
 
@@ -50,6 +53,12 @@ function getUserProgram() {
     }
 }
 
+function getUserSpec() {
+    return {
+        spec: DashStore.getUserSpec()
+    }
+}
+
 class Program extends Component {
 
     constructor() {
@@ -59,23 +68,62 @@ class Program extends Component {
 
     componentDidMount() {
 
-        this.progOnChange = this._onChange.bind(this);
-        DashStore.addChangeListener(this.progOnChange);
+        this.bindOnChange = this._onChange.bind(this);
+        DashStore.addChangeListener(this.bindOnChange);
     }
 
     componentWillUnmount() {
-        DashStore.removeChangeListener(this.progOnChange);
+        DashStore.removeChangeListener(this.bindOnChange);
     }
 
-	render() {
-        console.log("program");
-        return <div>
-            <h3>My program: {this.state.program}</h3>
-        </div>
-	}
+    render() {
 
-	_onChange() {
+        return <div>
+            <div>
+                <h4>My program</h4>
+            </div>
+            <div id="program_box" className="box">
+                <h4>{this.state.program ? this.state.program : "-----"}</h4>
+            </div>
+        </div>
+    }
+
+    _onChange() {
         this.setState(getUserProgram());
+    }
+}
+
+class Spec extends Component {
+
+    constructor() {
+        super();
+        this.state = { spec: null };
+    }
+
+    componentDidMount() {
+
+        this.bindOnChange = this._onChange.bind(this);
+        DashStore.addChangeListener(this.bindOnChange);
+    }
+
+    componentWillUnmount() {
+        DashStore.removeChangeListener(this.bindOnChange);
+    }
+
+    render() {
+
+        return <div>
+            <div>
+                <h4>Specialization</h4>
+            </div>
+            <div id="program_box" className="box">
+                <h4>{this.state.spec ? this.state.spec : "-----"}</h4>
+            </div>
+        </div>
+    }
+
+    _onChange() {
+        this.setState(getUserSpec());
     }
 }
 
