@@ -41,6 +41,11 @@ var checkPassword = function(user, password){
     return (user.saltedHash === value);
 };
 
+app.get("/dashboard", function(req, res, next) {
+    if (!req.session.user) return res.redirect("/login");
+    return next();
+});
+
 app.get("/", function(req, res, next) {
     if (req.session.user) return res.redirect("/dashboard");
     delete req.session.redirectTo;
