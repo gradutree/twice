@@ -28,6 +28,7 @@ var User = function(user){
     var hash = crypto.createHmac('sha512', salt);
     hash.update(user.password);
     this.username = user.username;
+    this.program = user.program;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -61,11 +62,6 @@ app.use(function (req, res, next){
 });
 
 app.use(express.static('frontend/static'));
-
-app.get("/test", function (req, res) {
-   res.end("Yup its working");
-});
-
 
 // API
 
