@@ -2,6 +2,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 var MongoClient = require('mongodb').MongoClient;
 
+
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
 var dbURL = "mongodb://localhost:27017/";
 
