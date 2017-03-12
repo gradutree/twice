@@ -133,6 +133,13 @@ app.get("/api/user/:username/info", function (req, res) {
     });
 });
 
+app.get('/api/signout/', function (req, res) {
+    req.session.destroy(function(err) {
+        if (err) return res.status(500).end(err);
+        return res.redirect("/");
+    });
+});
+
 app.listen(8000, function () {
     console.log('App listening on port 8000');
 });
