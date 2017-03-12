@@ -66,10 +66,6 @@ app.get("/test", function (req, res) {
    res.end("Yup its working");
 });
 
-app.get('*', function (request, response){
-    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
-});
-
 
 // API
 
