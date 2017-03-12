@@ -3,161 +3,11 @@ var cheerio = require('cheerio');
 var MongoClient = require('mongodb').MongoClient;
 
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
-var dbURL = "mongodb://localhost:27017/c09";
-
-var addCourses = function(dbName) {
-
-    dbURL += dbName;
-
-    MongoClient.connect(dbURL, function (err, db) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-
-        console.log("Connected to db.");
-
-        request(url, function (err, res, html) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            var $ = cheerio.load(html);
-            var elems = $("strong");
-            var program = new Program("Computer Science");
-            var core = [];
-
-            elems.each(function (i, item) {
-                var data = $(this);
-                // console.log(data.text());
-                // ref++;
-                var corePattern = /Core/;
-                var specialistPattern = /[A-Z]\. /;
-
-                if (corePattern.test(data.text())) {
-                    // console.log(data[0].children[0].data);
-                    // console.log(data.parent().next()[0].children[1]);
-                    // console.log(data.parent().siblings().children().text());
-
-                    var sectionPattern = /[2-9]. [A-Z]/;
-                    data.parent().next()[0].children.forEach(function(item){
-                        if(item.type == 'tag' && item.name != 'br'){
-                            var elemType = item.name;
-                            var innerHTML = item.children[0].data;
-                        } else return;
-
-                        // Find divisions of the core requirements
-                        if(elemType == 'strong' && sectionPattern.test(innerHTML)){
-                            while (item.next.name != 'strong'){
-                                // Find the course name under each core course section
-                                if(item.next.name == 'a'){
-                                    core.push([item.next.children[0].data]);
-                                }
-                                item = item.next;
-                            }
-                        }
-                    });
-
-                } else if(specialistPattern.test(data.text())){
-                    // console.log(data.text().split(specialistPattern.exec(data.text()))[1]);
-                    var streamName = data.text().split(specialistPattern.exec(data.text()))[1].split(" Stream")[0];
-                    console.log(streamName);
-
-                    var sectionPattern = /[2-9]\. [A-Z]/;
-                    var current = data.parent().next();
-                    
-                    if(streamName == streamName){
-                        do {
-                            console.log(current.text());
-                            console.log(sectionPattern.test(current.text()));
-                            if(specialistPattern.test(current.text())){
-                                break;
-                            }
-                            current = current.next();
-                        } while (sectionPattern.test(current.text()));
-
-
-                        // console.log(current.text());
-                        // console.log(sectionPattern.test(current.text()));
-
-                        // while(sectionPattern.test(current.text())){
-                        //     // console.log(current.text());
-
-                        //     // console.log(current.children()[0].children[0].data);
-                        //     // // console.log(data.parent().next()[0].children);
-                        //     // data.parent().next()[0].children.forEach(function(item){
-                        //     //     if(item.type == 'tag' && item.name == 'a'){
-                        //     //         console.log(item.children[0].data);
-                        //     //     }
-                        //     // }); 
-
-                        //     // current = current.next().children();
-                        //     // console.log(current.parent().next().text());
-                        //     if(specialistPattern.test(current.text())){
-                        //         break;
-                        //     }
-                        //     // old = current; 
-                        //     current = current.next();
-                        //     console.log(current.text());
-                        //     console.log(sectionPattern.test(current.text()));
-                        //     if(specialistPattern.test(old.text())){
-                        //         break;
-                        //     }
-                        // }
-
-                        // console.log(current.children()[0].children[0].data);
-                        // // console.log(data.parent().next()[0].children);
-                        // data.parent().next()[0].children.forEach(function(item){
-                        //     if(item.type == 'tag' && item.name == 'a'){
-                        //         console.log(item.children[0].data);
-                        //     }
-                        // }); 
-
-                        // // current = current.next().children();
-                        // current = current.next().children();
-                        // console.log(current.text());
-                    }
-                    // data.parent().next()[0].children.forEach(function(item){
-                    //     // console.log(data[0].children[0].data);
-                    // // console.log(data.parent().next()[0].children[1]);
-                    // // console.log(data.parent().siblings().children().text());
-
-                    //     // if(item.type == 'tag' && item.name != 'br'){
-                    //     //     var elemType = item.name;
-                    //     //     var innerHTML = item.children[0].data;
-                    //     // } else return;
-                    //     if(item.type == 'tag' && item.name != 'br' && item.children[0] == undefined){
-                    //         console.log(item);
-                    //     }
-
-                    //     // // Find divisions of the core requirements
-                    //     // if(item.name == 'strong' && sectionPattern.test(item.children[0].data)){
-                    //     //     console.log(item.children[0].data);
-                    //     //     // while (item.next.name != 'strong'){
-                    //     //     //     // Find the course name under each core course section
-                    //     //     //     if(item.next.name == 'a'){
-                    //     //     //         core.push(item.next.children[0].data);
-                    //     //     //     }
-                    //     //     //     item = item.next;
-                    //     //     // }
-                    //     // }
-                    // // });
-                    // });
-                }
-
-
-            });
-
-            // console.log(core);
-            db.close();
-
-        });
-    });
-};
+var dbURL = "mongodb://localhost:27017/";
 
 var Program = function (name) {
     this.name = name;
-    this.specialist = []; // Contains objects {"stream":string, "courses":array of string or obj {"credits":int, "courses":array of string}}
+    this.specialist = []; // Contains objects {"stream":string, "courses":array of array of string}
     this.major = [];
     this.minor = [];
 };
@@ -214,9 +64,8 @@ compSci.minor = [{"credits": 1.0, "courses": [['CSCA08H3','CSCA20H3'],['CSCA48H3
                                             ['CSCC73H3'],['CSCC85H3'],['CSCD01H3'],['CSCD03H3'],['CSCD18H3'],['CSCD27H3'],['CSCD37H3'],['CSCD43H3'],['CSCD54H3'],
                                             ['CSCD58H3'],,['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
 
-// console.log(compSci);
 
-var addProgram = function(dbName){
+var addProgram = function(dbName, program){
     dbURL += dbName;
     MongoClient.connect(dbURL, function (err, db) {
         if (err) {
@@ -224,19 +73,28 @@ var addProgram = function(dbName){
             return;
         }
 
-        db.collection("programs").insertOne(compSci, function (err, r) {
-            if (err) {
-                console.log("Failed to insert document: " + compSci.name);
+        // Check if program already exists
+        db.collection("programs").findOne({name: program.name}).then(function(result){
+            if(result){
+                db.close();
                 return;
             }
-            console.log("Added course: " + compSci.name);
+
+            db.collection("programs").insertOne(program, function (err, r) {
+                if (err) {
+                    console.log("Failed to insert document: " + program.name);
+                    db.close();
+                    return;
+                }
+                console.log("Added program: " + program.name);
+                db.close();
+            });
         });
-        db.close();
     });
 };
 
 if (process.argv.length != 3) {
     console.log("Usage: prog_scraper.js [Database Name]");
 } else {
-    addCourses(process.argv[2]);
+    addProgram(process.argv[2], compSci);
 }
