@@ -19,12 +19,14 @@
     "express": "^4.14.1",
     "express-session": "^1.15.1",
     "express-validator": "^3.1.2",
+    "flux": "^3.1.2",
+    "keymirror": "^0.1.1",
+    "merge": "^1.2.0",
     "mongodb": "^2.2.24",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
-    "serve": "^5.0.2",
     "webpack": "^2.2.1"
   }
 }
