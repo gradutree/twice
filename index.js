@@ -80,7 +80,7 @@ app.get('/api/courses/query/', function (req, res) {
     // console.log(req.query);
     var result = [];
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("courses").find(req.query).toArray(function (err, data) {
+        db.collection("courses").find({code: {$regex : ".*"+req.query.code+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
                 return;
