@@ -24,21 +24,8 @@ var model = (function(){
         }        
     };
 	
-    model.onLoad = function() {
-        
-    };
-
-    model.signup = function(detail) {
-		doAjax("POST", "/api/user", detail, true, function(err, res) {
-			if (err) {
-				return document.dispatchEvent(new CustomEvent("OnSignUpFail", {detail: err}));
-			}
-			document.dispatchEvent(new CustomEvent("onSignUpSuccess"));
-		});
-	};
-
-    model.test = function(str, callback){
-        console.log("Your str: " + str.toUpperCase());
+    model.searchCourses = function(str, callback){
+        // console.log("Your str: " + str.toUpperCase());
         doAjax("GET", "/api/courses/query?code="+str.toUpperCase(), null, true, callback);
     };
 

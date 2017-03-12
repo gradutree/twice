@@ -10667,21 +10667,8 @@ var model = (function(){
         }        
     };
 	
-    model.onLoad = function() {
-        
-    };
-
-    model.signup = function(detail) {
-		doAjax("POST", "/api/user", detail, true, function(err, res) {
-			if (err) {
-				return document.dispatchEvent(new CustomEvent("OnSignUpFail", {detail: err}));
-			}
-			document.dispatchEvent(new CustomEvent("onSignUpSuccess"));
-		});
-	};
-
-    model.test = function(str, callback){
-        console.log("Your str: " + str.toUpperCase());
+    model.searchCourses = function(str, callback){
+        // console.log("Your str: " + str.toUpperCase());
         doAjax("GET", "/api/courses/query?code="+str.toUpperCase(), null, true, callback);
     };
 
@@ -10719,7 +10706,36 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var containerStyle = {
-	border: '1px solid black'
+	border: '1px solid #8e8e8e',
+	// marginTop: '4px',
+	padding: '5px'
+};
+
+var nameStyle = {
+	maringTop: '1px'
+};
+
+var descriptionStyle = {
+	marginTop: '5px'
+};
+
+var preqStyle = {
+	display: 'flex',
+	flexDirection: 'row'
+};
+
+var preqTitleStyle = {
+	textAlign: 'center',
+	// marginLeft: '10px',
+	height: '30px',
+	lineHeight: '30px'
+};
+
+var preqCourseStyle = {
+	textAlign: 'center',
+	marginLeft: '10px',
+	height: '30px',
+	lineHeight: '30px'
 };
 
 var SearchResult = function (_Component) {
@@ -10728,7 +10744,12 @@ var SearchResult = function (_Component) {
 	function SearchResult() {
 		_classCallCheck(this, SearchResult);
 
-		return _possibleConstructorReturn(this, (SearchResult.__proto__ || Object.getPrototypeOf(SearchResult)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (SearchResult.__proto__ || Object.getPrototypeOf(SearchResult)).call(this));
+
+		_this.state = {
+			preq: "N/A"
+		};
+		return _this;
 	}
 
 	_createClass(SearchResult, [{
@@ -10739,13 +10760,36 @@ var SearchResult = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq : "N/A";
 			return _react2.default.createElement(
 				'div',
 				{ style: containerStyle, onClick: this.clicked.bind(this) },
 				_react2.default.createElement(
 					'h3',
-					null,
-					this.props.course.code
+					{ style: nameStyle },
+					this.props.course.title,
+					' (',
+					this.props.course.code,
+					')'
+				),
+				_react2.default.createElement(
+					'div',
+					{ style: descriptionStyle },
+					this.props.course.description
+				),
+				_react2.default.createElement(
+					'div',
+					{ style: preqStyle },
+					_react2.default.createElement(
+						'div',
+						{ style: preqTitleStyle },
+						'Prerequisites: '
+					),
+					_react2.default.createElement(
+						'div',
+						{ style: preqCourseStyle },
+						this.state.preq
+					)
 				)
 			);
 		}
@@ -10816,7 +10860,11 @@ var dropdownStyle = {
 };
 
 var resultStyle = {
-	marginTop: '50px'
+	marginTop: '40px'
+};
+
+var resultHeaderStyle = {
+	marginBottom: '10px'
 };
 
 var Search = function (_Component) {
@@ -10843,56 +10891,24 @@ var Search = function (_Component) {
 	}, {
 		key: 'changeResults',
 		value: function changeResults(e) {
-			// console.log(e.target.value);
-			var r = [];
-			// console.log("START");
-			//       console.log(this);
-			var elem = this;
+			var resultCourses = [];
+			var thisComp = this;
 
 			var callback = function callback(err, courses) {
-				// console.log("MID");
-				// console.log(elem);
 				Promise.all(courses.map(function (course) {
-					r.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course }));
+					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course }));
 				})).then(function () {
-					// console.log(r);
-					// console.log("END");
-					// console.log(this);
-					elem.setState({ results: r });
+					thisComp.setState({ results: resultCourses });
 				});
-
-				// courses.forEach(function(course){
-				// 	console.log(course);
-				// });
 			};
-			// callback.bind(this);
 
-			_model2.default.test(e.target.value, callback);
-
-			// this.setState({results: [
-			// 	<SearchResult key={1} course={"some text"} />,
-			// 	<SearchResult key={2} course={"some text?"} />,
-			// 	<SearchResult key={3} course={"some text??"} />,
-			// ]});
+			_model2.default.searchCourses(e.target.value, callback);
 		}
-
-		// var Courses = [
-		// 	<SearchResult key={1} course={"some text"} />,
-		// 	<SearchResult key={2} course={"some text?"} />,
-		// 	<SearchResult key={3} course={"some text??"} />
-		// ];
-
 	}, {
 		key: 'render',
 		value: function render() {
 
-			// this.state.results = [
-			// 	<SearchResult key={1} course={"some text"} />,
-			// 	<SearchResult key={2} course={"some text?"} />,
-			// 	<SearchResult key={3} course={"some text??"} />,
-			// ];
-
-			var msg = "Selected " + this.state.school;
+			var msg = "Search for " + this.state.school + " courses";
 			return _react2.default.createElement(
 				'div',
 				null,
@@ -10936,7 +10952,7 @@ var Search = function (_Component) {
 					{ style: resultStyle },
 					_react2.default.createElement(
 						'h3',
-						null,
+						{ style: resultHeaderStyle },
 						'Search Results'
 					),
 					this.state.results

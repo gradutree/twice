@@ -29,7 +29,11 @@ const dropdownStyle = {
 };
 
 const resultStyle = {
-	marginTop: '50px',
+	marginTop: '40px',
+};
+
+const resultHeaderStyle = {
+	marginBottom: '10px',
 };
 
 class Search extends Component {
@@ -58,12 +62,12 @@ class Search extends Component {
             });
 		};
 		
-		model.test(e.target.value, callback);
+		model.searchCourses(e.target.value, callback);
 	}
 
 	render() {
 
-		var msg = "Selected " + this.state.school;
+		var msg = "Search for " + this.state.school + " courses";
 		return (<div>
 					<div style={tabStyle}> 
 						<h3 style={headerStyle}> {msg} </h3>
@@ -77,7 +81,7 @@ class Search extends Component {
 						</div>
 					</div>
 					<div style={resultStyle}>
-						<h3>Search Results</h3>
+						<h3 style={resultHeaderStyle}>Search Results</h3>
 						{this.state.results}
 					</div>
 				</div>)
