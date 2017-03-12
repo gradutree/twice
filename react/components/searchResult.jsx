@@ -23,6 +23,7 @@ const preqTitleStyle = {
 	textAlign: 'center',
 	height: '30px',
   	lineHeight: '30px',
+  	fontSize: '16px',
 };
 
 const preqCourseStyle = {
@@ -45,7 +46,7 @@ class SearchResult extends Component {
 	}
 	
 	render() {
-		this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq : "N/A";
+		this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
 		return <div style={containerStyle} onClick={this.clicked.bind(this)}>
 					<h3 style={nameStyle}>{this.props.course.title} ({this.props.course.code})</h3>
 					<div style={descriptionStyle}>{this.props.course.description}</div>
@@ -55,7 +56,6 @@ class SearchResult extends Component {
 					</div>
 				</div>;
 	}
-	
 }
 
 

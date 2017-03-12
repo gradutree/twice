@@ -29,7 +29,7 @@ const dropdownStyle = {
 };
 
 const resultStyle = {
-	marginTop: '40px',
+	marginTop: '45px',
 };
 
 const resultHeaderStyle = {
@@ -43,7 +43,6 @@ class Search extends Component {
 			school: 'UTSC', 
 			results: []
 		};
-		// model.test("HI");
 	}
 
 	changeSchool(e){

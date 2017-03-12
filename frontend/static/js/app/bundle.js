@@ -10707,7 +10707,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var containerStyle = {
 	border: '1px solid #8e8e8e',
-	// marginTop: '4px',
 	padding: '5px'
 };
 
@@ -10726,9 +10725,9 @@ var preqStyle = {
 
 var preqTitleStyle = {
 	textAlign: 'center',
-	// marginLeft: '10px',
 	height: '30px',
-	lineHeight: '30px'
+	lineHeight: '30px',
+	fontSize: '16px'
 };
 
 var preqCourseStyle = {
@@ -10760,7 +10759,7 @@ var SearchResult = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq : "N/A";
+			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
 			return _react2.default.createElement(
 				'div',
 				{ style: containerStyle, onClick: this.clicked.bind(this) },
@@ -10860,7 +10859,7 @@ var dropdownStyle = {
 };
 
 var resultStyle = {
-	marginTop: '40px'
+	marginTop: '45px'
 };
 
 var resultHeaderStyle = {
@@ -10879,7 +10878,6 @@ var Search = function (_Component) {
 			school: 'UTSC',
 			results: []
 		};
-		// model.test("HI");
 		return _this;
 	}
 
