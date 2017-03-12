@@ -4,20 +4,20 @@ import { render } from 'react-dom';
 import SearchResult from "./components/searchResult.jsx";
 import model from "../frontend/static/js/app/model.js"
 
-const tabStyle = {
-	display: 'flex',
-	flexDirection: 'row',
-};
+// const tabStyle = {
+// 	display: 'flex',
+// 	flexDirection: 'row',
+// };
 
 const headerStyle = {
 	flexGrow: 10,
 };
 
-const searchDivStyle = {
-	flexGrow: 1,
-	display: 'flex',
-	flexDirection: 'column',
-};
+// const searchDivStyle = {
+// 	flexGrow: 1,
+// 	display: 'flex',
+// 	flexDirection: 'column',
+// };
 
 const inputStyle = {
 	flexGrow: 1,
@@ -29,7 +29,7 @@ const dropdownStyle = {
 };
 
 const resultStyle = {
-	marginTop: '45px',
+	padding: '10px',
 };
 
 const resultHeaderStyle = {
@@ -68,14 +68,14 @@ class Search extends Component {
 
 		var msg = "Search for " + this.state.school + " courses";
 		return (<div>
-					<div style={tabStyle}> 
+					<div className="search_banner"> 
 						<h3 style={headerStyle}> {msg} </h3>
-						<div style={searchDivStyle}>
+						<div className="search_div">
 							<input style={inputStyle} onChange={this.changeResults.bind(this)} placeholder="Search for course" />
 							<select style={dropdownStyle} value={this.state.school} onChange={this.changeSchool.bind(this)} >
 								<option value="UTSC">UTSC</option>
 							  	<option value="UTSG">UTSG</option>
-							  	<option value="UTM">UTSC</option>
+							  	<option value="UTM">UTM</option>
 							</select>
 						</div>
 					</div>

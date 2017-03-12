@@ -71,11 +71,10 @@ app.use(express.static('frontend/static'));
 
 // API
 
-// Enter query as a parameter 
+// Enter query as a parameter. Allows for partial strings.
 // Ex. curl http://localhost:8000/api/courses/query?code=CSCC09H3
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
-    // console.log(req.query);
     var result = [];
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code+".*"}}).toArray(function (err, data) {
@@ -93,9 +92,9 @@ app.get('/api/courses/query/', function (req, res) {
     });
 });
 
-// app.get('*', function (request, response){
-//     response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
-// });
+app.get('*', function (request, response){
+    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
+});
 
 
 app.post('/api/login/', function (req, res) {
