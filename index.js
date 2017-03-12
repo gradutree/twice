@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var expressValidator = require('express-validator');
 var path = require("path");
 
-var dbURL = "mongodb://35.167.141.109:8000/c09";
+var dbURL = "mongodb://localhost:27017/c09";
 var MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.json());
@@ -70,6 +70,33 @@ app.use(function (req, res, next){
 app.use(express.static('frontend/static'));
 
 // API
+
+// Enter query as a parameter 
+// Ex. curl http://localhost:8000/api/courses/query?code=CSCC09H3
+// Response is an array of Course objects
+app.get('/api/courses/query/', function (req, res) {
+    // console.log(req.query);
+    var result = [];
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("courses").find(req.query).toArray(function (err, data) {
+            if (err) {
+                res.json([]);
+                return;
+            }
+
+            Promise.all(data.map(function (course) {
+                result.push(course);
+            })).then(function(){
+                res.json(result);
+            });
+        });
+    });
+});
+
+app.get('*', function (request, response){
+    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
+});
+
 
 app.post('/api/login/', function (req, res) {
     req.checkBody("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
