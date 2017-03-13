@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var expressValidator = require('express-validator');
 var path = require("path");
 
-var dbURL = "mongodb://localhost:27017/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09";
 var MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.json());
@@ -92,11 +92,6 @@ app.get('/api/courses/query/', function (req, res) {
     });
 });
 
-app.get('*', function (request, response){
-    response.sendFile(path.resolve(__dirname, 'frontend/static', 'index.html'))
-});
-
-
 app.post('/api/login/', function (req, res) {
     req.checkBody("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
     req.checkBody("password", "Password must be alphanumeric").notEmpty().isAlphanumeric();
@@ -156,6 +151,13 @@ app.get("/api/user/:username/info", function (req, res) {
             info.spec = data.spec;
             res.json(info);
         });
+    });
+});
+
+app.get('/api/signout/', function (req, res) {
+    req.session.destroy(function(err) {
+        if (err) return res.status(500).end(err);
+        return res.redirect("/");
     });
 });
 

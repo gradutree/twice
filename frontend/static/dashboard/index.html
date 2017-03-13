@@ -12,15 +12,29 @@
 <body>
 <div class="container">
   <div class="header_container">
-    <header class="header_bar"> <a class="header_text" href="/">
-      <h3>GraduTree</h3>
-      </a>
+    <header class="header_bar"> 
+		
       <nav class="navbar">
-        <ul id="btn_list">
+	  <a class="header_text" href="/">
+			<h3>GraduTree</h3>
+		</a>
+        <ul class="btn_list" id="btn_list">
           <li><a href="/">Create a new plan</a></li>
-          <li class="profile"><img id="profile_img" src="../media/user.png"></li>
+          <li class="profile">
+			<div class="btn-group">
+				<button type="button" class="profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					
+					<img id="profile_img" src="../media/user.png">
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="/api/signout">Sign out</a></li>
+
+				</ul>
+			</div>
+		  </li>
         </ul>
       </nav>
+	  
     </header>
 	<div id="root">
   	

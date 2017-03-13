@@ -3,7 +3,6 @@ var EventEmitter = require('events').EventEmitter;
 var merge = require('merge');
 var DashConstants = require('./dashboardConstants.jsx');
 
-// Internal object of shoes
 var userData = {};
 
 function loadUserData(data) {
@@ -11,7 +10,6 @@ function loadUserData(data) {
     userData = data;
 }
 
-// Merge our store with Node's Event Emitter
 var DashStore = merge(EventEmitter.prototype, {
 
     getUserData: function() {
