@@ -546,15 +546,36 @@ footer {
 	flex-direction: row;
 }
 
+.search_header{
+	flex-grow: 10;
+}
+
 .search_div {
-	flexGrow: 1;
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	font-size: 18px;
 }
 
+.search_input{
+	flex-grow: 1;
+}
+
+.search_dropdown{
+	flex-grow: 1;
+	margin-top: 5px;
+}
+
+.search_result{
+	padding: 10px;
+}
+
 #content_container h3 {
-	margin: 0;
+	margin: 0px;
+}
+
+#search_result_header {
+	margin-bottom: 10px;
 }
 
 .profile_btn, .profile_btn:focus, .profile_btn:active {
