@@ -38,15 +38,16 @@ class Search extends Component {
 		return (<div>
 					<div className="search_banner"> 
 						<h3 className="search_header"> {msg} </h3>
-						<div className="search_div">
-							<input className="search_input" onChange={this.changeResults.bind(this)} placeholder="Search for course" />
-							<select className="search_dropdown" value={this.state.school} onChange={this.changeSchool.bind(this)} >
-								<option value="UTSC">UTSC</option>
-							  	<option value="UTSG">UTSG</option>
-							  	<option value="UTM">UTM</option>
-							</select>
-						</div>
+
 					</div>
+			<div className="search_div">
+				<input className="search_input" onChange={this.changeResults.bind(this)} placeholder="Search for course" />
+				<select className="search_dropdown" value={this.state.school} onChange={this.changeSchool.bind(this)} >
+					<option value="UTSC">UTSC</option>
+					<option value="UTSG">UTSG</option>
+					<option value="UTM">UTM</option>
+				</select>
+			</div>
 					<div className="search_result">
 						<h3 id="search_result_header">Search Results</h3>
 						{this.state.results}

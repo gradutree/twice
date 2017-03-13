@@ -559,11 +559,15 @@ footer {
 
 .search_input{
 	flex-grow: 1;
+	width: 300px;
+	margin: 10px;
 }
 
 .search_dropdown{
 	flex-grow: 1;
 	margin-top: 5px;
+	width: 300px;
+	margin-left: 10px;
 }
 
 .search_result{
