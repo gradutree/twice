@@ -4,6 +4,7 @@ var app = express();
 var bodyParser = require("body-parser");
 var expressValidator = require('express-validator');
 var path = require("path");
+var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09";
 var MongoClient = require('mongodb').MongoClient;
@@ -158,6 +159,24 @@ app.get('/api/signout/', function (req, res) {
     req.session.destroy(function(err) {
         if (err) return res.status(500).end(err);
         return res.redirect("/");
+    });
+});
+
+app.get("/api/path/:start/post", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        courses = {};
+        backend.visualizePostreq(db, req.params.start, courses).then(function () {
+            res.json(courses);
+        });
+    });
+});
+
+app.get("/api/path/:start/pre", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        courses = {};
+        backend.visualizePreq(db, req.params.start, courses).then(function () {
+            res.json(courses);
+        });
     });
 });
 

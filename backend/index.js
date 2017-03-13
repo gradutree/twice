@@ -2,14 +2,16 @@ var dbURL = "mongodb://35.167.141.109:8000/c09";
 var MongoClient = require('mongodb').MongoClient;
 var start = "CSCA08H3";
 
-var visualizePreq = function (db, courseCode, node) {
+var backend = {};
+
+backend.visualizePreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
     var deferred = Promise.defer();
 
-    db.collection("courses").findOne({ code: courseCode }, function (err, data) {
+    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
         if (data) {
             node.title = data.title;
@@ -22,7 +24,7 @@ var visualizePreq = function (db, courseCode, node) {
                 data.preq.forEach(function (item, i) {
 
                     node.preq.push({});
-                    visualizePreq(db, item[0], node.preq[i]).then(function () {
+                    backend.visualizePreq(db, item[0], node.preq[i]).then(function () {
                         count--;
                         if (count == 0) deferred.resolve();
                     });
@@ -36,7 +38,7 @@ var visualizePreq = function (db, courseCode, node) {
     return deferred.promise;
 };
 
-var buildPreq = function () {
+buildPreq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
         visualizePreq(db, start, courses).then(function () {
@@ -47,14 +49,14 @@ var buildPreq = function () {
     });
 };
 
-var visualizePostreq = function (db, courseCode, node) {
+backend.visualizePostreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
     var deferred = Promise.defer();
 
-    db.collection("courses").findOne({ code: courseCode }, function (err, data) {
+    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
         if (data) {
 
@@ -71,7 +73,7 @@ var visualizePostreq = function (db, courseCode, node) {
 
                     node.postreq.push({});
 
-                    visualizePostreq(db, item, node.postreq[i]).then(function () {
+                    backend.visualizePostreq(db, item, node.postreq[i]).then(function () {
                         count--;
                         if (count == 0) deferred.resolve();
                     });
@@ -96,7 +98,7 @@ var buildPostReq = function () {
     });
 };
 
-var findPostReq = function (db, callback) {
+backend.findPostReq = function (db, callback) {
 
     db.collection("courses").find({}).toArray(function (err, data) {
         if (err) {
@@ -156,4 +158,4 @@ var setPostReq = function () {
 // -use scraper to get course data
 // -run setPostReq
 // -then run the build functions
-buildPostReq();
+module.exports = backend;
