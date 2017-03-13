@@ -42,9 +42,28 @@ var checkPassword = function(user, password){
     return (user.saltedHash === value);
 };
 
+var sessionRedirect = function(req, res, next) {
+    if (!req.session.user && req.originalUrl !== "/favicon.ico") {
+        console.log(req.originalUrl);
+        req.session.redirectTo = req.originalUrl;
+        return res.redirect("/login");
+    }
+    return next();
+};
+
 app.get("/dashboard", function(req, res, next) {
     if (!req.session.user) return res.redirect("/login");
     return next();
+});
+
+app.get("/trees", sessionRedirect, function(req, res, next) {
+    if (!req.session.user) return res.redirect("/login");
+    return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
+});
+
+app.get("/search", sessionRedirect, function(req, res, next) {
+    if (!req.session.user) return res.redirect("/login");
+    return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
 });
 
 app.get("/", function(req, res, next) {
