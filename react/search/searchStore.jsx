@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher.jsx');
 var EventEmitter = require('events').EventEmitter;
 var merge = require('merge');
-var DashConstants = require('./dashboardConstants.jsx');
+var SearchConstants = require('./searchConstants.jsx');
 
 var userData = {};
 
@@ -9,10 +9,10 @@ function loadUserData(data) {
     userData = data;
 }
 
-var DashStore = merge(EventEmitter.prototype, {
+var SearchStore = merge(EventEmitter.prototype, {
 
     getUserData: function() {
-        return userData.user;
+        return userData;
     },
 
     getUserProgram: function() {
@@ -21,6 +21,10 @@ var DashStore = merge(EventEmitter.prototype, {
 
     getUserSpec: function() {
         return userData.spec;
+    },
+
+    getUserTaken: function() {
+        return userData.taken;
     },
 
     emitChange: function() {
@@ -42,7 +46,7 @@ AppDispatcher.register(function(payload) {
     var action = payload.action;
     // Define what to do for certain actions
     switch(action.actionType) {
-        case DashConstants.LOAD_USERDATA:
+        case SearchConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
             break;
@@ -52,10 +56,10 @@ AppDispatcher.register(function(payload) {
     }
 
     // If action was acted upon, emit change event
-    DashStore.emitChange();
+    SearchStore.emitChange();
 
     return true;
 
 });
 
-module.exports = DashStore;
+module.exports = SearchStore;

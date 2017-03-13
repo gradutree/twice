@@ -1,37 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-// const containerStyle = {
-// 	border: '1px solid #8e8e8e',
-// // 	padding: '5px',
-// // };
-
-// const nameStyle = {
-// 	marginTop: '1px',
-// };
-
-// const descriptionStyle = {
-// 	marginTop: '5px',
-// };
-
-// const preqStyle = {
-// 	display: 'flex',
-// 	flexDirection: 'row',
-// };
-
-// const preqTitleStyle = {
-// 	textAlign: 'center',
-// 	height: '30px',
-//   	lineHeight: '30px',
-//   	fontSize: '16px',
-// };
-
-// const preqCourseStyle = {
-// 	textAlign: 'center',
-// 	marginLeft: '10px',
-// 	height: '30px',
-//   	lineHeight: '30px',
-// };
 
 class SearchResult extends Component {
 	constructor(){

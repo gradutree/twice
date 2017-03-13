@@ -169,6 +169,7 @@ app.get("/api/user/:username/info", function (req, res) {
             info.username = data.username;
             info.program = data.program;
             info.spec = data.spec;
+            info.taken = data.taken;
             res.json(info);
         });
     });
