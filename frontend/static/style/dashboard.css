@@ -582,6 +582,38 @@ footer {
 	margin-bottom: 10px;
 }
 
+.search_result_elem {
+	border: 1px solid #8e8e8e;
+	padding: 5px;
+}
+
+.search_result_name {
+	margin-top: 1px;
+}
+
+.search_result_desc {
+	margin-top: 5px;
+}
+
+.search_result_preq {
+	display: flex;
+	flex-direction: row;
+}
+
+.search_result_preq_title {
+	align: center;
+	height: 30px;
+  	line-height: 30px;
+  	font-size: 16px;
+}
+
+.search_result_preq_course {
+	text-align: center;
+	margin-left: 10px;
+	height: 30px;
+  	line-height: 30px;
+}
+
 .profile_btn, .profile_btn:focus, .profile_btn:active {
     border-radius: 50%;
     outline: none;
