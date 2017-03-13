@@ -4,9 +4,14 @@ var merge = require('merge');
 var SearchConstants = require('./searchConstants.jsx');
 
 var userData = {};
+var searchResults = [];
 
 function loadUserData(data) {
     userData = data;
+}
+
+function loadSearchResults(data) {
+    searchResults = data;
 }
 
 var SearchStore = merge(EventEmitter.prototype, {
@@ -25,6 +30,10 @@ var SearchStore = merge(EventEmitter.prototype, {
 
     getUserTaken: function() {
         return userData.taken;
+    },
+
+    getSearchResults: function() {
+        return searchResults;
     },
 
     emitChange: function() {
@@ -49,6 +58,12 @@ AppDispatcher.register(function(payload) {
         case SearchConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
+            break;
+
+        case 'SEARCH_RESULTS':
+            // console.log("in case SEARCH_RESUTLS");
+            // console.log(action.data);
+            loadSearchResults(action.data);
             break;
 
         default:

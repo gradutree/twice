@@ -11636,24 +11636,36 @@ var Search = function (_Component) {
 	}, {
 		key: 'changeResults',
 		value: function changeResults(e) {
-			var resultCourses = [];
-			var thisComp = this;
+			// var resultCourses = [];
+			//       var thisComp = this;
 
-			var callback = function callback(err, courses) {
-				Promise.all(courses.map(function (course) {
-					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course }));
-				})).then(function () {
-					thisComp.setState({ results: resultCourses });
-				});
-			};
+			// const callback = function(err, courses){
+			// 	Promise.all(courses.map(function (course) {
+			//               resultCourses.push(<SearchResult key={course.code} course={course} />);
+			//           })).then(function(){
+			//               thisComp.setState({results: resultCourses});
+			//           });
+			// };
 
-			_model2.default.searchCourses(e.target.value, callback);
-			console.log(this.state.user);
+			actions.getSearchResults(e.target.value).then(function () {
+				console.log("ok");
+			});
+
+			// console.log("this.state.result");
+			// console.log(this.state.result);
+			console.log(SearchStore.getSearchResults());
+			// var r = SearchStore.getSearchResults()
+			// this.setState({results: SearchStore.getSearchResults()});
+
+
+			// model.searchCourses(e.target.value, callback);
+			// console.log("this.state.user")
+			// console.log(this.state.user);
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-
+			var resultCourses = [];
 			var msg = "Search for " + this.state.school + " courses";
 			return _react2.default.createElement(
 				'div',
@@ -11778,6 +11790,23 @@ var SearchActions = {
             }
         });
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
+    },
+
+    getSearchResults: function getSearchResults(search) {
+        $.ajax({
+            url: "/api/courses/query?code=" + search,
+            success: function success(result) {
+                // console.log("ajax search results");
+                // console.log(result);
+                AppDispatcher.handleAction({
+                    actionType: 'SEARCH_RESULTS',
+                    data: result
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
     }
 
 };
@@ -11895,9 +11924,14 @@ var merge = __webpack_require__(72);
 var SearchConstants = __webpack_require__(65);
 
 var userData = {};
+var searchResults = [];
 
 function loadUserData(data) {
     userData = data;
+}
+
+function loadSearchResults(data) {
+    searchResults = data;
 }
 
 var SearchStore = merge(EventEmitter.prototype, {
@@ -11916,6 +11950,10 @@ var SearchStore = merge(EventEmitter.prototype, {
 
     getUserTaken: function getUserTaken() {
         return userData.taken;
+    },
+
+    getSearchResults: function getSearchResults() {
+        return searchResults;
     },
 
     emitChange: function emitChange() {
@@ -11940,6 +11978,12 @@ AppDispatcher.register(function (payload) {
         case SearchConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
+            break;
+
+        case 'SEARCH_RESULTS':
+            // console.log("in case SEARCH_RESUTLS");
+            // console.log(action.data);
+            loadSearchResults(action.data);
             break;
 
         default:

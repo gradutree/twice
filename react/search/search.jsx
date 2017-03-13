@@ -35,23 +35,33 @@ class Search extends Component {
 	}
 
 	changeResults(e){
-		var resultCourses = [];
-        var thisComp = this;
+		// var resultCourses = [];
+  //       var thisComp = this;
 
-		const callback = function(err, courses){
-			Promise.all(courses.map(function (course) {
-                resultCourses.push(<SearchResult key={course.code} course={course} />);
-            })).then(function(){
-                thisComp.setState({results: resultCourses});
-            });
-		};
+		// const callback = function(err, courses){
+		// 	Promise.all(courses.map(function (course) {
+  //               resultCourses.push(<SearchResult key={course.code} course={course} />);
+  //           })).then(function(){
+  //               thisComp.setState({results: resultCourses});
+  //           });
+		// };
+
+		actions.getSearchResults(e.target.value);
+
+		// console.log("this.state.result");
+		// console.log(this.state.result);
+		console.log(SearchStore.getSearchResults());
+		// var r = SearchStore.getSearchResults()
+		// this.setState({results: SearchStore.getSearchResults()});
+
 		
-		model.searchCourses(e.target.value, callback);
-		console.log(this.state.user);
+		// model.searchCourses(e.target.value, callback);
+		// console.log("this.state.user")
+		// console.log(this.state.user);
 	}
 
 	render() {
-
+		var resultCourses = [];
 		var msg = "Search for " + this.state.school + " courses";
 		return (<div>
 					<div className="search_banner"> 

@@ -27,6 +27,23 @@ var SearchActions = {
             }
         });
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
+    },
+
+    getSearchResults: function(search) {
+        $.ajax({
+            url: "/api/courses/query?code="+search,
+            success: (function (result) {
+                // console.log("ajax search results");
+                // console.log(result);
+                AppDispatcher.handleAction({
+                    actionType: 'SEARCH_RESULTS',
+                    data: result
+                });
+            }),
+            error: function (err) {
+                console.log(err);
+            }
+        });
     }
 
 };
