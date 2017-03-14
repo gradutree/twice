@@ -178,7 +178,7 @@ class Trees extends Component {
 					    ])
 	    	}
 
-	    	cy.minZoom(1);
+	    	cy.minZoom(8);
 	    	cy.maxZoom(5);
 
 
