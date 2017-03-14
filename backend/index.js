@@ -9,33 +9,32 @@ backend.visualizePreq = function (db, courseCode, node) {
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
-    var deferred = Promise.defer();
+    return new Promise(function(resolve, reject) {
+      db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
-    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
+          if (data) {
+              node.title = data.title;
+              node.courseid = courseCode;
+              node.preq = [];
+              if (data.preq.length === 0) {
+                  resolve();
+              } else {
+                  var count = data.preq.length;
+                  data.preq.forEach(function (item, i) {
 
-        if (data) {
-            node.title = data.title;
-            node.courseid = courseCode;
-            node.preq = [];
-            if (data.preq.length === 0) {
-                deferred.resolve();
-            } else {
-                var count = data.preq.length;
-                data.preq.forEach(function (item, i) {
+                      node.preq.push({});
+                      backend.visualizePreq(db, item[0], node.preq[i]).then(function () {
+                          count--;
+                          if (count == 0) resolve();
+                      });
+                  });
+              }
 
-                    node.preq.push({});
-                    backend.visualizePreq(db, item[0], node.preq[i]).then(function () {
-                        count--;
-                        if (count == 0) deferred.resolve();
-                    });
-                });
-            }
+          } else resolve();
 
-        } else deferred.resolve();
-
+      });
     });
 
-    return deferred.promise;
 };
 
 buildPreq = function () {
@@ -54,37 +53,37 @@ backend.visualizePostreq = function (db, courseCode, node) {
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
-    var deferred = Promise.defer();
 
-    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
+    return new Promise(function(resolve, reject) {
+      db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
-        if (data) {
+          if (data) {
 
-            node.title = data.title;
-            node.courseid = courseCode;
-            node.postreq = [];
+              node.title = data.title;
+              node.courseid = courseCode;
+              node.postreq = [];
 
-            if (!data.postreq) deferred.resolve();
-            else if (data.postreq.length === 0) {
-                deferred.resolve();
-            } else {
-                var count = data.postreq.length;
-                data.postreq.forEach(function (item, i) {
+              if (!data.postreq) resolve();
+              else if (data.postreq.length === 0) {
+                  resolve();
+              } else {
+                  var count = data.postreq.length;
+                  data.postreq.forEach(function (item, i) {
 
-                    node.postreq.push({});
+                      node.postreq.push({});
 
-                    backend.visualizePostreq(db, item, node.postreq[i]).then(function () {
-                        count--;
-                        if (count == 0) deferred.resolve();
-                    });
-                });
-            }
+                      backend.visualizePostreq(db, item, node.postreq[i]).then(function () {
+                          count--;
+                          if (count == 0) resolve();
+                      });
+                  });
+              }
 
-        } else deferred.resolve();
+          } else resolve();
 
+      });
     });
 
-    return deferred.promise;
 };
 
 var buildPostReq = function () {
