@@ -16,16 +16,7 @@ class SearchResult extends Component {
 
 	clicked(e){
 		console.log(this.props.course);
-		// console.log("/course/"+this.props.course.code);
-		$.ajax({
-            url: "/course/"+this.props.course.code,
-            success: function(result){
-            	// console.log(result)
-            }, 
-            error: function (err) {
-                console.log(err);
-            }
-        });
+		window.location.href = "/course/"+this.props.course.code;
 	}
 	
 	render() {
