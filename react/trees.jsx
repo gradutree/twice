@@ -122,12 +122,13 @@ class Trees extends Component {
      	   		var rank = nodes[i].rank;
      	   		var levels  = [10, 110, 210, 310];
      	   		
-    	   		var x = 50 + (levelCount[id.charAt(3)]*150);
+    	   		var x = 50 + (levelCount[id.charAt(3)]*130);
     	   		var y = 50 + (i*50);
     	   		switch(id.charAt(3)) {
     	   			case ("A"):
+    	   				x = 400 + (levelCount[id.charAt(3)]*120);
     	   				y = 50 + levels[0];
-    	   				levelCount["A"] += 1;
+    	   				levelCount["A"] +=1;
     	   				break;
     	   			case("B"):
     	   				y = 50 + levels[1];
@@ -148,6 +149,7 @@ class Trees extends Component {
 					        {group: "nodes", data: {id: id, title: title}, position:{x:x , y:y}}
 					    ])
 				//cy.$('#'+id).lock();
+				console.log(levelCount);
 	    	}
 
 	    	
