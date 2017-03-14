@@ -3,12 +3,16 @@ var path = require('path');
 
 var BUILD_DIR = path.resolve(__dirname, 'frontend/static/js/app');
 var APP_DIR = path.resolve(__dirname, 'react/');
+var COURSE_DIR = path.resolve(__dirname, 'react_course/');
 
 var config = {
-  entry: APP_DIR + '/index.jsx',
+  entry: {
+	  app: APP_DIR + '/index.jsx',
+	  course: COURSE_DIR + '/index.jsx'
+  },
   output: {
     path: BUILD_DIR,
-    filename: 'bundle.js'
+    filename: '[name]_bundle.js'
   },
   module : {
     loaders : [

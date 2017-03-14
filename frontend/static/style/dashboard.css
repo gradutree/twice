@@ -37,13 +37,25 @@ footer a:hover {
 }
 
 .form_input {
-	-webkit-box-shadow: inset 0px 0px 3px 0px rgba(138,138,138,1);
-	-moz-box-shadow: inset 0px 0px 3px 0px rgba(138,138,138,1);
-	box-shadow: inset 0px 0px 3px 0px rgba(138,138,138,1);
-	border: none;
+	width: 200px;
+	appearance: none;
+    display: block;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 18px;
+	font-weight: 300;
+    background: #fff;
+    color: #5f6a7d;
+    outline: none;
+    border: 1px solid #c4c4c4;
+    border-radius: 3px;
+	box-sizing: border-box;
 	
-	resize: none;
-	padding: 5px;
+}
+
+.form_input:focus {
+	border-color: #2996cc;
 }
 
 .hidden {
@@ -386,6 +398,7 @@ footer {
 
 .comment_area {
 	width: 97.5%;
+	max-width: 97.5%;
 	height: 75px;
 }
 
@@ -517,11 +530,12 @@ footer {
 	background-color: #fff;
 	padding: 10px;
 	border-radius: 3px;
-	border: 1px solid #DADADA;
+	border: 1px solid rgba(0, 0, 0, 0.0901961);
     margin: 5px 20px;
 	width: auto;
 	text-align: center;
     display: inline-block;
+	
 }
 
 #content_container h4 {
@@ -589,3 +603,39 @@ footer {
     background-color: #fff;
 }
 
+.page {
+	
+	height: auto !important;
+	margin: 15px 0 !important;
+	width: 75% !important;
+}
+
+.center_container {
+	width: 75% !important;
+	margin: auto;
+}
+
+.status_box {
+	margin: 15px 0;
+	width: 25%;
+}
+
+.desc_box {
+	text-align: justify;
+	width: 600px;
+	margin: 20px auto;
+}
+
+.flex_cent {
+	justify-content: space-between !important;
+}
+
+.review_area {
+	width: 50% !important;
+	
+}
+
+.submit_area {
+	text-align: left;
+	padding: 0 5px;
+}
