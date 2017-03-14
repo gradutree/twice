@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>GraduTree</title>
+<title>index</title>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <link href="/style/dashboard.css" rel="stylesheet" type="text/css">
 </head>
-<body>
+
 <div class="container">
   <div class="header_container">
     <header class="header_bar"> 
@@ -24,7 +24,7 @@
 			<div class="btn-group">
 				<button type="button" class="profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					
-					<img id="profile_img" src="../media/user.png">
+					<img id="profile_img" src="/media/user.png">
 				</button>
 				<ul class="dropdown-menu">
 					<li><a href="/api/signout">Sign out</a></li>
@@ -36,16 +36,20 @@
       </nav>
 	  
     </header>
-	<div id="root">
-  	
+	<div id="search_box" class="flex-row flex_start">
+  		<input class="form_input" type="text" placeholder="Search courses">
+  		<button id="search_btn">Search</button>
     </div>
   </div>
+  
+  
 
   
 </div>
-<div id="content_container" style="height: 1000px">
+<div id="content_container" style="height: 1000px; text-align: center;">
+
+
+
 </div>
-<script src="/js/app/app_bundle.js"></script>
-<!-- <script src="/js/app/model.js"></script> -->
-</body>
+<script src="/js/app/course_bundle.js"></script>
 </html>

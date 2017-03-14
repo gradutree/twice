@@ -56,12 +56,24 @@ app.get("/dashboard", function(req, res, next) {
     return next();
 });
 
-app.get("/trees", sessionRedirect, function(req, res, next) {
+app.get("/course/:code", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
+            if (data) {
+                return res.sendFile(path.resolve("frontend/views/course.html"));
+            }
+            return res.status(404).end("No such course");
+        });
+    });
+
+});
+
+app.get("/trees", sessionRedirect, function(req, res) {
     if (!req.session.user) return res.redirect("/login");
     return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
 });
 
-app.get("/search", sessionRedirect, function(req, res, next) {
+app.get("/search", sessionRedirect, function(req, res) {
     if (!req.session.user) return res.redirect("/login");
     return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
 });
@@ -97,7 +109,7 @@ app.use(express.static('frontend/static'));
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("courses").find({code: {$regex : ".*"+req.query.code+".*"}}).toArray(function (err, data) {
+        db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
                 return;
@@ -185,7 +197,7 @@ app.get('/api/signout/', function (req, res) {
 app.get("/api/path/:start/post", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
         courses = {};
-        backend.visualizePostreq(db, req.params.start, courses).then(function () {
+        backend.visualizePostreq(db, req.params.start.toUpperCase(), courses).then(function () {
             res.json(courses);
         });
     });
@@ -194,7 +206,7 @@ app.get("/api/path/:start/post", function (req, res) {
 app.get("/api/path/:start/pre", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
         courses = {};
-        backend.visualizePreq(db, req.params.start, courses).then(function () {
+        backend.visualizePreq(db, req.params.start.toUpperCase(), courses).then(function () {
             res.json(courses);
         });
     });

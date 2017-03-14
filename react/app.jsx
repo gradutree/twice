@@ -72,9 +72,9 @@ const Nav = () => (
 			<Route path="/dashboard" component={Dashboard}/>
 			<Route path="/trees" component={Trees}/>
 			<Route path="/search" component={Search}/>
-			
-			
-		</div>	
+
+
+		</div>
 	</Router>
 
 );
