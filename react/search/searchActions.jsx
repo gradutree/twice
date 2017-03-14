@@ -29,17 +29,10 @@ var SearchActions = {
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
     },
 
-    getSearchResults: function(search) {
+    getSearchResults: function(search, callback) {
         $.ajax({
             url: "/api/courses/query?code="+search,
-            success: (function (result) {
-                // console.log("ajax search results");
-                // console.log(result);
-                AppDispatcher.handleAction({
-                    actionType: 'SEARCH_RESULTS',
-                    data: result
-                });
-            }),
+            success: callback,
             error: function (err) {
                 console.log(err);
             }

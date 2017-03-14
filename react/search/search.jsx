@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 
 import SearchResult from "./searchResult.jsx";
-import model from "../../frontend/static/js/app/model.js"
+// import model from "../../frontend/static/js/app/model.js"
 
+var AppDispatcher = require('../dispatcher.jsx');
 var SearchStore = require("./searchStore.jsx");
 var actions = require("./searchActions.jsx");
 
@@ -35,29 +36,25 @@ class Search extends Component {
 	}
 
 	changeResults(e){
-		// var resultCourses = [];
-  //       var thisComp = this;
+		var thisComp = this;
 
-		// const callback = function(err, courses){
-		// 	Promise.all(courses.map(function (course) {
-  //               resultCourses.push(<SearchResult key={course.code} course={course} />);
-  //           })).then(function(){
-  //               thisComp.setState({results: resultCourses});
-  //           });
-		// };
+		var callback = function (result) {
+            AppDispatcher.handleAction({
+                actionType: 'SEARCH_RESULTS',
+                data: result
+            });
 
-		actions.getSearchResults(e.target.value);
+            var searchResult = SearchStore.getSearchResults();
+			var resultCourses = [];
 
-		// console.log("this.state.result");
-		// console.log(this.state.result);
-		console.log(SearchStore.getSearchResults());
-		// var r = SearchStore.getSearchResults()
-		// this.setState({results: SearchStore.getSearchResults()});
+			Promise.all(searchResult.map(function (course) {
+                resultCourses.push(<SearchResult key={course.code} course={course} />);
+            })).then(function(){
+                thisComp.setState({results: resultCourses});
+            });
+        }
 
-		
-		// model.searchCourses(e.target.value, callback);
-		// console.log("this.state.user")
-		// console.log(this.state.user);
+		actions.getSearchResults(e.target.value, callback);
 	}
 
 	render() {
