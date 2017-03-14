@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GraduTree: Sign up</title>
+<link href="../style/login.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div class="container">
+  <h2 class="heading">Sign Up</h2>
+  <form id="signup_form">
+	<div id="login_err"></div>
+    <div class="flex_col">
+     	<label>Username:</label>
+      	<input id="uname_input" type="text" required="required" placeholder="Username">
+    </div>
+    
+    <div class="flex_col">
+		<label>Password:</label>
+      <input id="pwd_input" type="password" required="required" placeholder="Password">
+    </div>
+    <div class="flex_col">
+		<label>Confirm password:</label>
+      <input id="pwdc_input" type="password" required="required" placeholder="Password again">
+    </div>
+      <div class="flex_col">
+          <label>What is your program/desired program?</label>
+          <select id="prog_input">
+              <option value="Major">Computer science major</option>
+              <option value="Minor">Computer science minor</option>
+              <option value="Software Engineering">Comp sci specialist: Software Engineering</option>
+              <option value="Comprehensive">Comp sci specialist: Comprehensive</option>
+              <option value="Information Systems">Comp sci specialist: Information Systems</option>
+              <option value="Entrepreneurship">Comp sci specialist: Entrepreneurship</option>
+              <option value="Health Informatics">Comp sci specialist: Health Informatics</option>
+          </select>
+      </div>
+    
+    <div>
+   	  <input class="form_input" type="submit" value="Confirm">
+    </div>
+  </form>
+  <div class="div_box">
+	  Already have an account? <a href="/login">Login in</a>.
+  </div>
+  <script src="../js/signup/view.js"></script> 
+  <script src="../js/signup/model.js"></script> 
+  <script src="../js/signup/test.js"></script> 
+  <script src="../js/signup/controller.js"></script> 
+</div>
+
+</body>
+</html>

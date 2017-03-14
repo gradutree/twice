@@ -1,17 +1,17 @@
-var dbURL = "mongodb://localhost:27017/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09";
 var MongoClient = require('mongodb').MongoClient;
 var start = "CSCA08H3";
 
-var visualizePreq = function (db, courseCode, node) {
+var backend = {};
+
+backend.visualizePreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
-    // for now it will only work backwards, but il make one from a root soon
-
     var deferred = Promise.defer();
 
-    db.collection("courses").findOne({ code: courseCode }, function (err, data) {
+    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
         if (data) {
             node.title = data.title;
@@ -24,7 +24,7 @@ var visualizePreq = function (db, courseCode, node) {
                 data.preq.forEach(function (item, i) {
 
                     node.preq.push({});
-                    visualizePreq(db, item[0], node.preq[i]).then(function () {
+                    backend.visualizePreq(db, item[0], node.preq[i]).then(function () {
                         count--;
                         if (count == 0) deferred.resolve();
                     });
@@ -38,7 +38,7 @@ var visualizePreq = function (db, courseCode, node) {
     return deferred.promise;
 };
 
-var buildPreq = function () {
+buildPreq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
         visualizePreq(db, start, courses).then(function () {
@@ -49,16 +49,14 @@ var buildPreq = function () {
     });
 };
 
-var visualizePostreq = function (db, courseCode, node) {
+backend.visualizePostreq = function (db, courseCode, node) {
     // this function will render a tree like graph in json
     // with a starting node using course data
     // structure : {data: {courseid: "", title: "", next: [ {courseid: "", title: "", next: []}, ... ]}
 
-    // for now it will only work backwards, but il make one from a root soon
-
     var deferred = Promise.defer();
 
-    db.collection("courses").findOne({ code: courseCode }, function (err, data) {
+    db.collection("courses").findOne({ code: courseCode }, {_id: 0}, function (err, data) {
 
         if (data) {
 
@@ -75,7 +73,7 @@ var visualizePostreq = function (db, courseCode, node) {
 
                     node.postreq.push({});
 
-                    visualizePostreq(db, item, node.postreq[i]).then(function () {
+                    backend.visualizePostreq(db, item, node.postreq[i]).then(function () {
                         count--;
                         if (count == 0) deferred.resolve();
                     });
@@ -89,7 +87,7 @@ var visualizePostreq = function (db, courseCode, node) {
     return deferred.promise;
 };
 
-var buildPostreq = function () {
+var buildPostReq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
         visualizePostreq(db, start, courses).then(function () {
@@ -100,39 +98,46 @@ var buildPostreq = function () {
     });
 };
 
-var findPostReq = function (db, callback) {
+backend.findPostReq = function (db, callback) {
 
     db.collection("courses").find({}).toArray(function (err, data) {
-        if (!data) callback();
+        if (err) {
+            callback();
+            return;
+        }
 
-        var count = data.length;
-        console.log(count);
-        if (count == 0) callback();
+        Promise.all(data.map(function (item, i) {
+            return new Promise(function (resolve, reject) {
+                db.collection("courses").find({ preq : { $in: [[item.code]] }}).toArray(function (err, courses) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return;
+                    }
+                    if (!item.postreq) {
+                        item.postreq = [];
+                    }
 
-        data.forEach(function (item, i) {
+                    Promise.all(courses.map(function (course) {
 
-            db.collection("courses").find({ preq : { $in: [[item.code]] }}).toArray(function (err, courses) {
-                if (err) {
-                    console.log(err);
-                    count--;
-                    return;
-                }
-                if (!item.postreq) {
-                    item.postreq = [];
-                }
-                var count2 = courses.length;
-                if (courses.length == 0) count--;
-                if (count == 0) callback();
-                for (var i = 0; i < courses.length; i++) {
-                    item.postreq.push(courses[i].code);
-                    console.log(item.postreq.toString());
-                    db.collection("courses").updateOne({ code: item.code }, item, function (err, num) {
-                        count2--;
-                        if (count2 == 0) count--;
-                        if (count == 0) callback();
+                        return new Promise(function (resolve2, reject2) {
+                            item.postreq.push(course.code);
+                            //console.log(item.postreq.toString());
+                            resolve2();
+                        });
+                    })).then(function () {
+                        db.collection("courses").updateOne({ code: item.code }, item, function (err, num) {
+                            console.log("Finished adding postreqs for "+item.code);
+                            resolve();
+                        });
+
                     });
-                }
+
+                });
             });
+        })).then(function () {
+
+            callback();
         });
     });
 };
@@ -148,4 +153,9 @@ var setPostReq = function () {
     });
 };
 
-buildPostreq();
+// proper setup order:
+// -create c09 database
+// -use scraper to get course data
+// -run setPostReq
+// -then run the build functions
+module.exports = backend;

@@ -3,9 +3,9 @@ var cheerio = require('cheerio');
 var MongoClient = require('mongodb').MongoClient;
 
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
-var dbURL = "mongodb://localhost:27017/";
+var dbURL = "mongodb://35.167.141.109:8000/";
 
-var addCourses = function(dbName) {
+var addCourses = function(dbName, callback) {
 
     dbURL += dbName;
 
@@ -25,64 +25,78 @@ var addCourses = function(dbName) {
             var $ = cheerio.load(html);
             var ref = 0;
             var hit = 0;
-            var elems = $("span[class='strong']");
+            var elems = $("span[class='strong']").toArray();
             var count = elems.length;
-            elems.each(function (i, item) {
-                var data = $(this);
-                ref++;
-                var pattern = /[A-Z][A-Z][A-Z][A-D][0-9][0-9]H[0-9]/;
-                var course;
-                if (pattern.test(data.text())) {
-                    hit++;
-                    // console.log("Adding course: "+data.text().trim());
-                    // magic string "    "
-                    course = new Class(data.text().trim().split("    ")[0], data.text().trim().split("    ")[1]);
-                } else return;
+            Promise.all(elems.map(function (item) {
+                return new Promise(function (resolve, reject) {
+                    var data = $(item);
 
-                var node = data.next()[0].next;
+                    ref++;
+                    var pattern = /[A-Z][A-Z][A-Z][A-D][0-9][0-9]H[0-9]/;
+                    var course;
+                    if (pattern.test(data.text())) {
+                        hit++;
+                        // console.log("Adding course: "+data.text().trim());
+                        // magic string "    "
+                        course = new Course(data.text().trim().split("    ")[0], data.text().trim().split("    ")[1]);
+                    } else resolve();
 
-                // console.log("Prerequisites: ");
+                    course.description = data.next().text();
+                    var node = data.next()[0].next;
 
-                while (node.name !== "br") {
-                    if (node.name === "a" && node.data !== " or ") {
-                        var preq = [];
-                        preq.push(node.children[0].data);
-                        while (node.next.data == " or ") {
-                            preq.push(node.next.next.children[0].data);
-                            node = node.next.next;
+
+                    // console.log("Prerequisites: ");
+
+                    while (node.name !== "br") {
+
+
+                        if (node.name === "a" && node.data !== " or ") {
+                            var preq = [];
+                            preq.push(node.children[0].data);
+                            while (node.next.data == " or ") {
+                                preq.push(node.next.next.children[0].data);
+                                node = node.next.next;
+                            }
+                            course.preq.push(preq);
                         }
-                        course.preq.push(preq);
-                    }
-                    node = node.next;
+                        node = node.next;
 
-                    if (!node) {
-                        break;
+                        if (!node) {
+                            break;
+                        }
+
                     }
-				
-                }
-                db.collection("courses").insertOne(course, function (err, r) {
-                    if (err) {
-                        console.log("Failed to insert document: " + data.text().trim());
-                        return;
-                    }
-                    console.log("Added course: " + data.text().trim());
+                    db.collection("courses").insertOne(course, function (err, r) {
+                        if (err) {
+                            reject("Failed to insert document: " + data.text().trim());
+                            return;
+                        }
+                        resolve("Added course: " + data.text().trim());
+                    });
                 });
-                // console.log("-----");
-                if (count == i + 1) {
-                    console.log("Total: "+hit+" courses added");
-                    console.log("Total: "+ref+" elements inspected");
-                    db.close();
-                }
+            })).then(function () {
+                console.log("Total: "+hit+" courses added");
+                console.log("Total: "+ref+" elements inspected");
+                db.close();
             });
+
+
+
+                // console.log("-----");
+                //if (count == i + 1) {
+                //
+                //}
+
 
         });
     });
 };
 
-var Class = function (code, title) {
+var Course = function (code, title) {
     this.code = code;
     this.title = title;
     this.preq = [];
+    this.description = null;
 };
 
 if (process.argv.length != 3) {
