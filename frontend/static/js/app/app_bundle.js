@@ -26798,7 +26798,7 @@ var Trees = function (_Component) {
 														cy.add([{ group: "edges", data: { id: id, source: source, target: target } }]);
 												}
 
-												cy.minZoom(1);
+												cy.minZoom(8);
 												cy.maxZoom(5);
 
 												cy.on('tap', function (evt) {
