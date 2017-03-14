@@ -26239,7 +26239,8 @@ var Search = function (_Component) {
 			results: [],
 			selected: [],
 			user: null,
-			showTaken: true
+			showTaken: true,
+			takenFilterText: 'Hide'
 		};
 		return _this;
 	}
@@ -26263,66 +26264,28 @@ var Search = function (_Component) {
 		value: function changeSchool(e) {
 			this.setState({ school: e.target.value });
 		}
+
+		// Updates the results when typing in the search bar
+
 	}, {
 		key: 'changeResults',
 		value: function changeResults(e) {
-			// var thisComp = this;
-			// // console.log(e);
-
-			// var callback = function (result) {
-			//           AppDispatcher.handleAction({
-			//               actionType: 'SEARCH_RESULTS',
-			//               data: result
-			//           });
-
-			//           var searchResult = SearchStore.getSearchResults();
-			// 	var resultCourses = [];
-
-			// 	Promise.all(searchResult.map(function (course) {
-			// 		var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
-			//               resultCourses.push(<SearchResult key={course.code} course={course} taken={userTook} />);
-			//           })).then(function(){
-			//           	// Sort results alphabetically
-			//           	resultCourses.sort(function(a, b) {
-			// 		    var codeA = a.key.toUpperCase();
-			// 		    var codeB = b.key.toUpperCase();
-			// 		    return (codeA < codeB) ? -1 : (codeA > codeB) ? 1 : 0;
-			// 		});
-
-			//           	// 
-			// 		if(!thisComp.state.showTaken){
-			// 			console.log("trying to remove courses");
-			// 			resultCourses = resultCourses.filter(function(course){
-			// 				// console.log(course);
-			// 				// console.log(course.props.taken);
-			// 				return !course.props.taken;
-			// 			});
-			// 		}
-
-			// 		// console.log(resultCourses);
-			//               thisComp.setState({results: resultCourses});
-			//           });
-			//       }
-
-			// actions.getSearchResults(e.target.value, callback);
-
 			this.updateResults(e.target.value);
 		}
+
+		// Updates the results to show/hide taken courses when filter clicked
+
 	}, {
 		key: 'takenFilter',
 		value: function takenFilter(e) {
-			// console.log("clicked filter: ");
 			this.state.showTaken = !this.state.showTaken;
-			// console.log(this.state.showTaken);
-			// console.log(this.refs.searchInput.value);
+			this.state.takenFilterText = this.state.showTaken ? "Hide" : "Show";
 			this.updateResults(this.refs.searchInput.value);
-			// this.changeResults(this.refs.searchInput).bind(this);
 		}
 	}, {
 		key: 'updateResults',
 		value: function updateResults(searchStr) {
 			var thisComp = this;
-			// console.log(e);
 
 			var callback = function callback(result) {
 				AppDispatcher.handleAction({
@@ -26344,17 +26307,14 @@ var Search = function (_Component) {
 						return codeA < codeB ? -1 : codeA > codeB ? 1 : 0;
 					});
 
-					// 
+					// Remove the taken courses if the filter was selected
 					if (!thisComp.state.showTaken) {
 						console.log("trying to remove courses");
 						resultCourses = resultCourses.filter(function (course) {
-							// console.log(course);
-							// console.log(course.props.taken);
 							return !course.props.taken;
 						});
 					}
 
-					// console.log(resultCourses);
 					thisComp.setState({ results: resultCourses });
 				});
 			};
@@ -26394,7 +26354,8 @@ var Search = function (_Component) {
 						_react2.default.createElement(
 							'div',
 							{ className: 'search_filter', onClick: this.takenFilter.bind(this) },
-							'Show Taken Courses'
+							this.state.takenFilterText,
+							' Taken Courses'
 						),
 						_react2.default.createElement(
 							'div',
