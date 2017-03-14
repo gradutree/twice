@@ -1,7 +1,9 @@
 #cy {
-  width: 300px;
-  height: 300px;
-  display: block;
+  width: 80%;
+  height: 800px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -29,6 +31,8 @@ label {
 
 #box {
 	/* basics */
+  position: absolute;
+  left: 50%;
   background-color: #295cad;
   color: #C4BE92;
   text-align: center;
