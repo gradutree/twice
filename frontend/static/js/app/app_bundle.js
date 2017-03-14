@@ -26309,7 +26309,6 @@ var Search = function (_Component) {
 
 					// Remove the taken courses if the filter was selected
 					if (!thisComp.state.showTaken) {
-						console.log("trying to remove courses");
 						resultCourses = resultCourses.filter(function (course) {
 							return !course.props.taken;
 						});
@@ -26360,7 +26359,8 @@ var Search = function (_Component) {
 						_react2.default.createElement(
 							'div',
 							{ className: 'search_div' },
-							_react2.default.createElement('input', { className: 'search_input', onChange: this.changeResults.bind(this), ref: 'searchInput', placeholder: 'Search for course' }),
+							_react2.default.createElement('input', { className: 'search_input', onChange: this.changeResults.bind(this),
+								ref: 'searchInput', placeholder: 'Search for course' }),
 							_react2.default.createElement(
 								'select',
 								{ className: 'search_dropdown', value: this.state.school, onChange: this.changeSchool.bind(this) },
@@ -26521,11 +26521,13 @@ var SearchResult = function (_Component) {
 			console.log(this.props.course);
 			// console.log("/course/"+this.props.course.code);
 			$.ajax({
-				url: "/course/" + this.props.course.code,
+				url: "/coursegoto/" + this.props.course.code,
 				success: function success(result) {
-					// console.log(result)
+					console.log("result");
+					console.log(result);
 				},
 				error: function error(err) {
+					console.log("err");
 					console.log(err);
 				}
 			});
@@ -26670,6 +26672,23 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var node = function node(data) {
+	this.title = data.title;
+	this.id = data.courseid;
+	this.postreq = data.postreq;
+	this.source = null;
+	this.target = null;
+	this.edgeNumbers = data.postreq.length;
+	this.visited = false;
+};
+
+var edge = function edge(sourceNode, targetNode) {
+	this.id = sourceNode.id + targetNode.id;
+	this.source = sourceNode.id;
+	this.target = targetNode.id;
+	this.visited = false;
+};
+
 var Trees = function (_Component) {
 	_inherits(Trees, _Component);
 
@@ -26711,22 +26730,23 @@ var Trees = function (_Component) {
 				success: function success(result) {
 					var data = result;
 
-					var node = function node(data) {
-						this.title = data.title;
-						this.id = data.courseid;
-						this.postreq = data.postreq;
-						this.source = null;
-						this.target = null;
-						this.edgeNumbers = data.postreq.length;
-						this.visited = false;
-					};
+					// var node = function (data){
+					// 		this.title = data.title;
+					// 		this.id = data.courseid;
+					// 		this.postreq = data.postreq;
+					// 		this.source = null;
+					// 		this.target = null;
+					// 		this.edgeNumbers = data.postreq.length;
+					// 		this.visited = false;
+					// 	  };
 
-					var edge = function edge(sourceNode, targetNode) {
-						this.id = sourceNode.id + targetNode.id;
-						this.source = sourceNode.id;
-						this.target = targetNode.id;
-						this.visited = false;
-					};
+					// 	  var edge = function (sourceNode, targetNode){ 	
+					// 		this.id = sourceNode.id + targetNode.id;
+					// 		this.source = sourceNode.id;
+					// 		this.target = targetNode.id;
+					// 		this.visited = false;
+					// 	  };
+
 
 					var nodes = [];
 					var edges = [];

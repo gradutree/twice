@@ -18,11 +18,13 @@ class SearchResult extends Component {
 		console.log(this.props.course);
 		// console.log("/course/"+this.props.course.code);
 		$.ajax({
-            url: "/course/"+this.props.course.code,
+            url: "/coursegoto/"+this.props.course.code,
             success: function(result){
-            	// console.log(result)
+            	console.log("result");
+            	console.log(result);
             }, 
             error: function (err) {
+            	console.log("err");
                 console.log(err);
             }
         });

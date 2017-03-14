@@ -1,8 +1,27 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
+var node = function (data){
+	this.title = data.title;
+	this.id = data.courseid;
+	this.postreq = data.postreq;
+	this.source = null;
+	this.target = null;
+	this.edgeNumbers = data.postreq.length;
+	this.visited = false;
+};
+
+var edge = function (sourceNode, targetNode){ 	
+	this.id = sourceNode.id + targetNode.id;
+	this.source = sourceNode.id;
+	this.target = targetNode.id;
+	this.visited = false;
+};
+
 
 class Trees extends Component {
+  
+
   render() {
     return (
         <div>
@@ -22,22 +41,22 @@ class Trees extends Component {
       success: function (result) {
       var data = result;
 	  
-	  var node = function (data){
-   		this.title = data.title;
-   		this.id = data.courseid;
-   		this.postreq = data.postreq;
-   		this.source = null;
-   		this.target = null;
-   		this.edgeNumbers = data.postreq.length;
-   		this.visited = false;
-   	  };
+	  // var node = function (data){
+   // 		this.title = data.title;
+   // 		this.id = data.courseid;
+   // 		this.postreq = data.postreq;
+   // 		this.source = null;
+   // 		this.target = null;
+   // 		this.edgeNumbers = data.postreq.length;
+   // 		this.visited = false;
+   // 	  };
 
-   	  var edge = function (sourceNode, targetNode){ 	
-   		this.id = sourceNode.id + targetNode.id;
-   		this.source = sourceNode.id;
-   		this.target = targetNode.id;
-   		this.visited = false;
-   	  };
+   // 	  var edge = function (sourceNode, targetNode){ 	
+   // 		this.id = sourceNode.id + targetNode.id;
+   // 		this.source = sourceNode.id;
+   // 		this.target = targetNode.id;
+   // 		this.visited = false;
+   // 	  };
 
 
       

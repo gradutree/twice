@@ -57,6 +57,7 @@ app.get("/dashboard", function(req, res, next) {
 });
 
 app.get("/course/:code", function (req, res) {
+    console.log("COURSE/CODE");
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
@@ -65,7 +66,15 @@ app.get("/course/:code", function (req, res) {
             return res.status(404).end("No such course");
         });
     });
+});
 
+app.get("/coursegoto/:code", function(req, res, next) {
+    console.log("IN courseGOTO");
+    // res.redirect("/course/"+req.params.code);
+    // 'http://mydomain.com'+req.url
+    // req.url = "/course/"+req.params.code;
+    res.json({});
+    return next();
 });
 
 app.get("/trees", sessionRedirect, function(req, res) {

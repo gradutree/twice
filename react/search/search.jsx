@@ -74,7 +74,6 @@ class Search extends Component {
 
             	// Remove the taken courses if the filter was selected
 				if(!thisComp.state.showTaken){
-					console.log("trying to remove courses");
 					resultCourses = resultCourses.filter(function(course){
 						return !course.props.taken;
 					});
@@ -99,9 +98,12 @@ class Search extends Component {
 					<div className="search_result_div">
 						<h3 id="search_result_header">Search Results</h3>
 						<div className="search_div_container">
-							<div className="search_filter" onClick={this.takenFilter.bind(this)}>{this.state.takenFilterText} Taken Courses</div>
+							<div className="search_filter" onClick={this.takenFilter.bind(this)}>
+								{this.state.takenFilterText} Taken Courses
+							</div>
 							<div className="search_div">
-								<input className="search_input" onChange={this.changeResults.bind(this)} ref="searchInput" placeholder="Search for course" />
+								<input className="search_input" onChange={this.changeResults.bind(this)} 
+									ref="searchInput" placeholder="Search for course" />
 								<select className="search_dropdown" value={this.state.school} onChange={this.changeSchool.bind(this)} >
 									<option value="UTSC">UTSC</option>
 									<option value="UTSG">UTSG</option>
