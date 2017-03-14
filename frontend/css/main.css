@@ -29,21 +29,6 @@ label {
 	font-size: .8em;
 }
 
-button {
-	/* basics */
-	color: #444;
-	background-color: #B5B198;
-	/* rounded corners */
-    -webkit-border-radius: 6px;
-          border-radius: 6px; 
-    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
-	font-weight: bold;
-
-}
-
-button:hover, button:active, button:focus {
-	background-color: #CBC7AE;
-}
 
 .box {
 	/* basics */
