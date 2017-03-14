@@ -1,4 +1,4 @@
-var Dispatcher = require('../dispatcher.jsx');
+var Dispatcher = require('./dispatcher.jsx');
 var EventEmitter = require('events').EventEmitter;
 var merge = require('merge');
 var Constants = require('./constants.jsx');
@@ -7,7 +7,7 @@ var courseData = {};
 var reviews = {};
 
 var loadCourse = function (data) {
-    this.courseData = data;
+    courseData = data;
 };
 
 var Store = merge(EventEmitter.prototype, {

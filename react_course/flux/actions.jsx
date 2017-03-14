@@ -1,4 +1,4 @@
-var Dispatcher = require('../dispatcher.jsx');
+var Dispatcher = require('./dispatcher.jsx');
 var Constants = require('./constants.jsx');
 
 var Actions = {
@@ -7,9 +7,12 @@ var Actions = {
 
     loadCourseInfo: function (code) {
         $.ajax({
-            url: "api/courses/query?code="+code,
+            url: "/api/courses/query?code="+code,
             success: function (result) {
-                
+                Dispatcher.handleAction({
+                    actionType: Constants.LOAD_COURSE,
+                    data: result[0]
+                });
             }
         });
     }

@@ -109,7 +109,7 @@ app.use(express.static('frontend/static'));
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("courses").find({code: {$regex : ".*"+req.query.code+".*"}}).toArray(function (err, data) {
+        db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
                 return;

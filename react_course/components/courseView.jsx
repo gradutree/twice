@@ -7,16 +7,20 @@ import {
     IndexRoute
 } from 'react-router-dom';
 
-var Store = require('./store.jsx');
-var Actions = require('./actions.jsx');
-
+var Store = require('../flux/store.jsx');
+var Actions = require('../flux/actions.jsx');
 
 
 class CourseView extends Component {
 
     constructor() {
         super();
-        this.state = null;
+        this.state = {
+            code: null,
+            title: null,
+            preq: null,
+            description: null
+        };
     }
 
     componentDidMount() {
@@ -32,21 +36,31 @@ class CourseView extends Component {
 
     }
 
+    _onChange() {
+        this.setState(getCourse());
+    }
+
     render() {
-        var hidden = "box page"+this.state ? " hidden" : "";
+        var hidden = "box page"+(this.state.code ? "" : " hidden");
+        if (this.state.preq) this.state.preq = this.state.preq.length > 0 ? this.state.preq.join(" / ") : "N/A";
         return <div className={hidden}>
             <h3>{this.state.code}</h3>
 
             {this.state.title}
             <div className="desc_box">
-                Programming in an object-oriented language such as Python. Program structure: elementary data types, statements, control flow, functions, classes, objects, methods. Lists; searching, sorting and complexity.  This course is intended for students having a serious interest in higher level computer science courses, or planning to complete a computer science program.
+                {this.state.description}
             </div>
             <div id="preq_box">
-                Prerequisite: NONE
+                Prerequisites:
+                {this.state.preq}
             </div>
 
         </div>;
     }
+}
+
+function getCourse() {
+    return Store.getCourseData();
 }
 
 module.exports = CourseView;
