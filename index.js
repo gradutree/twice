@@ -212,6 +212,61 @@ app.get("/api/path/:start/pre", function (req, res) {
     });
 });
 
+app.post("/api/course/:code/vote/:action", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("social").findOne({ code: req.params.code }, function (err, course) {
+            switch(req.params.action) {
+                case ("up"):
+                    if (course.liked.contains(req.session.user.username))
+                        db.collection("social").updateOne({code: req.params.code}, {$pop: {liked: req.session.user.username}});
+                    else
+                        db.collection("social").updateOne({code: req.params.code}, {$push: {liked: req.session.user.username}});
+                    break;
+                case ("down"):
+                    if (course.disliked.contains(req.session.user.username))
+                        db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username}});
+                    else
+                        db.collection("social").updateOne({code: req.params.code}, {$push: {disliked: req.session.user.username}});
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+            res.end("success");
+        });
+
+
+    });
+});
+
+app.post("/api/review", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        var review = {};
+        review.author = req.sessions.user.username;
+        review.content = req.body.content;
+        review.timestamp = new Date();
+        review.up = [];
+        review.down = [];
+        review.courseCode = req.body.code;
+        db.collection("reviews").insertOne(comment, function (err, item) {
+            res.json({id: item._id});
+        });
+    });
+});
+
+app.get("/api/course/:code/review/:page", function (req, res) {
+    var page = parseInt(req.params.page)*10;
+    MongoClient.connect(dbURL, function (err, db) {
+       db.collection("reviews").find({courseCode: req.params.code}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+           data.forEach(function (item, i) {
+               item.up = item.up.length;
+               item.down = item.down.length;
+           });
+           res.json(data);
+       });
+    });
+});
+
 app.listen(8000, function () {
     console.log('App listening on port 8000');
 });
