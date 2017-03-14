@@ -26277,8 +26277,15 @@ var Search = function (_Component) {
 				var resultCourses = [];
 
 				Promise.all(searchResult.map(function (course) {
-					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course }));
+					var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
+					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course, taken: userTook }));
 				})).then(function () {
+					// Sort results alphabetically
+					resultCourses.sort(function (a, b) {
+						var codeA = a.key.toUpperCase();
+						var codeB = b.key.toUpperCase();
+						return codeA < codeB ? -1 : codeA > codeB ? 1 : 0;
+					});
 					thisComp.setState({ results: resultCourses });
 				});
 			};
@@ -26450,6 +26457,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var takenStyle = {
+	backgroundColor: '#e4ffe0'
+};
+
 var SearchResult = function (_Component) {
 	_inherits(SearchResult, _Component);
 
@@ -26459,7 +26470,8 @@ var SearchResult = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (SearchResult.__proto__ || Object.getPrototypeOf(SearchResult)).call(this));
 
 		_this.state = {
-			preq: "N/A"
+			preq: "N/A",
+			currStyle: null
 		};
 		return _this;
 	}
@@ -26483,9 +26495,11 @@ var SearchResult = function (_Component) {
 		key: 'render',
 		value: function render() {
 			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
+			this.state.currStyle = this.props.taken ? takenStyle : { backgroundColor: '#ffffff' };
+
 			return _react2.default.createElement(
 				'div',
-				{ className: 'search_result_elem', onClick: this.clicked.bind(this) },
+				{ style: this.state.currStyle, className: 'search_result_elem', onClick: this.clicked.bind(this) },
 				_react2.default.createElement(
 					'h3',
 					{ className: 'search_result_name' },

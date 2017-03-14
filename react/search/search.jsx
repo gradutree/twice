@@ -48,8 +48,15 @@ class Search extends Component {
 			var resultCourses = [];
 
 			Promise.all(searchResult.map(function (course) {
-                resultCourses.push(<SearchResult key={course.code} course={course} />);
+				var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
+                resultCourses.push(<SearchResult key={course.code} course={course} taken={userTook} />);
             })).then(function(){
+            	// Sort results alphabetically
+            	resultCourses.sort(function(a, b) {
+				    var codeA = a.key.toUpperCase();
+				    var codeB = b.key.toUpperCase();
+				    return (codeA < codeB) ? -1 : (codeA > codeB) ? 1 : 0;
+				});
                 thisComp.setState({results: resultCourses});
             });
         }
