@@ -15,7 +15,7 @@ text-halign: right;
 background-color: #11479e;
 }
 
-input {
+#box input {
 	font-size: 2.4em;
 	background-color: transparent;
 	text-align: center;

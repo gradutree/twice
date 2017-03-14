@@ -9,7 +9,7 @@ import {
 
 import DashboardContent from "./dashboard/dashboard.jsx";
 import TreesContent from "./trees.jsx";
-import SearchContent from "./search.jsx";
+import SearchContent from "./search/search.jsx";
 
 class Dashboard extends Component {
 	componentDidMount() {
