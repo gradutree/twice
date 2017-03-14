@@ -26306,36 +26306,40 @@ var Search = function (_Component) {
 				),
 				_react2.default.createElement(
 					'div',
-					{ className: 'search_div' },
-					_react2.default.createElement('input', { className: 'search_input', onChange: this.changeResults.bind(this), placeholder: 'Search for course' }),
+					{ className: 'search_result_div' },
 					_react2.default.createElement(
-						'select',
-						{ className: 'search_dropdown', value: this.state.school, onChange: this.changeSchool.bind(this) },
+						'h3',
+						{ id: 'search_result_header' },
+						'Search Results'
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'search_div' },
+						_react2.default.createElement('input', { className: 'search_input', onChange: this.changeResults.bind(this), placeholder: 'Search for course' }),
 						_react2.default.createElement(
-							'option',
-							{ value: 'UTSC' },
-							'UTSC'
-						),
-						_react2.default.createElement(
-							'option',
-							{ value: 'UTSG' },
-							'UTSG'
-						),
-						_react2.default.createElement(
-							'option',
-							{ value: 'UTM' },
-							'UTM'
+							'select',
+							{ className: 'search_dropdown', value: this.state.school, onChange: this.changeSchool.bind(this) },
+							_react2.default.createElement(
+								'option',
+								{ value: 'UTSC' },
+								'UTSC'
+							),
+							_react2.default.createElement(
+								'option',
+								{ value: 'UTSG' },
+								'UTSG'
+							),
+							_react2.default.createElement(
+								'option',
+								{ value: 'UTM' },
+								'UTM'
+							)
 						)
 					)
 				),
 				_react2.default.createElement(
 					'div',
 					{ className: 'search_result' },
-					_react2.default.createElement(
-						'h3',
-						{ id: 'search_result_header' },
-						'Search Results'
-					),
 					this.state.results
 				)
 			);

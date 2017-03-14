@@ -568,24 +568,35 @@ footer {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 .search_input{
 	flex-grow: 1;
-	width: 300px;
+	width: 250px;
 	margin: 10px;
+	margin-left:auto; 
+	margin-right:0;
 }
 
 .search_dropdown{
 	flex-grow: 1;
-	margin-top: 5px;
-	width: 300px;
+	width: 250px;
 	margin-left: 10px;
+	margin-left:auto; 
+	margin-right:0;
+}
+
+.search_result_div{
+	padding: 10px;
+	display: flex;
+	flex-direction: row;
 }
 
 .search_result{
 	padding: 10px;
+	display: flex;
+	flex-direction: column;
 }
 
 #content_container h3 {
@@ -594,6 +605,7 @@ footer {
 
 #search_result_header {
 	margin-bottom: 10px;
+	flex-grow: 15;
 }
 
 .search_result_elem {
