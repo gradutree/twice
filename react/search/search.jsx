@@ -15,7 +15,8 @@ class Search extends Component {
 			school: 'UTSC', 
 			results: [],
 			selected: [],
-			user: null
+			user: null,
+			showTaken: true
 		};
 	}
 
@@ -35,7 +36,18 @@ class Search extends Component {
 		this.setState({school: e.target.value});
 	}
 
+	// Updates the results when typing in the search bar
 	changeResults(e){
+		this.updateResults(e.target.value);
+	}
+
+	// Updates the results to show/hide taken courses when filter clicked
+	takenFilter(e){
+		this.state.showTaken = !this.state.showTaken;
+		this.updateResults(this.refs.searchInput.value);
+	}
+
+	updateResults(searchStr){
 		var thisComp = this;
 
 		var callback = function (result) {
@@ -57,12 +69,22 @@ class Search extends Component {
 				    var codeB = b.key.toUpperCase();
 				    return (codeA < codeB) ? -1 : (codeA > codeB) ? 1 : 0;
 				});
+
+            	// Remove the taken courses if the filter was selected
+				if(!thisComp.state.showTaken){
+					console.log("trying to remove courses");
+					resultCourses = resultCourses.filter(function(course){
+						return !course.props.taken;
+					});
+				}
+
                 thisComp.setState({results: resultCourses});
             });
         }
 
-		actions.getSearchResults(e.target.value, callback);
+		actions.getSearchResults(searchStr, callback);
 	}
+
 
 	render() {
 		var resultCourses = [];
@@ -72,17 +94,20 @@ class Search extends Component {
 						<h3 className="search_header"> {msg} </h3>
 
 					</div>
-			<div className="search_div">
-				<input className="search_input" onChange={this.changeResults.bind(this)} placeholder="Search for course" />
-				<select className="search_dropdown" value={this.state.school} onChange={this.changeSchool.bind(this)} >
-					<option value="UTSC">UTSC</option>
-					<option value="UTSG">UTSG</option>
-					<option value="UTM">UTM</option>
-				</select>
-			</div>
+
 					<div className="search_result_div">
 						<h3 id="search_result_header">Search Results</h3>
-
+						<div className="search_div_container">
+							<div className="search_filter" onClick={this.takenFilter.bind(this)}>Show Taken Courses</div>
+							<div className="search_div">
+								<input className="search_input" onChange={this.changeResults.bind(this)} ref="searchInput" placeholder="Search for course" />
+								<select className="search_dropdown" value={this.state.school} onChange={this.changeSchool.bind(this)} >
+									<option value="UTSC">UTSC</option>
+									<option value="UTSG">UTSG</option>
+									<option value="UTM">UTM</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div className="search_result">
 						{this.state.results}
