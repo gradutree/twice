@@ -92,7 +92,7 @@ class Trees extends Component {
 
 	          boxSelectionEnabled: false,
 	          autounselectify: true,
-
+	          pan: { x: 0, y: 0 },
 	          style: cytoscape.stylesheet()
 	            .selector('node')
 	              .css({
@@ -153,32 +153,33 @@ class Trees extends Component {
 	          }
 	        });
 
-	        //highlight the node
+	        
 	        for(var i =0; i<nodes.length; i++){ 
      	   		var id = nodes[i].id;
-     	   		var title = nodes[i].id;
-    	   		var x = 450 + (i*30) - nodes[i].edgeNumbers*50;
-     	   		var y = 50 + (i*50);
+     	   		var title = nodes[i].title;
+     	   		var degree = nodes[i].edgeNumbers;
+    	   		var x = 450 + (i*30) - Math.pow(-1,degree)*50;
+     	   		var y = 50 + (i*30);
 
 
 					cy.add([
-					        {group: "nodes", data: {id: id, title: title}, position:{x:x , y:y}}
+					        {group: "nodes", data: {id: id, title: title, marked: 0, degree: degree}, position:{x:x , y:y}}
 					    ])
-					cy.$('#'+id).lock();
-
-
+				//cy.$('#'+id).lock();
 	    	}
+
 
 	    	for(var i =0; i<edges.length; i++){ 
      	   		var id = edges[i].id;
      	   		var source = edges[i].source;
      	   		var target = edges[i].target;
 					cy.add([
-					        { group: "edges", data: { id: id, source: source, target: target}}
+					        { group: "edges", data: { id: id, source: source, target: target, marked : 0}}
 					    ])
+					
 	    	}
 
-	    	cy.minZoom(-5);
+	    	cy.minZoom(1);
 	    	cy.maxZoom(5);
 
 
@@ -190,11 +191,13 @@ class Trees extends Component {
 	          var newCredit = parseFloat(creditCounter);
 
 	          if(tapid.hasClass('highlighted')){
-	            unhighLighter(tapid);
+	          	edgeUnmarker(tapid);
 	            newCredit-=0.5;
 	          }
 	          else {
+	          	console.log("tap");
 	            newCredit+=0.5;
+	            edgeMarker(tapid);
 	            findconnected(tapid);
 	          }
 	          document.getElementById('qty').value = newCredit + "/20";
@@ -202,21 +205,62 @@ class Trees extends Component {
 	        });
 
 	        var findconnected = function(node){
-	            var i = 1;
-	            var connectedEdges = node.connectedEdges();
+	            //var i = 0;
+	            var connectedEdges = node.incomers();
+	            var length = connectedEdges.length;
 	            var roots = cy.nodes().roots();
+	          
 
 	            roots.forEach(function(e) {
-	              if(e.id()==node.id()) node.addClass('highlighted');
+	              	if(e.id()==node.id()){ 
+	              		node.addClass('highlighted');
+	              		edgeMarker(node);
+	              		return;
+	            	}
 	            })
 
 	            connectedEdges.forEach(function(ele){
 	                var target = ele.target();
 	                var source = ele.source();
-	                if(source.hasClass('highlighted') && target.id()==node.id()) i++;
-	                if(i==connectedEdges.size()) highLighter(node);
+	                if(source.hasClass('highlighted') && markChecker(node)==true) {
+	                	highLighter(node);
+	                	return;
+	                }
 	            });
 	        }
+
+
+	        var edgeMarker = function(node){
+	          node.data('marked',1);
+	          node.outgoers().forEach(function(ele){
+	          		//console.log(ele);
+	          		ele.data('marked',1);
+	          });
+	        }
+
+
+
+	        var edgeUnmarker = function(node){
+	          node.data('marked',0);
+	          unhighLighter(node);
+	          node.outgoers().forEach(function(ele){
+	          		ele.data('marked',0);
+	          });
+	        }
+
+
+	        var markChecker = function(node){
+	        	var result = true;
+	         	node.incomers().forEach(function(ele){
+	          		var value = ele.data('marked');
+	          		if(value==0) result=false;
+	          });
+	          		//console.log("Ddd");
+	          		return result;
+	        }
+
+
+
 
 	        var highLighter = function(node){
 	          node.connectedEdges().forEach(function(ele){
@@ -230,10 +274,10 @@ class Trees extends Component {
 	        var unhighLighter = function(node){
 	          node.removeClass('highlighted');
 	          node.connectedEdges().forEach(function(ele){
-	            if(ele.target().id()==node.id()) {
-	              ele.target().removeClass('highlighted');
+	            //if(ele.target().id()==node.id()) {
+	              //ele.target().removeClass('highlighted');
 	              ele.removeClass('highlighted');
-	              }
+	              //}
 	          });
 	        }
 
