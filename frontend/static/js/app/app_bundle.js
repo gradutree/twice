@@ -26360,25 +26360,6 @@ function getUser() {
 	};
 }
 
-// function getUserProgram() {
-//     return {
-//         program: SearchStore.getUserProgram()
-//     }
-// }
-
-// function getUserSpec() {
-//     return {
-//         spec: SearchStore.getUserSpec()
-//     }
-// }
-
-// function getUserTaken() {
-//     return {
-//         taken: SearchStore.getUserTaken()
-//     }
-// }
-
-
 exports.default = Search;
 
 /***/ }),
@@ -26487,6 +26468,16 @@ var SearchResult = function (_Component) {
 		key: 'clicked',
 		value: function clicked(e) {
 			console.log(this.props.course);
+			// console.log("/course/"+this.props.course.code);
+			$.ajax({
+				url: "/course/" + this.props.course.code,
+				success: function success(result) {
+					// console.log(result)
+				},
+				error: function error(err) {
+					console.log(err);
+				}
+			});
 		}
 	}, {
 		key: 'render',
@@ -26502,25 +26493,6 @@ var SearchResult = function (_Component) {
 					' (',
 					this.props.course.code,
 					')'
-				),
-				_react2.default.createElement(
-					'div',
-					{ className: 'search_result_desc' },
-					this.props.course.description
-				),
-				_react2.default.createElement(
-					'div',
-					{ className: 'search_result_preq' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'search_result_preq_title' },
-						'Prerequisites: '
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'search_result_preq_course' },
-						this.state.preq
-					)
 				)
 			);
 		}

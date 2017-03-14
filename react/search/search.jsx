@@ -94,23 +94,4 @@ function getUser() {
     }
 }
 
-// function getUserProgram() {
-//     return {
-//         program: SearchStore.getUserProgram()
-//     }
-// }
-
-// function getUserSpec() {
-//     return {
-//         spec: SearchStore.getUserSpec()
-//     }
-// }
-
-// function getUserTaken() {
-//     return {
-//         taken: SearchStore.getUserTaken()
-//     }
-// }
-
-
 export default Search;
