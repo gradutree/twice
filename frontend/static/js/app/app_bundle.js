@@ -26671,6 +26671,7 @@ var Trees = function (_Component) {
 								dataType: 'json',
 								success: function success(result) {
 										var data = result;
+										var rank = 0;
 
 										var node = function node(data) {
 												this.title = data.title;
@@ -26679,6 +26680,7 @@ var Trees = function (_Component) {
 												this.source = null;
 												this.target = null;
 												this.edgeNumbers = data.postreq.length;
+												this.rank = rank++;
 										};
 
 										var edge = function edge(sourceNode, targetNode) {
@@ -26748,14 +26750,36 @@ var Trees = function (_Component) {
 														}
 												});
 
+												var levelCount = { A: 0, B: 0, C: 0, D: 0 };
 												for (var i = 0; i < nodes.length; i++) {
 														var id = nodes[i].id;
 														var title = nodes[i].title;
-														var degree = nodes[i].edgeNumbers;
-														var x = i * 50;
-														var y = -x;
+														var rank = nodes[i].rank;
+														var levels = [10, 110, 210, 310];
 
-														cy.add([{ group: "nodes", data: { id: id, title: title, marked: 0, degree: degree }, position: { x: x, y: y } }]);
+														var x = 50 + levelCount[id.charAt(3)] * 150;
+														var y = 50 + i * 50;
+														switch (id.charAt(3)) {
+																case "A":
+																		y = 50 + levels[0];
+																		levelCount["A"] += 1;
+																		break;
+																case "B":
+																		y = 50 + levels[1];
+																		levelCount["B"] += 1;
+																		break;
+																case "C":
+																		y = 50 + levels[2];
+																		levelCount["C"] += 1;
+																		break;
+																case "D":
+																		y = 50 + levels[3];
+																		levelCount["D"] += 1;
+																		break;
+
+														}
+
+														cy.add([{ group: "nodes", data: { id: id, title: title }, position: { x: x, y: y } }]);
 														//cy.$('#'+id).lock();
 												}
 
