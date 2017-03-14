@@ -26679,7 +26679,6 @@ var Trees = function (_Component) {
 												this.source = null;
 												this.target = null;
 												this.edgeNumbers = data.postreq.length;
-												this.visited = false;
 										};
 
 										var edge = function edge(sourceNode, targetNode) {
@@ -26691,12 +26690,9 @@ var Trees = function (_Component) {
 
 										var nodes = [];
 										var edges = [];
-										var stacks = [];
 										var startNode = new node(data);
 										nodes.push(startNode);
-										stacks.push(startNode);
 										startNode.source = startNode;
-										startNode.visited = true;
 
 										var findCourse = function findCourse(node) {
 												for (var i = 0; i < nodes.length; i++) {
@@ -26719,7 +26715,6 @@ var Trees = function (_Component) {
 										};
 
 										courseAdder(startNode); // all the courses added
-
 
 										$(function () {
 												// on dom ready
@@ -26744,33 +26739,6 @@ var Trees = function (_Component) {
 																'transition-property': 'background-color, line-color, target-arrow-color',
 																'transition-duration': '0.5s'
 														}),
-														/*
-              	          elements: {
-              	              nodes: [
-              	                { data: { id: 'a' ,degree: 1} },
-              	                { data: { id: 'b' ,degree: 1} },
-              	                { data: { id: 'c' ,degree: 1} },
-              	                { data: { id: 'd' ,degree: 1} },
-              	                { data: { id: 'e' ,degree: 1} },
-              	                { data: { id: 'f' ,degree: 2} },
-              	                { data: { id: 'g' ,degree: 2} },
-              	                { data: { id: 'h' ,degree: 2} },
-              	                { data: { id: 'i' ,degree: 3} }
-              	              ],
-              
-              	              edges: [
-              	                { data: { id: 'af', weight: 1, source: 'a', target: 'f' } },
-              	                { data: { id: 'bf', weight: 1, source: 'b', target: 'f' } },
-              	                { data: { id: 'bg', weight: 1, source: 'b', target: 'g' } },
-              	                { data: { id: 'cg', weight: 1, source: 'c', target: 'g' } },
-              	                { data: { id: 'ch', weight: 1, source: 'c', target: 'h' } },
-              	                { data: { id: 'dh', weight: 1, source: 'd', target: 'h' } },
-              	                { data: { id: 'eh', weight: 1, source: 'e', target: 'h' } },
-              	                { data: { id: 'fi', weight: 1, source: 'f', target: 'i' } },
-              	                { data: { id: 'gi', weight: 1, source: 'g', target: 'i' } },
-              	                { data: { id: 'hi', weight: 1, source: 'h', target: 'i' } }
-              	              ]
-              	            },*/
 
 														layout: {
 																name: 'breadthfirst',
@@ -26784,8 +26752,8 @@ var Trees = function (_Component) {
 														var id = nodes[i].id;
 														var title = nodes[i].title;
 														var degree = nodes[i].edgeNumbers;
-														var x = 450 + i * 30 - Math.pow(-1, degree) * 50;
-														var y = 50 + i * 30;
+														var x = i * 50;
+														var y = -x;
 
 														cy.add([{ group: "nodes", data: { id: id, title: title, marked: 0, degree: degree }, position: { x: x, y: y } }]);
 														//cy.$('#'+id).lock();
