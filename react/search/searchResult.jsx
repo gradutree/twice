@@ -15,12 +15,10 @@ class SearchResult extends Component {
 	}
 
 	clicked(e){
-		console.log(this.props.course);
 		window.location.href = "/course/"+this.props.course.code;
 	}
 	
 	render() {
-		this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
 		this.state.currStyle = this.props.taken ? takenStyle : {backgroundColor: '#ffffff'};
 
 		return <div style={this.state.currStyle} className="search_result_elem" onClick={this.clicked.bind(this)}>

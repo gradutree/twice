@@ -26518,28 +26518,11 @@ var SearchResult = function (_Component) {
 	_createClass(SearchResult, [{
 		key: 'clicked',
 		value: function clicked(e) {
-			console.log(this.props.course);
-			// <<<<<<< HEAD
-			// 		// console.log("/course/"+this.props.course.code);
-			// 		$.ajax({
-			//             url: "/coursegoto/"+this.props.course.code,
-			//             success: function(result){
-			//             	console.log("result");
-			//             	console.log(result);
-			//             }, 
-			//             error: function (err) {
-			//             	console.log("err");
-			//                 console.log(err);
-			//             }
-			//         });
-			// =======
 			window.location.href = "/course/" + this.props.course.code;
-			// >>>>>>> master
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
 			this.state.currStyle = this.props.taken ? takenStyle : { backgroundColor: '#ffffff' };
 
 			return _react2.default.createElement(
@@ -26632,8 +26615,6 @@ AppDispatcher.register(function (payload) {
             break;
 
         case 'SEARCH_RESULTS':
-            // console.log("in case SEARCH_RESUTLS");
-            // console.log(action.data);
             loadSearchResults(action.data);
             break;
 
@@ -26675,24 +26656,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// var node = function (data){
-// 	this.title = data.title;
-// 	this.id = data.courseid;
-// 	this.postreq = data.postreq;
-// 	this.source = null;
-// 	this.target = null;
-// 	this.edgeNumbers = data.postreq.length;
-// 	this.visited = false;
-// };
-
-// var edge = function (sourceNode, targetNode){ 	
-// 	this.id = sourceNode.id + targetNode.id;
-// 	this.source = sourceNode.id;
-// 	this.target = targetNode.id;
-// 	this.visited = false;
-// };
-
 
 var Trees = function (_Component) {
 	_inherits(Trees, _Component);
@@ -26736,24 +26699,6 @@ var Trees = function (_Component) {
 					var data = result;
 					var rank = 0;
 
-					// <<<<<<< HEAD
-					// var node = function (data){
-					// 		this.title = data.title;
-					// 		this.id = data.courseid;
-					// 		this.postreq = data.postreq;
-					// 		this.source = null;
-					// 		this.target = null;
-					// 		this.edgeNumbers = data.postreq.length;
-					// 		this.visited = false;
-					// 	  };
-
-					// 	  var edge = function (sourceNode, targetNode){ 	
-					// 		this.id = sourceNode.id + targetNode.id;
-					// 		this.source = sourceNode.id;
-					// 		this.target = targetNode.id;
-					// 		this.visited = false;
-					// 	  };
-					// =======
 					var node = function node(data) {
 						this.title = data.title;
 						this.id = data.courseid;
@@ -26770,8 +26715,6 @@ var Trees = function (_Component) {
 						this.target = targetNode.id;
 						this.visited = false;
 					};
-					// >>>>>>> master
-
 
 					var nodes = [];
 					var edges = [];
