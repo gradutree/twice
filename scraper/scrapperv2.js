@@ -41,9 +41,17 @@ var setupPreqs = function () {
                 item.prerequisites.replace(/[^0-9a-z /&]/gi, '').replace("one of ").split(delimiter).reduce(function(result, preq) {
                     var res = preq.replace("/", " or ").split(" or ");
                     var flag = true;
+                    var pat = /[A-Z][A-Z][A-Z][1-4]|[A-D][0-9][0-9]H|Y/;
                     for (var i = 0; i < res.length; i++) {
+
                         if (res[i].length != 8) {
-                            flag = false;
+                            if (res[i].length != 7)
+                                flag = false;
+                            else if (pat.test(res[i])) {
+                                console.log(res[i]);
+                                res.splice(i, 1);
+                                i--;
+                            }
                         }
                     }
                     if (flag) result.push(res);
