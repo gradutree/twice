@@ -7,6 +7,7 @@ var path = require("path");
 var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09";
+var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
 var MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.json());
@@ -117,7 +118,7 @@ app.use(express.static('frontend/static'));
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(cobaltURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
@@ -218,6 +219,88 @@ app.get("/api/path/:start/pre", function (req, res) {
         backend.visualizePreq(db, req.params.start.toUpperCase(), courses).then(function () {
             res.json(courses);
         });
+    });
+});
+
+app.post("/api/course/:code/vote/:action", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("social").findOne({ code: req.params.code }, function (err, course) {
+            switch(req.params.action) {
+                case ("up"):
+                    if (course.liked.contains(req.session.user.username))
+                        db.collection("social").updateOne({code: req.params.code}, {$pop: {liked: req.session.user.username}});
+                    else
+                        db.collection("social").updateOne({code: req.params.code}, {$push: {liked: req.session.user.username}});
+                    break;
+                case ("down"):
+                    if (course.disliked.contains(req.session.user.username))
+                        db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username}});
+                    else
+                        db.collection("social").updateOne({code: req.params.code}, {$push: {disliked: req.session.user.username}});
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+            res.end("success");
+        });
+
+
+    });
+});
+
+app.post("/api/review", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        var review = {};
+        review.author = req.sessions.user.username;
+        review.content = req.body.content;
+        review.timestamp = new Date();
+        review.up = [];
+        review.down = [];
+        review.courseCode = req.body.code;
+        db.collection("reviews").insertOne(comment, function (err, item) {
+            res.json({id: item._id});
+        });
+    });
+});
+
+app.get("/api/course/:code/review/:page", function (req, res) {
+    var page = parseInt(req.params.page)*10;
+    MongoClient.connect(dbURL, function (err, db) {
+       db.collection("reviews").find({courseCode: req.params.code}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+           data.forEach(function (item, i) {
+               item.up = item.up.length;
+               item.down = item.down.length;
+           });
+           res.json(data);
+       });
+    });
+});
+
+app.post("/api/review/:id/vote/:action", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("review").findOne({ code: req.params.id }, function (err, review) {
+            switch(req.params.action) {
+                case ("up"):
+                    if (review.liked.contains(req.session.user.username))
+                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {up: req.session.user.username}});
+                    else
+                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {up: req.session.user.username}});
+                    break;
+                case ("down"):
+                    if (review.disliked.contains(req.session.user.username))
+                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {down: req.session.user.username}});
+                    else
+                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {down: req.session.user.username}});
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+            res.end("success");
+        });
+
+
     });
 });
 
