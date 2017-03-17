@@ -564,11 +564,28 @@ footer {
 	flex-grow: 10;
 }
 
+.search_div_container {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.search_filter {
+	flex-grow: 1;
+	background-color: #e4ffe0;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+}
+
 .search_div {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	font-size: 16px;
+	width: 250px;
+	margin: 0 10px;
 }
 
 .search_input{

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-
 class Trees extends Component {
+  
+
   render() {
     return (
         <div>
@@ -39,7 +40,6 @@ class Trees extends Component {
    		this.target = targetNode.id;
    		this.visited = false;
    	  };
-
 
    	   var nodes = [];
    	   var edges = [];

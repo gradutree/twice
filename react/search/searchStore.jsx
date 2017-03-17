@@ -61,8 +61,6 @@ AppDispatcher.register(function(payload) {
             break;
 
         case 'SEARCH_RESULTS':
-            // console.log("in case SEARCH_RESUTLS");
-            // console.log(action.data);
             loadSearchResults(action.data);
             break;
 
