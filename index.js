@@ -7,6 +7,7 @@ var path = require("path");
 var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09";
+var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
 var MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.json());
@@ -108,7 +109,7 @@ app.use(express.static('frontend/static'));
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(cobaltURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
@@ -264,6 +265,33 @@ app.get("/api/course/:code/review/:page", function (req, res) {
            });
            res.json(data);
        });
+    });
+});
+
+app.post("/api/review/:id/vote/:action", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("review").findOne({ code: req.params.id }, function (err, review) {
+            switch(req.params.action) {
+                case ("up"):
+                    if (review.liked.contains(req.session.user.username))
+                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {up: req.session.user.username}});
+                    else
+                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {up: req.session.user.username}});
+                    break;
+                case ("down"):
+                    if (review.disliked.contains(req.session.user.username))
+                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {down: req.session.user.username}});
+                    else
+                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {down: req.session.user.username}});
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+            res.end("success");
+        });
+
+
     });
 });
 

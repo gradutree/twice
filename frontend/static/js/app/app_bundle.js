@@ -27174,7 +27174,7 @@ var SearchResult = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
+			//this.state.preq = this.props.course.preq.length > 0 ? this.props.course.preq.join(" / ") : "N/A";
 			this.state.currStyle = this.props.taken ? takenStyle : { backgroundColor: '#ffffff' };
 
 			return _react2.default.createElement(
@@ -27183,7 +27183,7 @@ var SearchResult = function (_Component) {
 				_react2.default.createElement(
 					'h3',
 					{ className: 'search_result_name' },
-					this.props.course.title,
+					this.props.course.name,
 					' (',
 					this.props.course.code,
 					')'
