@@ -15,6 +15,31 @@ var Actions = {
                 });
             }
         });
+    },
+    
+    loadReviews: function (code, page) {
+        $.ajax({
+            url: "/api/course/"+code+"/review/"+page,
+            success: function (result) {
+                Dispatcher.handleAction({
+                    actionType: Constants.LOAD_REVIEWS,
+                    data: result
+                });
+            }
+        });
+    },
+
+    submitReview: function (code, content) {
+        $.ajax({
+            url: "/api/review",
+            method: "POST",
+            data: JSON.stringify({content: content, code: code}),
+            contentType: "application/json",
+            processData: false,
+            success: function (result) {
+                console.log(result);
+            }
+        })
     }
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
 

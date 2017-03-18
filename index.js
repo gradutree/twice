@@ -126,9 +126,8 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                // console.log(course);
-                // course.liked = course.liked.length;
-                // course.disliked = course.disliked.length;
+                //course.liked = course.liked.length;
+                //course.disliked = course.disliked.length;
                 result.push(course);
             })).then(function(){
                 res.json(result);
@@ -230,19 +229,19 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
         db.collection("courses").findOne({ code: req.params.code }, function (err, course) {
             switch(req.params.direction) {
                 case ("up"):
-                        db.collection("social").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
-                            res.json({});
-                        });
+                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
                 case ("down"):
-                        db.collection("social").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
-                            res.json({});
-                        });
+                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
                 case ("neutral"):
-                        db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
-                            res.json({});
-                        });
+                    db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
                 default:
                     return res.status(400).end("Invalid api action");
@@ -258,12 +257,12 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
 app.post("/api/review", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
         var review = {};
-        review.author = req.body.author;
+        review.author = req.session.user.username;
         review.content = req.body.content;
         review.timestamp = new Date();
         review.up = [];
         review.down = [];
-        review.courseCode = req.body.code;
+        review.courseCode = req.body.code.toUpperCase();
         db.collection("reviews").insertOne(review, function (err, item) {
             res.json({id: item._id});
         });
@@ -273,13 +272,17 @@ app.post("/api/review", function (req, res) {
 app.get("/api/course/:code/review/:page", function (req, res) {
     var page = parseInt(req.params.page)*10;
     MongoClient.connect(dbURL, function (err, db) {
-       db.collection("reviews").find({courseCode: req.params.code}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
-           data.forEach(function (item, i) {
-               item.up = item.up.length;
-               item.down = item.down.length;
-           });
-           res.json(data);
-       });
+        db.collection("reviews").find({courseCode: req.params.code.toUpperCase()}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+            data.forEach(function (item, i) {
+                if (req.session.user){
+                    item.user_state = item.up.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                    if (item.user_state == "0") item.user_state = item.down.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                }
+                item.up = item.up.length;
+                item.down = item.down.length;
+            });
+            res.json(data);
+        });
     });
 });
 
@@ -291,18 +294,18 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
             switch(req.params.direction) {
                 case ("up"):
 
-                        db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
-                            res.json({});
-                        });
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
+                        res.json({});
+                    });
 
 
                     break;
                 case ("down"):
 
-                        db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
 
-                            res.json({});
-                        });
+                        res.json({});
+                    });
 
                     break;
 
@@ -343,4 +346,3 @@ var voteDownCallback = function (username) {
 app.listen(8000, function () {
     console.log('App listening on port 8000');
 });
-
