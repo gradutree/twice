@@ -6,7 +6,7 @@ var expressValidator = require('express-validator');
 var path = require("path");
 var backend = require("./backend");
 
-var dbURL = "mongodb://35.167.141.109:8000/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09v2";
 var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
@@ -33,6 +33,7 @@ var User = function(user){
     this.username = user.username;
     this.program = user.program;
     this.spec = user.spec;
+    this.taken = user.taken;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -59,7 +60,7 @@ app.get("/dashboard", function(req, res, next) {
 });
 
 app.get("/course/:code", function (req, res) {
-    MongoClient.connect(cobaltURL, function (err, db) {
+    MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
                 return res.sendFile(path.resolve("frontend/views/course.html"));
@@ -67,15 +68,6 @@ app.get("/course/:code", function (req, res) {
             return res.status(404).end("No such course");
         });
     });
-});
-
-app.get("/coursegoto/:code", function(req, res, next) {
-    console.log("IN courseGOTO");
-    // res.redirect("/course/"+req.params.code);
-    // 'http://mydomain.com'+req.url
-    // req.url = "/course/"+req.params.code;
-    res.json({});
-    return next();
 });
 
 app.get("/trees", sessionRedirect, function(req, res) {
@@ -118,7 +110,7 @@ app.use(express.static('frontend/static'));
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(cobaltURL, function (err, db) {
+    MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);

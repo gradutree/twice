@@ -18,10 +18,10 @@ var setupPreqs = function () {
             return new Promise(function (resolve, reject) {
                 if (item != "") item = JSON.parse(item);
                 else {resolve(); return;}
-                if (item.campus != "UTSC") {
-                    resolve();
-                    return;
-                }
+                // if (item.campus != "UTSC") {
+                //     resolve();
+                //     return;
+                // }
                 var course = {};
 
                 course.code = item.code.substring(0, item.code.length-1);
@@ -35,6 +35,8 @@ var setupPreqs = function () {
                 course.level = item.level;
                 course.description = item.description;
                 course.department = item.department;
+                course.campus = item.campus;
+                course.term = item.term;
                 course.liked = [];
                 course.disliked = [];
                 var delimiter = " & ";

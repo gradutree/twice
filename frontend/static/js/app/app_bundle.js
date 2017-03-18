@@ -25657,7 +25657,9 @@ module.exports = keyMirror({
 /***/ }),
 /* 223 */,
 /* 224 */,
-/* 225 */
+/* 225 */,
+/* 226 */,
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25677,15 +25679,15 @@ var _reactDom = __webpack_require__(20);
 
 var _reactRouterDom = __webpack_require__(37);
 
-var _dashboard = __webpack_require__(232);
+var _dashboard = __webpack_require__(234);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
-var _trees = __webpack_require__(237);
+var _trees = __webpack_require__(239);
 
 var _trees2 = _interopRequireDefault(_trees);
 
-var _search = __webpack_require__(233);
+var _search = __webpack_require__(235);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -25843,11 +25845,11 @@ var Nav = function Nav() {
 exports.default = Nav;
 
 /***/ }),
-/* 226 */,
-/* 227 */,
 /* 228 */,
 /* 229 */,
-/* 230 */
+/* 230 */,
+/* 231 */,
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25898,7 +25900,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = DashActions;
 
 /***/ }),
-/* 231 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25966,7 +25968,7 @@ AppDispatcher.register(function (payload) {
 module.exports = DashStore;
 
 /***/ }),
-/* 232 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25992,8 +25994,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DashStore = __webpack_require__(231);
-var actions = __webpack_require__(230);
+var DashStore = __webpack_require__(233);
+var actions = __webpack_require__(232);
 
 var Dashboard = function (_Component) {
     _inherits(Dashboard, _Component);
@@ -26190,7 +26192,7 @@ var Spec = function (_Component3) {
 exports.default = Dashboard;
 
 /***/ }),
-/* 233 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26208,7 +26210,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(20);
 
-var _searchResult = __webpack_require__(235);
+var _searchResult = __webpack_require__(237);
 
 var _searchResult2 = _interopRequireDefault(_searchResult);
 
@@ -26223,8 +26225,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // import model from "../../frontend/static/js/app/model.js"
 
 var AppDispatcher = __webpack_require__(63);
-var SearchStore = __webpack_require__(236);
-var actions = __webpack_require__(234);
+var SearchStore = __webpack_require__(238);
+var actions = __webpack_require__(236);
 
 var Search = function (_Component) {
 	_inherits(Search, _Component);
@@ -26412,7 +26414,7 @@ function getUser() {
 exports.default = Search;
 
 /***/ }),
-/* 234 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26473,7 +26475,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = SearchActions;
 
 /***/ }),
-/* 235 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26549,7 +26551,7 @@ var SearchResult = function (_Component) {
 exports.default = SearchResult;
 
 /***/ }),
-/* 236 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26634,7 +26636,7 @@ AppDispatcher.register(function (payload) {
 module.exports = SearchStore;
 
 /***/ }),
-/* 237 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26923,8 +26925,6 @@ var Trees = function (_Component) {
 exports.default = Trees;
 
 /***/ }),
-/* 238 */,
-/* 239 */,
 /* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26937,7 +26937,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(20);
 
-var _app = __webpack_require__(225);
+var _app = __webpack_require__(227);
 
 var _app2 = _interopRequireDefault(_app);
 
