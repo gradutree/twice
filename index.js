@@ -59,8 +59,7 @@ app.get("/dashboard", function(req, res, next) {
 });
 
 app.get("/course/:code", function (req, res) {
-    console.log("COURSE/CODE");
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(cobaltURL, function (err, db) {
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
                 return res.sendFile(path.resolve("frontend/views/course.html"));
@@ -127,8 +126,9 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                course.liked = course.liked.length;
-                course.disliked = course.disliked.length;
+                // console.log(course);
+                // course.liked = course.liked.length;
+                // course.disliked = course.disliked.length;
                 result.push(course);
             })).then(function(){
                 res.json(result);

@@ -35,6 +35,7 @@ class Search extends Component {
 
 	changeSchool(e){
 		this.setState({school: e.target.value});
+		this.updateResults(this.refs.searchInput.value);
 	}
 
 	// Updates the results when typing in the search bar
@@ -62,8 +63,10 @@ class Search extends Component {
 			var resultCourses = [];
 
 			Promise.all(searchResult.map(function (course) {
-				var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
-                resultCourses.push(<SearchResult key={course.code} course={course} taken={userTook} />);
+				if(thisComp.state.user && course.campus == thisComp.state.school){
+					var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
+	                resultCourses.push(<SearchResult key={course.code} course={course} taken={userTook} />);
+	            }
             })).then(function(){
             	// Sort results alphabetically
             	resultCourses.sort(function(a, b) {

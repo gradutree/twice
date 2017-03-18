@@ -26263,6 +26263,7 @@ var Search = function (_Component) {
 		key: 'changeSchool',
 		value: function changeSchool(e) {
 			this.setState({ school: e.target.value });
+			this.updateResults(this.refs.searchInput.value);
 		}
 
 		// Updates the results when typing in the search bar
@@ -26297,8 +26298,10 @@ var Search = function (_Component) {
 				var resultCourses = [];
 
 				Promise.all(searchResult.map(function (course) {
-					var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
-					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course, taken: userTook }));
+					if (thisComp.state.user && course.campus == thisComp.state.school) {
+						var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
+						resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course, taken: userTook }));
+					}
 				})).then(function () {
 					// Sort results alphabetically
 					resultCourses.sort(function (a, b) {
@@ -26531,7 +26534,7 @@ var SearchResult = function (_Component) {
 				_react2.default.createElement(
 					'h3',
 					{ className: 'search_result_name' },
-					this.props.course.title,
+					this.props.course.name,
 					' (',
 					this.props.course.code,
 					')'
@@ -26709,6 +26712,7 @@ var Trees = function (_Component) {
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+
 			$.ajax({
 				url: "/api/path/CSCA08H3/post",
 				dataType: 'json',
@@ -26748,7 +26752,6 @@ var Trees = function (_Component) {
 						// on dom ready
 						var cy = cytoscape({
 							container: document.getElementById('cy'),
-
 							boxSelectionEnabled: false,
 							autounselectify: true,
 							pan: { x: 0, y: 0 },
@@ -26767,7 +26770,6 @@ var Trees = function (_Component) {
 								'transition-property': 'background-color, line-color, target-arrow-color',
 								'transition-duration': '0.5s'
 							}),
-
 							layout: {
 								name: 'breadthfirst',
 								directed: true,
