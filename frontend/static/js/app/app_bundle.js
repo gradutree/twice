@@ -26657,6 +26657,23 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var node = function node(data) {
+	this.title = data.title;
+	this.id = data.courseid;
+	this.postreq = data.postreq;
+	this.source = null;
+	this.target = null;
+	this.edgeNumbers = data.postreq.length;
+	// this.rank = rank++;
+};
+
+var edge = function edge(sourceNode, targetNode) {
+	this.id = sourceNode.id + targetNode.id;
+	this.source = sourceNode.id;
+	this.target = targetNode.id;
+	this.visited = false;
+};
+
 var Trees = function (_Component) {
 	_inherits(Trees, _Component);
 
@@ -26697,24 +26714,7 @@ var Trees = function (_Component) {
 				dataType: 'json',
 				success: function success(result) {
 					var data = result;
-					var rank = 0;
-
-					var node = function node(data) {
-						this.title = data.title;
-						this.id = data.courseid;
-						this.postreq = data.postreq;
-						this.source = null;
-						this.target = null;
-						this.edgeNumbers = data.postreq.length;
-						this.rank = rank++;
-					};
-
-					var edge = function edge(sourceNode, targetNode) {
-						this.id = sourceNode.id + targetNode.id;
-						this.source = sourceNode.id;
-						this.target = targetNode.id;
-						this.visited = false;
-					};
+					// var rank = 0;
 
 					var nodes = [];
 					var edges = [];
@@ -26780,7 +26780,7 @@ var Trees = function (_Component) {
 						for (var i = 0; i < nodes.length; i++) {
 							var id = nodes[i].id;
 							var title = nodes[i].title;
-							var rank = nodes[i].rank;
+							// var rank = nodes[i].rank;
 							var levels = [10, 110, 210, 310];
 
 							var x = 50 + levelCount[id.charAt(3)] * 130;
