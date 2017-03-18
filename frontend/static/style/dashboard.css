@@ -58,8 +58,8 @@ footer a:hover {
 	border-color: #2996cc;
 }
 
-.hidden {
-	display: none;
+.hidden_fade {
+	opacity: 0;
 }
 
 .btn {
@@ -535,7 +535,7 @@ footer {
 	width: auto;
 	text-align: center;
     display: inline-block;
-	
+	transition: all 0.3s linear;
 }
 
 #content_container h4 {
@@ -686,7 +686,7 @@ footer {
 
 .desc_box {
 	text-align: justify;
-	width: 600px;
+	width: 65%;
 	margin: 20px auto;
 }
 
@@ -702,4 +702,9 @@ footer {
 .submit_area {
 	text-align: left;
 	padding: 0 5px;
+}
+
+#preq_box {
+	width: 65%;
+	margin: auto;
 }

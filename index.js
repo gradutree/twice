@@ -7,7 +7,7 @@ var path = require("path");
 var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09";
-var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
+var cobaltURL = "mongodb://35.167.141.109:8000/c09v2";
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
 
@@ -325,24 +325,6 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
 
     });
 });
-
-var voteUpCallback = function (id, username) {
-    return function (err, item) {
-        db.collection("reviews").updateOne({code: id}, {$pop: {down: username}}, function (err, item2) {
-            res.json({state: item2.up.contains(username)});
-        });
-
-    }
-};
-
-var voteDownCallback = function (username) {
-    return function (err, item) {
-        db.collection("reviews").updateOne({code: id}, {$pop: {up: username}}, function (err, item2) {
-            res.json({state: item2.down.contains(username)});
-        });
-
-    }
-};
 
 app.listen(8000, function () {
     console.log('App listening on port 8000');
