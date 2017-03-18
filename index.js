@@ -317,24 +317,6 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
     });
 });
 
-var voteUpCallback = function (id, username) {
-    return function (err, item) {
-        db.collection("reviews").updateOne({code: id}, {$pop: {down: username}}, function (err, item2) {
-            res.json({state: item2.up.contains(username)});
-        });
-
-    }
-};
-
-var voteDownCallback = function (username) {
-    return function (err, item) {
-        db.collection("reviews").updateOne({code: id}, {$pop: {up: username}}, function (err, item2) {
-            res.json({state: item2.down.contains(username)});
-        });
-
-    }
-};
-
 app.listen(8000, function () {
     console.log('App listening on port 8000');
 });
