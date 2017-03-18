@@ -158,4 +158,3 @@ var setPostReq = function () {
 // -run setPostReq
 // -then run the build functions
 module.exports = backend;
-buildPostReq();

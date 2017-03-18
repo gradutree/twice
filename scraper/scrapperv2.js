@@ -35,6 +35,8 @@ var setupPreqs = function () {
                 course.level = item.level;
                 course.description = item.description;
                 course.department = item.department;
+                course.liked = [];
+                course.disliked = [];
                 var delimiter = " & ";
                 if (item.prerequisites.indexOf(" & ") == -1) delimiter = " and ";
                 course.preq = [];
