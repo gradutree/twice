@@ -1,4 +1,4 @@
-var dbURL = "mongodb://35.167.141.109:8000/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09v2";
 var MongoClient = require('mongodb').MongoClient;
 var start = "CSCA08H3";
 
@@ -40,7 +40,7 @@ backend.visualizePreq = function (db, courseCode, node) {
 buildPreq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
-        visualizePreq(db, start, courses).then(function () {
+        backend.visualizePreq(db, start, courses).then(function () {
             console.log(JSON.stringify(courses));
             db.close();
         });
@@ -59,7 +59,7 @@ backend.visualizePostreq = function (db, courseCode, node) {
 
           if (data) {
 
-              node.title = data.title;
+              node.name = data.name;
               node.courseid = courseCode;
               node.postreq = [];
 
@@ -89,7 +89,7 @@ backend.visualizePostreq = function (db, courseCode, node) {
 var buildPostReq = function () {
     MongoClient.connect(dbURL, function (err, db) {
         var courses = {};
-        visualizePostreq(db, start, courses).then(function () {
+        backend.visualizePostreq(db, start, courses).then(function () {
             console.log(JSON.stringify(courses));
             db.close();
         });
@@ -107,7 +107,7 @@ backend.findPostReq = function (db, callback) {
 
         Promise.all(data.map(function (item, i) {
             return new Promise(function (resolve, reject) {
-                db.collection("courses").find({ preq : { $in: [[item.code]] }}).toArray(function (err, courses) {
+                db.collection("courses").find({ preq : { $in: [[ item.code ]] }}).toArray(function (err, courses) {
                     if (err) {
                         console.log(err);
                         reject(err);
@@ -144,7 +144,7 @@ backend.findPostReq = function (db, callback) {
 var setPostReq = function () {
     MongoClient.connect(dbURL, function (err, db) {
 
-        findPostReq(db, function () {
+        backend.findPostReq(db, function () {
             console.log("Done setting preqs for all courses");
             db.close();
         });

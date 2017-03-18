@@ -7,7 +7,9 @@ var path = require("path");
 var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09";
+var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
 var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require("mongodb").ObjectID;
 
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -117,7 +119,7 @@ app.use(express.static('frontend/static'));
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(cobaltURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
@@ -125,6 +127,8 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
+                course.liked = course.liked.length;
+                course.disliked = course.disliked.length;
                 result.push(course);
             })).then(function(){
                 res.json(result);
@@ -220,6 +224,121 @@ app.get("/api/path/:start/pre", function (req, res) {
         });
     });
 });
+
+app.post("/api/course/:code/vote/:direction", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("courses").findOne({ code: req.params.code }, function (err, course) {
+            switch(req.params.direction) {
+                case ("up"):
+                        db.collection("social").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
+                            res.json({});
+                        });
+                    break;
+                case ("down"):
+                        db.collection("social").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
+                            res.json({});
+                        });
+                    break;
+                case ("neutral"):
+                        db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
+                            res.json({});
+                        });
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+
+        });
+
+
+    });
+});
+
+app.post("/api/review", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        var review = {};
+        review.author = req.body.author;
+        review.content = req.body.content;
+        review.timestamp = new Date();
+        review.up = [];
+        review.down = [];
+        review.courseCode = req.body.code;
+        db.collection("reviews").insertOne(review, function (err, item) {
+            res.json({id: item._id});
+        });
+    });
+});
+
+app.get("/api/course/:code/review/:page", function (req, res) {
+    var page = parseInt(req.params.page)*10;
+    MongoClient.connect(dbURL, function (err, db) {
+       db.collection("reviews").find({courseCode: req.params.code}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+           data.forEach(function (item, i) {
+               item.up = item.up.length;
+               item.down = item.down.length;
+           });
+           res.json(data);
+       });
+    });
+});
+
+app.post("/api/review/:id/vote/:direction", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("reviews").findOne({ _id: new ObjectID(req.params.id) }, function (err, review) {
+            if (err) console.log(err);
+            if (!review) return res.status(404).end("Cannot find review");
+            switch(req.params.direction) {
+                case ("up"):
+
+                        db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
+                            res.json({});
+                        });
+
+
+                    break;
+                case ("down"):
+
+                        db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
+
+                            res.json({});
+                        });
+
+                    break;
+
+                case ("neutral"):
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$pop: {down: req.session.user.username, up: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
+                    break;
+                default:
+                    return res.status(400).end("Invalid api action");
+                    break;
+            }
+
+        });
+
+
+    });
+});
+
+var voteUpCallback = function (id, username) {
+    return function (err, item) {
+        db.collection("reviews").updateOne({code: id}, {$pop: {down: username}}, function (err, item2) {
+            res.json({state: item2.up.contains(username)});
+        });
+
+    }
+};
+
+var voteDownCallback = function (username) {
+    return function (err, item) {
+        db.collection("reviews").updateOne({code: id}, {$pop: {up: username}}, function (err, item2) {
+            res.json({state: item2.down.contains(username)});
+        });
+
+    }
+};
 
 app.listen(8000, function () {
     console.log('App listening on port 8000');
