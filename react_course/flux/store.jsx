@@ -4,10 +4,15 @@ var merge = require('merge');
 var Constants = require('./constants.jsx');
 
 var courseData = {};
-var reviews = {};
+var reviews = [];
 
 var loadCourse = function (data) {
     courseData = data;
+};
+
+var loadReviews = function (data) {
+    console.log(data);
+    reviews = data;
 };
 
 var Store = merge(EventEmitter.prototype, {
@@ -43,7 +48,10 @@ Dispatcher.register(function(payload) {
             // Call internal method based upon dispatched action
             loadCourse(action.data);
             break;
-
+        case Constants.LOAD_REVIEWS:
+            // Call internal method based upon dispatched action
+            loadReviews(action.data);
+            break;
         default:
             return true;
     }

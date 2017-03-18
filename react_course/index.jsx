@@ -18,10 +18,10 @@ const App = React.createClass({
         return <div>
             <div className="flex-row center_container flex_cent">
                 <CourseView code={this.props.match.params.code}/>
-                <StatusBox />
+                <StatusBox code={this.props.match.params.code}/>
             </div>
-            <CoursePath/>
-            <ReviewArea/>
+            <CoursePath code={this.props.match.params.code}/>
+            <ReviewArea code={this.props.match.params.code}/>
         </div>;
     }
 });
