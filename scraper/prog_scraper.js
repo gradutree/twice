@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 
 
 var url = "http://www.utsc.utoronto.ca/~registrar/calendars/calendar/Computer_Science.html";
-var dbURL = "mongodb://localhost:27017/";
+var dbURL = "mongodb://35.167.141.109:8000/";
 
 var Program = function (name) {
     this.name = name;
@@ -16,7 +16,7 @@ var Program = function (name) {
 // ['CSCC01H3','CSCC09H3','CSCC10H3','CSCC11H3','CSCC24H3','CSCC37H3','CSCC43H3','CSCC63H3','CSCC69H3','CSCC73H3','CSCC85H3',
 // 'CSCD01H3','CSCD03H3','CSCD18H3','CSCD27H3','CSCD37H3','CSCD43H3','CSCD54H3','CSCD58H3',,'CSCD71H3','CSCD72H3','CSCD84H3','CSCD90H3','CSCD92H3','CSCD94H3','CSCD95H3']
 
-var compSci = new Program("Computer Science");
+var compSci = new Program("ComputerScience");
 var compSciCore = [{"credits": 3.0, "courses": [['CSCA08H3'],['CSCA48H3'],['CSCA67H3'],['MATHA23H3'],['MATHA31H3'],['MATHA37H3']]},
                     {"credits": 3.5, "courses": [['CSCB07H3'],['CSCB09H3'],['CSCB36H3'],['CSCB58H3'],['CSCB63H3'],['MATB24H3'],['STAB52H3']]},
                     {"credits": 1.5, "courses": [['CSCC43H3'],['CSCC69H3'],['CSCC73H3']]},
@@ -46,9 +46,9 @@ var compSciEntreprenuer = [{"credits": 3.0, "courses": [['CSCC01H3'],['CSCC37H3'
                                                         ['CSCD27H3'],['CSCD43H3'],['CSCD58H3'],['CSCD84H3']]}];
 
 compSci.specialist.push({"stream": "Comprehensive", "reqs": compSciCore.concat(compSciComprehensive)});
-compSci.specialist.push({"stream": "Software Engineering", "reqs": compSciCore.concat(compSciSoftwareEng)});
-compSci.specialist.push({"stream": "Information Systems", "reqs": compSciCore.concat(compSciInfoSystem)});
-compSci.specialist.push({"stream": "Health Informatics", "reqs": compSciCore.concat(compSciHealthInfo)});
+compSci.specialist.push({"stream": "SoftwareEngineering", "reqs": compSciCore.concat(compSciSoftwareEng)});
+compSci.specialist.push({"stream": "InformationSystems", "reqs": compSciCore.concat(compSciInfoSystem)});
+compSci.specialist.push({"stream": "HealthInformatics", "reqs": compSciCore.concat(compSciHealthInfo)});
 compSci.specialist.push({"stream": "Entrepreneurship", "reqs": compSciCore.concat(compSciEntreprenuer)});
 
 compSci.major = [{"credits": 3.0, "courses": [['CSCA08H3'],['CSCA48H3'],['CSCA67H3'],['MATA23H3'],['MATA31H3'],['MATA37H3']]},
@@ -56,14 +56,14 @@ compSci.major = [{"credits": 3.0, "courses": [['CSCA08H3'],['CSCA48H3'],['CSCA67
                 {"credits": 1.0, "courses": [['CSCC37H3'],['CSCC63H3','CSCC73H3']]},
                 {"credits": 1.0, "courses": [['CSCC01H3'],['CSCC09H3'],['CSCC10H3'],['CSCC11H3'],['CSCC24H3'],['CSCC43H3'],['CSCC63H3'],['CSCC69H3'],
                                             ['CSCC73H3'],['CSCC85H3'],['CSCD01H3'],['CSCD03H3'],['CSCD18H3'],['CSCD27H3'],['CSCD37H3'],['CSCD43H3'],['CSCD54H3'],
-                                            ['CSCD58H3'],,['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
+                                            ['CSCD58H3'],['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
 
 compSci.minor = [{"credits": 1.0, "courses": [['CSCA08H3','CSCA20H3'],['CSCA48H3']]},
                 {"credits": 0.5, "courses": [['CSCA67H3'],['MATA67H3'],['MATA23H3'],['MATA30H3'],['MATA31H3'],['MATA32H3'],['PHLB50H3']]},
                 {"credits": 1.5, "courses": [['CSCB07H3'],['CSCB09H3'],['CSCB20H3'],['CSCB36H3'],['CSCB58H3'],['CSCB63H3']]},
                 {"credits": 1.0, "courses": [['CSCC01H3'],['CSCC09H3'],['CSCC10H3'],['CSCC11H3'],['CSCC24H3'],['CSCC37H3'],['CSCC43H3'],['CSCC63H3'],['CSCC69H3'],
                                             ['CSCC73H3'],['CSCC85H3'],['CSCD01H3'],['CSCD03H3'],['CSCD18H3'],['CSCD27H3'],['CSCD37H3'],['CSCD43H3'],['CSCD54H3'],
-                                            ['CSCD58H3'],,['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
+                                            ['CSCD58H3'],['CSCD71H3'],['CSCD72H3'],['CSCD84H3'],['CSCD90H3'],['CSCD92H3'],['CSCD94H3'],['CSCD95H3']]}];
 
 
 var addProgram = function(dbName, program){
