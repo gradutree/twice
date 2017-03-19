@@ -22,6 +22,26 @@ var appendReviews = function (data) {
     reviews.more = data.more;
 };
 
+var setVoteData = function (dir) {
+    if (dir == "1") {
+        if (courseData.user_state == "0") courseData.liked++;
+        else if (courseData.user_state == "-1") {
+            courseData.liked++;
+            courseData.disliked--;
+        }
+    } else if (dir == "0") {
+        if (courseData.user_state == "1") courseData.liked--;
+        else if (courseData.user_state == "-1") courseData.disliked++;
+    } else {
+        if (courseData.user_state == "0") courseData.disliked++;
+        else if (courseData.user_state == "1") {
+            courseData.liked--;
+            courseData.disliked++;
+        }
+    }
+    courseData.user_state = dir;
+};
+
 var Store = merge(EventEmitter.prototype, {
 
     getCourseData: function() {
@@ -61,6 +81,9 @@ Dispatcher.register(function(payload) {
             break;
         case Constants.APPEND_REVIEWS:
             appendReviews(action.data);
+            break;
+        case Constants.VOTE:
+            setVoteData(action.data);
             break;
         default:
             return true;

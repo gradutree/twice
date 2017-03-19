@@ -37,10 +37,27 @@ var Actions = {
             contentType: "application/json",
             processData: false,
             success: function (result) {
+                Actions.loadReviews(code, 0);
+                document.getElementById("review_form").reset();
+            }
+        })
+    },
+    
+    vote: function (code, dir) {
+        Dispatcher.handleAction({
+            actionType: Constants.VOTE,
+            data: dir
+        });
+        $.ajax({
+            url: "/api/course/"+code+"/vote/"+dir,
+            method: "POST",
+            success: function (result) {
                 console.log(result);
             }
         })
     }
+
+
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
 
 

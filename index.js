@@ -118,8 +118,13 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                //course.liked = course.liked.length;
-                //course.disliked = course.disliked.length;
+                if (req.session.user) {
+                    course.user_state = course.liked.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                    if (course.user_state == "0") course.user_state = course.disliked.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                }
+                course.liked = course.liked.length;
+                course.disliked = course.disliked.length;
+
                 result.push(course);
             })).then(function(){
                 res.json(result);
@@ -217,21 +222,22 @@ app.get("/api/path/:start/pre", function (req, res) {
 });
 
 app.post("/api/course/:code/vote/:direction", function (req, res) {
+    req.params.code = req.params.code.toUpperCase();
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({ code: req.params.code }, function (err, course) {
             switch(req.params.direction) {
-                case ("up"):
-                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
+                case ("1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
-                case ("down"):
-                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
+                case ("-1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
-                case ("neutral"):
-                    db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
+                case ("0"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
@@ -271,7 +277,7 @@ app.get("/api/course/:code/review/:page", function (req, res) {
                 item.down = item.down.length;
             });
             db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
-                res.json({data: data, page: page, more: count > page*10+10});
+                res.json({data: data, page: page/10, more: count > page+10});
             });
 
         });

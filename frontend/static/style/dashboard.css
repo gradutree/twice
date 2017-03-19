@@ -708,3 +708,8 @@ footer {
 	width: 65%;
 	margin: auto;
 }
+
+.vote_active {
+	border-color: #ffa230;
+	color: #ffa230;
+}
