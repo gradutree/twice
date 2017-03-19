@@ -15,7 +15,7 @@ class ReviewArea extends Component {
     constructor() {
         super();
         this.state = {
-            reviews: [],
+            data: [],
             page: 0
         };
     }
@@ -35,10 +35,11 @@ class ReviewArea extends Component {
 
     _onChange() {
 
-        this.setState({reviews: Store.getReviews(), page: 0});
+        this.setState(Store.getReviews());
     }
 
     render() {
+        var hidden = "box"+((this.state.more) ? "": " hidden");
         return <div>
             <form id="review_form" onSubmit={(e) => { e.preventDefault(); Actions.submitReview(this.props.code, document.getElementById("content_input").value) }}>
                 <div className="box review_area">
@@ -52,9 +53,11 @@ class ReviewArea extends Component {
                 </div>
             </form>
             <div id="review_container">
-                {this.state.reviews.map(function (item) { return <Review key={item._id} review={item} />; })}
+                {this.state.data.map(function (item) { return <Review key={item._id} review={item} />; })}
             </div>
-
+            <div className={hidden} onClick={(e) => { Actions.loadReviews(this.props.code, this.state.page+1) }}>
+                Show more reviews
+            </div>
         </div>;
     }
 }

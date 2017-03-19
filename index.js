@@ -239,10 +239,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                     return res.status(400).end("Invalid api action");
                     break;
             }
-
         });
-
-
     });
 });
 
@@ -273,7 +270,10 @@ app.get("/api/course/:code/review/:page", function (req, res) {
                 item.up = item.up.length;
                 item.down = item.down.length;
             });
-            res.json(data);
+            db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
+                res.json({data: data, page: page, more: count > page*10+10});
+            });
+
         });
     });
 });
@@ -285,20 +285,15 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
             if (!review) return res.status(404).end("Cannot find review");
             switch(req.params.direction) {
                 case ("up"):
-
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
                         res.json({});
                     });
-
-
                     break;
                 case ("down"):
-
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
 
                         res.json({});
                     });
-
                     break;
 
                 case ("neutral"):

@@ -22,7 +22,7 @@ var Actions = {
             url: "/api/course/"+code+"/review/"+page,
             success: function (result) {
                 Dispatcher.handleAction({
-                    actionType: Constants.LOAD_REVIEWS,
+                    actionType: page > 0 ? Constants.APPEND_REVIEWS : Constants.LOAD_REVIEWS,
                     data: result
                 });
             }

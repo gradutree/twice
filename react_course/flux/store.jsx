@@ -4,7 +4,7 @@ var merge = require('merge');
 var Constants = require('./constants.jsx');
 
 var courseData = {};
-var reviews = [];
+var reviews = {};
 
 var loadCourse = function (data) {
     courseData = data;
@@ -13,6 +13,13 @@ var loadCourse = function (data) {
 var loadReviews = function (data) {
     console.log(data);
     reviews = data;
+
+};
+
+var appendReviews = function (data) {
+    reviews.data = reviews.data.concat(data.data);
+    reviews.page = data.page;
+    reviews.more = data.more;
 };
 
 var Store = merge(EventEmitter.prototype, {
@@ -51,6 +58,9 @@ Dispatcher.register(function(payload) {
         case Constants.LOAD_REVIEWS:
             // Call internal method based upon dispatched action
             loadReviews(action.data);
+            break;
+        case Constants.APPEND_REVIEWS:
+            appendReviews(action.data);
             break;
         default:
             return true;
