@@ -232,7 +232,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                     });
                     break;
                 case ("-1"):
-                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}, $pop: {like: req.session.user.username}}, function (err, result) {
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}, $pop: {liked: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
