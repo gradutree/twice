@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import DashboardContent from "./dashboard/dashboard.jsx";
-import TreesContent from "./trees.jsx";
+import TreesContent from "./tree/trees.jsx";
 import SearchContent from "./search/search.jsx";
 
 class Dashboard extends Component {
