@@ -1,116 +1,135 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-var node = function (data){
-	this.title = data.title;
-	this.id = data.courseid;
-	this.postreq = data.postreq;
-	this.source = null;
-	this.target = null;
-	this.edgeNumbers = data.postreq.length;
-	// this.rank = rank++;
-};
-
-var edge = function (sourceNode, targetNode){ 	
-	this.id = sourceNode.id + targetNode.id;
-	this.source = sourceNode.id;
-	this.target = targetNode.id;
-	this.visited = false;
-};
+import TreeProgress from "./treeProgress.jsx";
 
 class Trees extends Component {
+	constructor(){
+		super();
+		this.state = {
+			program: null,
+			someText: "okok"
+		};
+	}
+
   	render() {
-    	return (
-        	<div>
-          		<div id="cy"></div>
-          		<div id="box">
-            		<label for="qty"><abbr title="Quantity">Credit</abbr></label>
-            		<input id="qty" value="0/20"></input>
-          		</div>
-        	</div>
-    	);
-  	}
+	    return (
 
-  	componentDidMount() {
+	        <div>
+	          <div id="cy"></div>
+	          <div id="box">
+	            <label for="qty"><abbr title="Quantity">Credit</abbr></label>
+	            <input id="qty" value="0/20"></input>
+	          </div>
+	          <TreeProgress />
+	        </div>
+	    );
+  }
 
-    	$.ajax({
-      		url: "/api/path/CSCA08H3/post",
-      		dataType: 'json',
-      		success: function (result) {
-      		var data = result;
-      		// var rank = 0;
+  componentDidMount() {
+    $.ajax({
+      url: "/api/path/CSCA08H3/post",
+      dataType: 'json',
+      success: function (result) {
+      var data = result;
+      var rank = 0;
+	  
+	  var node = function (data){
+   		this.title = data.title;
+   		this.id = data.courseid;
+   		this.postreq = data.postreq;
+   		this.source = null;
+   		this.target = null;
+   		this.edgeNumbers = data.postreq.length;
+   		this.rank = rank++;
+   	  };
 
-   	   		var nodes = [];
-   	   		var edges = [];
-       		var startNode = new node(data);
-       		nodes.push(startNode);
-       		startNode.source= startNode;
+   	  var edge = function (sourceNode, targetNode){ 	
+   		this.id = sourceNode.id + targetNode.id;
+   		this.source = sourceNode.id;
+   		this.target = targetNode.id;
+   		this.visited = false;
+   	  };
+
+   	   var nodes = [];
+   	   var edges = [];
+       var startNode = new node(data);
+       nodes.push(startNode);
+       startNode.source= startNode;
 
 
-       		var findCourse = function(node){
-	       		for(var i=0; i<nodes.length; i++){
-	       			if(nodes[i].id==node.id) return true;
-	       		}
-       			return false;
+       var findCourse = function(node){
+       		for(var i=0; i<nodes.length; i++){
+       			if(nodes[i].id==node.id) return true;
        		}
+       		return false;
+       }
 
-	       	var courseAdder = function (data){
-		       	var i;
-		       	for(i=0; i<data.edgeNumbers; i++){
-		       		if(findCourse(data.postreq[i])==true) return;
-		       		else{
-		       			var newNode = new node(data.postreq[i]);
-		       			var newEdge = new edge(data, newNode);
-		       			nodes.push(newNode);
-		       			edges.push(newEdge);
-		       			courseAdder(newNode);
-		       		}
-		       	}
+
+
+
+
+
+       var courseAdder = function (data){
+	       	var i;
+	       	for(i=0; i<data.edgeNumbers; i++){
+	       		if(findCourse(data.postreq[i])==true) return;
+	       		else{
+	       			var newNode = new node(data.postreq[i]);
+	       			var newEdge = new edge(data, newNode);
+	       			nodes.push(newNode);
+	       			edges.push(newEdge);
+	       			courseAdder(newNode);
+
+	       		}
 	       	}
+       }
 
-       		courseAdder(startNode); // all the courses added
+       courseAdder(startNode); // all the courses added
 
-		  	$(function(){ // on dom ready
-	        	var cy = cytoscape({
-		          	container: document.getElementById('cy'),
-		          	boxSelectionEnabled: false,
-		          	autounselectify: true,
-		          	pan: { x: 0, y: 0 },
-		          	style: cytoscape.stylesheet()
-		            	.selector('node')
-		              		.css({
-		                		'content': 'data(id)'
-		              		})
-		            	.selector('edge')
-		              		.css({
-		                		'target-arrow-shape': 'triangle',
-		                		'width': 4,
-		                		'line-color': '#ddd',
-		                		'target-arrow-color': '#ddd',
-		                		'curve-style': 'bezier'
-		              		})
+		  $(function(){ // on dom ready
+	        var cy = cytoscape({
+	          container: document.getElementById('cy'),
 
-		            	.selector('.highlighted')
-		              		.css({
-		                		'background-color': '#61bffc',
-				                'line-color': '#61bffc',
-				                'target-arrow-color': '#61bffc',
-				                'transition-property': 'background-color, line-color, target-arrow-color',
-				                'transition-duration': '0.5s'
-		              		}),
-		          	layout: {
-			            name: 'breadthfirst',
-			            directed: true,
-			            roots: '#CSCA08H3',
-			            padding: 10
-			        }
-	        	});
+	          boxSelectionEnabled: false,
+	          autounselectify: true,
+	          pan: { x: 0, y: 0 },
+	          style: cytoscape.stylesheet()
+	            .selector('node')
+	              .css({
+	                'content': 'data(id)'
+	              })
+	            .selector('edge')
+	              .css({
+	                'target-arrow-shape': 'triangle',
+	                'width': 4,
+	                'line-color': '#ddd',
+	                'target-arrow-color': '#ddd',
+	                'curve-style': 'bezier'
+	              })
+
+	            .selector('.highlighted')
+	              .css({
+	                'background-color': '#61bffc',
+	                'line-color': '#61bffc',
+	                'target-arrow-color': '#61bffc',
+	                'transition-property': 'background-color, line-color, target-arrow-color',
+	                'transition-duration': '0.5s'
+	              }),
+
+	          layout: {
+	            name: 'breadthfirst',
+	            directed: true,
+	            roots: '#CSCA08H3',
+	            padding: 10
+	          }
+	        });
 
 	        var levelCount = {A:0, B:0, C:0, D:0};
 	        for(var i =0; i<nodes.length; i++){ 
      	   		var id = nodes[i].id;
      	   		var title = nodes[i].title;
-     	   		// var rank = nodes[i].rank;
+     	   		var rank = nodes[i].rank;
      	   		var levels  = [10, 110, 210, 310];
      	   		
     	   		var x = 50 + (levelCount[id.charAt(3)]*130);

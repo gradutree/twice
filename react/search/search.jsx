@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 
 import SearchResult from "./searchResult.jsx";
-// import model from "../../frontend/static/js/app/model.js"
 
 var AppDispatcher = require('../dispatcher.jsx');
 var SearchStore = require("./searchStore.jsx");

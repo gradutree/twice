@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 240);
+/******/ 	return __webpack_require__(__webpack_require__.s = 241);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -25683,7 +25683,7 @@ var _dashboard = __webpack_require__(234);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
-var _trees = __webpack_require__(239);
+var _trees = __webpack_require__(240);
 
 var _trees2 = _interopRequireDefault(_trees);
 
@@ -26222,8 +26222,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// import model from "../../frontend/static/js/app/model.js"
-
 var AppDispatcher = __webpack_require__(63);
 var SearchStore = __webpack_require__(238);
 var actions = __webpack_require__(236);
@@ -26539,7 +26537,8 @@ var SearchResult = function (_Component) {
 					this.props.course.name,
 					' (',
 					this.props.course.code,
-					')'
+					') ',
+					this.props.course.preq
 				)
 			);
 		}
@@ -26662,22 +26661,78 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var node = function node(data) {
-	this.title = data.title;
-	this.id = data.courseid;
-	this.postreq = data.postreq;
-	this.source = null;
-	this.target = null;
-	this.edgeNumbers = data.postreq.length;
-	// this.rank = rank++;
-};
+var TreeProgress = function (_Component) {
+	_inherits(TreeProgress, _Component);
 
-var edge = function edge(sourceNode, targetNode) {
-	this.id = sourceNode.id + targetNode.id;
-	this.source = sourceNode.id;
-	this.target = targetNode.id;
-	this.visited = false;
-};
+	function TreeProgress() {
+		_classCallCheck(this, TreeProgress);
+
+		return _possibleConstructorReturn(this, (TreeProgress.__proto__ || Object.getPrototypeOf(TreeProgress)).apply(this, arguments));
+	}
+
+	_createClass(TreeProgress, [{
+		key: 'render',
+
+		// constructor(){
+		// 	super();
+		// 	this.state = {
+		// 		preq: "N/A", 
+		// 		currStyle: null
+		// 	};
+		// }
+
+		// clicked(e){
+		// 	window.location.href = "/course/"+this.props.course.code;
+		// }
+
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'h3',
+					{ className: 'search_result_name' },
+					'"PROGRESS BAR"'
+				)
+			);
+		}
+	}]);
+
+	return TreeProgress;
+}(_react.Component);
+
+exports.default = TreeProgress;
+
+/***/ }),
+/* 240 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(6);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(20);
+
+var _treeProgress = __webpack_require__(239);
+
+var _treeProgress2 = _interopRequireDefault(_treeProgress);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Trees = function (_Component) {
 	_inherits(Trees, _Component);
@@ -26685,7 +26740,13 @@ var Trees = function (_Component) {
 	function Trees() {
 		_classCallCheck(this, Trees);
 
-		return _possibleConstructorReturn(this, (Trees.__proto__ || Object.getPrototypeOf(Trees)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (Trees.__proto__ || Object.getPrototypeOf(Trees)).call(this));
+
+		_this.state = {
+			program: null,
+			someText: "okok"
+		};
+		return _this;
 	}
 
 	_createClass(Trees, [{
@@ -26708,19 +26769,36 @@ var Trees = function (_Component) {
 						)
 					),
 					_react2.default.createElement('input', { id: 'qty', value: '0/20' })
-				)
+				),
+				_react2.default.createElement(_treeProgress2.default, null)
 			);
 		}
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-
 			$.ajax({
 				url: "/api/path/CSCA08H3/post",
 				dataType: 'json',
 				success: function success(result) {
 					var data = result;
-					// var rank = 0;
+					var rank = 0;
+
+					var node = function node(data) {
+						this.title = data.title;
+						this.id = data.courseid;
+						this.postreq = data.postreq;
+						this.source = null;
+						this.target = null;
+						this.edgeNumbers = data.postreq.length;
+						this.rank = rank++;
+					};
+
+					var edge = function edge(sourceNode, targetNode) {
+						this.id = sourceNode.id + targetNode.id;
+						this.source = sourceNode.id;
+						this.target = targetNode.id;
+						this.visited = false;
+					};
 
 					var nodes = [];
 					var edges = [];
@@ -26754,6 +26832,7 @@ var Trees = function (_Component) {
 						// on dom ready
 						var cy = cytoscape({
 							container: document.getElementById('cy'),
+
 							boxSelectionEnabled: false,
 							autounselectify: true,
 							pan: { x: 0, y: 0 },
@@ -26772,6 +26851,7 @@ var Trees = function (_Component) {
 								'transition-property': 'background-color, line-color, target-arrow-color',
 								'transition-duration': '0.5s'
 							}),
+
 							layout: {
 								name: 'breadthfirst',
 								directed: true,
@@ -26784,7 +26864,7 @@ var Trees = function (_Component) {
 						for (var i = 0; i < nodes.length; i++) {
 							var id = nodes[i].id;
 							var title = nodes[i].title;
-							// var rank = nodes[i].rank;
+							var rank = nodes[i].rank;
 							var levels = [10, 110, 210, 310];
 
 							var x = 50 + levelCount[id.charAt(3)] * 130;
@@ -26925,7 +27005,7 @@ var Trees = function (_Component) {
 exports.default = Trees;
 
 /***/ }),
-/* 240 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

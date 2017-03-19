@@ -128,6 +128,28 @@ app.get('/api/courses/query/', function (req, res) {
     });
 });
 
+// Returns the program requirements give the program name (:name) with query params "post" and "spec"
+// Ex. curl http://localhost:8000/api/programs/ComputerScience?post=specialist&spec=SoftwareEngineering
+app.get('/api/programs/:name', function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("programs").findOne({name: req.params.name}, function (err, program) {
+            if (err) {
+                console.log("GET program error");
+                res.json([]);
+                return;
+            }
+
+            // Trying to find specific specialization.
+            if(req.query.spec != null && req.query.post == "specialist"){
+                res.json(program[req.query.post].find(spec => spec.stream == req.query.spec));
+                return;
+            }
+            res.json(program[req.query.post]);
+            return;
+        });
+    });
+});
+
 app.post('/api/login/', function (req, res) {
     req.checkBody("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
     req.checkBody("password", "Password must be alphanumeric").notEmpty().isAlphanumeric();
