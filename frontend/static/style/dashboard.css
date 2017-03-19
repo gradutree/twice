@@ -710,6 +710,6 @@ footer {
 }
 
 .vote_active {
-	border-color: #ffa230;
+	border-color: #ffa230 !important;
 	color: #ffa230;
 }
