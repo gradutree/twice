@@ -17,7 +17,7 @@ class StatusBox extends Component {
         this.state = {
             liked: 0,
             disliked: 0,
-            user_state: "0"
+            user_state: null
         };
     }
 
@@ -39,8 +39,8 @@ class StatusBox extends Component {
     }
 
     render() {
-        var user_state = "box"+((this.state.user_state == "1") ? " vote_active" : "");
-        var user_state2 = "box"+((this.state.user_state == "-1") ? " vote_active" : "");
+        var user_state = "box"+((this.state.user_state == "1") ? " vote_active" : "")+((this.state.user_state) ? "" : " hidden");
+        var user_state2 = "box"+((this.state.user_state == "-1") ? " vote_active" : "")+((this.state.user_state) ? "" : " hidden");
         return <div className="status_box">
             <div className="flex-row">
                 <div className={user_state} onClick={() => { var dir = this.state.user_state == "1" ? "0" : "1"; Actions.vote(this.props.code, dir); }}>Like</div>

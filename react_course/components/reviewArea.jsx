@@ -66,17 +66,12 @@ class Review extends Component {
 
     constructor() {
         super();
-
-        this.state = {
-            display_up: 0,
-            display_down: 0
-        }
     }
 
     render() {
         var delId = "delComment_"+this.props.review._id;
-        var user_state = "box"+((this.props.review.user_state == "1") ? " vote_active" : "");
-        var user_state2 = "box"+((this.props.review.user_state == "-1") ? " vote_active" : "");
+        var user_state = "box"+((this.props.review.user_state == "1") ? " vote_active" : "")+((this.props.review.user_state) ? "" : " hidden");
+        var user_state2 = "box"+((this.props.review.user_state == "-1") ? " vote_active" : "")+((this.props.review.user_state) ? "" : " hidden");
         return <div className="comment flex_col">
             <div className="flex-row flex_spaceb">
                 <div className="comment_author flex-row flex_start">
