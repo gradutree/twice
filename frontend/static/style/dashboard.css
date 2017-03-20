@@ -753,3 +753,12 @@ footer {
 	height: 30px;
 	margin-left: 20px;
 }
+
+.program_reqs_courses {
+	font-size: 12px;
+}
+
+.list_course_req {
+	display: flex;
+	flex-direction: row;
+}

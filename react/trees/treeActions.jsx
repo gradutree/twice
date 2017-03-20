@@ -17,8 +17,6 @@ var TreeActions = {
             url: "/api/user/"+getCurrentUsername()+"/info",
             success: (function (result) {
                 this.cache[TreeConstants.LOAD_USERDATA] = result;
-                // console.log("loadUser result: ");
-                console.log(result);
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
                     data: result
@@ -28,24 +26,19 @@ var TreeActions = {
                 console.log(err);
             }
         });
-        //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
     },
 
     getUserProgram: function(user) {
-        // console.log("TREE ACTION getUserProgram");
-        // console.log(user);
-        if(user.program){
-            // console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
-
+        if(user && user.program){
             var userSpec = user.spec.toLowerCase();
+
+            // User obj does not specifically define that they are a specialist, only the stream
             var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec : 
                 "specialist&spec="+user.spec.split(" ").join("");
 
             $.ajax({
                 url: "/api/programs/"+user.program.split(" ").join("")+"?post="+programStr,
                 success: (function (result) {
-                    // console.log("getUserProgram success");
-                    // console.log(result);
                     AppDispatcher.handleAction({
                         actionType: "GET_USER_PROGRAM",
                         data: result
@@ -57,16 +50,6 @@ var TreeActions = {
             });
         }
     }
-
-    // getSearchResults: function(search, callback) {
-    //     $.ajax({
-    //         url: "/api/courses/query?code="+search,
-    //         success: callback,
-    //         error: function (err) {
-    //             console.log(err);
-    //         }
-    //     });
-    // }
 
 };
 

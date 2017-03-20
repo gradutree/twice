@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Line } from 'rc-progress';
 
+import TreeProgressReqCourses from "./treeProgressReqCourses.jsx";
+
 
 class TreeProgressReq extends Component {
 	constructor(){
@@ -38,7 +40,7 @@ class TreeProgressReq extends Component {
 					</div>
 					<div className="program_reqs_courses">
 						<div>{this.state.reqCreditsStr}</div>
-						<div>{this.state.reqCoursesStr}</div>
+						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken}/>
 					</div>
 					<hr />
 				</div>;
