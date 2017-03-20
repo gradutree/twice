@@ -208,23 +208,23 @@ class Trees extends Component {
 
 
 	        cy.on('tap', function(evt){
-	          if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
-	          var tapid= cy.$('#'+evt.cyTarget.id());
-	          var creditCounter=document.getElementById('qty').value;
-	          creditCounter = creditCounter.split("/")[0];
-	          var newCredit = parseFloat(creditCounter);
+	          // if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+	          // var tapid= cy.$('#'+evt.cyTarget.id());
+	          // var creditCounter=document.getElementById('qty').value;
+	          // creditCounter = creditCounter.split("/")[0];
+	          // var newCredit = parseFloat(creditCounter);
 
-	          if(tapid.hasClass('highlighted')){
-	          	edgeUnmarker(tapid);
-	            newCredit-=0.5;
-	          }
-	          else {
-	          	// console.log("tap");
-	            newCredit+=0.5;
-	            edgeMarker(tapid);
-	            findconnected(tapid);
-	          }
-	          document.getElementById('qty').value = newCredit + "/20";
+	          // if(tapid.hasClass('highlighted')){
+	          // 	edgeUnmarker(tapid);
+	          //   newCredit-=0.5;
+	          // }
+	          // else {
+	          // 	// console.log("tap");
+	          //   newCredit+=0.5;
+	          //   edgeMarker(tapid);
+	          //   findconnected(tapid);
+	          // }
+	          // document.getElementById('qty').value = newCredit + "/20";
 
 	        });
 

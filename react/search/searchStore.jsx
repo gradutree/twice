@@ -40,12 +40,24 @@ var SearchStore = merge(EventEmitter.prototype, {
         this.emit('change');
     },
 
+    emitSearchChange: function() {
+        this.emit('searchChange');
+    },
+
     addChangeListener: function(callback) {
         this.on('change', callback);
     },
 
     removeChangeListener: function(callback) {
         this.removeListener('change', callback);
+    },
+
+    addSearchChangeListener: function(callback) {
+        this.on('searchChange', callback);
+    },
+
+    removeSearchChangeListener: function(callback) {
+        this.removeListener('searchChange', callback);
     }
 
 });
@@ -58,10 +70,12 @@ AppDispatcher.register(function(payload) {
         case SearchConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
+            SearchStore.emitChange();
             break;
 
         case 'SEARCH_RESULTS':
             loadSearchResults(action.data);
+            SearchStore.emitSearchChange();
             break;
 
         default:
@@ -69,7 +83,7 @@ AppDispatcher.register(function(payload) {
     }
 
     // If action was acted upon, emit change event
-    SearchStore.emitChange();
+    // SearchStore.emitChange();
 
     return true;
 

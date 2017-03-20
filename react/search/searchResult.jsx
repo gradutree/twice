@@ -22,7 +22,7 @@ class SearchResult extends Component {
 		this.state.currStyle = this.props.taken ? takenStyle : {backgroundColor: '#ffffff'};
 
 		return <div style={this.state.currStyle} className="search_result_elem" onClick={this.clicked.bind(this)}>
-					<h3 className="search_result_name">{this.props.course.name} ({this.props.course.code}) {this.props.course.preq}</h3>
+					<h3 className="search_result_name">{this.props.course.name} ({this.props.course.code})</h3>
 				</div>;
 	}
 }

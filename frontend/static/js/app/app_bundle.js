@@ -26501,7 +26501,11 @@ var Search = function (_Component) {
 		value: function componentDidMount() {
 			// load user info and keep it in the store
 			this.searchOnChange = this._onChange.bind(this);
+			this.searchOnSearchChange = this._onSearchChange.bind(this);
+
 			SearchStore.addChangeListener(this.searchOnChange);
+			SearchStore.addSearchChangeListener(this.searchOnSearchChange);
+
 			actions.loadUserData(null);
 			this.setState(getUser());
 		}
@@ -26514,7 +26518,7 @@ var Search = function (_Component) {
 		key: 'changeSchool',
 		value: function changeSchool(e) {
 			this.setState({ school: e.target.value });
-			this.updateResults(this.refs.searchInput.value);
+			actions.getSearchResults(this.refs.searchInput.value);
 		}
 
 		// Updates the results when typing in the search bar
@@ -26522,7 +26526,7 @@ var Search = function (_Component) {
 	}, {
 		key: 'changeResults',
 		value: function changeResults(e) {
-			this.updateResults(e.target.value);
+			actions.getSearchResults(e.target.value);
 		}
 
 		// Updates the results to show/hide taken courses when filter clicked
@@ -26532,47 +26536,37 @@ var Search = function (_Component) {
 		value: function takenFilter(e) {
 			this.state.showTaken = !this.state.showTaken;
 			this.state.takenFilterText = this.state.showTaken ? "Hide" : "Show";
-			this.updateResults(this.refs.searchInput.value);
+			actions.getSearchResults(this.refs.searchInput.value);
 		}
 	}, {
 		key: 'updateResults',
-		value: function updateResults(searchStr) {
+		value: function updateResults() {
 			var thisComp = this;
+			var searchResult = SearchStore.getSearchResults();
+			var resultCourses = [];
 
-			var callback = function callback(result) {
-				AppDispatcher.handleAction({
-					actionType: 'SEARCH_RESULTS',
-					data: result
+			Promise.all(searchResult.map(function (course) {
+				if (thisComp.state.user && course.campus == thisComp.state.school) {
+					var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
+					resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course, taken: userTook }));
+				}
+			})).then(function () {
+				// Sort results alphabetically
+				resultCourses.sort(function (a, b) {
+					var codeA = a.key.toUpperCase();
+					var codeB = b.key.toUpperCase();
+					return codeA < codeB ? -1 : codeA > codeB ? 1 : 0;
 				});
 
-				var searchResult = SearchStore.getSearchResults();
-				var resultCourses = [];
-
-				Promise.all(searchResult.map(function (course) {
-					if (thisComp.state.user && course.campus == thisComp.state.school) {
-						var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
-						resultCourses.push(_react2.default.createElement(_searchResult2.default, { key: course.code, course: course, taken: userTook }));
-					}
-				})).then(function () {
-					// Sort results alphabetically
-					resultCourses.sort(function (a, b) {
-						var codeA = a.key.toUpperCase();
-						var codeB = b.key.toUpperCase();
-						return codeA < codeB ? -1 : codeA > codeB ? 1 : 0;
+				// Remove the taken courses if the filter was selected
+				if (!thisComp.state.showTaken) {
+					resultCourses = resultCourses.filter(function (course) {
+						return !course.props.taken;
 					});
+				}
 
-					// Remove the taken courses if the filter was selected
-					if (!thisComp.state.showTaken) {
-						resultCourses = resultCourses.filter(function (course) {
-							return !course.props.taken;
-						});
-					}
-
-					thisComp.setState({ results: resultCourses });
-				});
-			};
-
-			actions.getSearchResults(searchStr, callback);
+				thisComp.setState({ results: resultCourses });
+			});
 		}
 	}, {
 		key: 'render',
@@ -26649,6 +26643,11 @@ var Search = function (_Component) {
 		value: function _onChange() {
 			this.setState(getUser());
 		}
+	}, {
+		key: '_onSearchChange',
+		value: function _onSearchChange() {
+			this.updateResults();
+		}
 	}]);
 
 	return Search;
@@ -26697,13 +26696,17 @@ var SearchActions = {
                 console.log(err);
             }
         });
-        //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
     },
 
-    getSearchResults: function getSearchResults(search, callback) {
+    getSearchResults: function getSearchResults(search) {
         $.ajax({
             url: "/api/courses/query?code=" + search,
-            success: callback,
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: 'SEARCH_RESULTS',
+                    data: result
+                });
+            },
             error: function error(err) {
                 console.log(err);
             }
@@ -26788,8 +26791,7 @@ var SearchResult = function (_Component) {
 					this.props.course.name,
 					' (',
 					this.props.course.code,
-					') ',
-					this.props.course.preq
+					')'
 				)
 			);
 		}
@@ -26849,12 +26851,24 @@ var SearchStore = merge(EventEmitter.prototype, {
         this.emit('change');
     },
 
+    emitSearchChange: function emitSearchChange() {
+        this.emit('searchChange');
+    },
+
     addChangeListener: function addChangeListener(callback) {
         this.on('change', callback);
     },
 
     removeChangeListener: function removeChangeListener(callback) {
         this.removeListener('change', callback);
+    },
+
+    addSearchChangeListener: function addSearchChangeListener(callback) {
+        this.on('searchChange', callback);
+    },
+
+    removeSearchChangeListener: function removeSearchChangeListener(callback) {
+        this.removeListener('searchChange', callback);
     }
 
 });
@@ -26867,10 +26881,12 @@ AppDispatcher.register(function (payload) {
         case SearchConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
+            SearchStore.emitChange();
             break;
 
         case 'SEARCH_RESULTS':
             loadSearchResults(action.data);
+            SearchStore.emitSearchChange();
             break;
 
         default:
@@ -26878,7 +26894,7 @@ AppDispatcher.register(function (payload) {
     }
 
     // If action was acted upon, emit change event
-    SearchStore.emitChange();
+    // SearchStore.emitChange();
 
     return true;
 });
@@ -27538,22 +27554,24 @@ var Trees = function (_Component) {
 						cy.maxZoom(5);
 
 						cy.on('tap', function (evt) {
-							if (evt.cyTarget === cy || evt.cyTarget.isEdge()) return;
-							var tapid = cy.$('#' + evt.cyTarget.id());
-							var creditCounter = document.getElementById('qty').value;
-							creditCounter = creditCounter.split("/")[0];
-							var newCredit = parseFloat(creditCounter);
+							// if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+							// var tapid= cy.$('#'+evt.cyTarget.id());
+							// var creditCounter=document.getElementById('qty').value;
+							// creditCounter = creditCounter.split("/")[0];
+							// var newCredit = parseFloat(creditCounter);
 
-							if (tapid.hasClass('highlighted')) {
-								edgeUnmarker(tapid);
-								newCredit -= 0.5;
-							} else {
-								// console.log("tap");
-								newCredit += 0.5;
-								edgeMarker(tapid);
-								findconnected(tapid);
-							}
-							document.getElementById('qty').value = newCredit + "/20";
+							// if(tapid.hasClass('highlighted')){
+							// 	edgeUnmarker(tapid);
+							//   newCredit-=0.5;
+							// }
+							// else {
+							// 	// console.log("tap");
+							//   newCredit+=0.5;
+							//   edgeMarker(tapid);
+							//   findconnected(tapid);
+							// }
+							// document.getElementById('qty').value = newCredit + "/20";
+
 						});
 
 						var findconnected = function findconnected(node) {
