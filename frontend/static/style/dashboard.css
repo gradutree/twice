@@ -739,7 +739,7 @@ footer {
 .program_req_visual {
 	display: flex;
 	flex-direction: row;
-	margin: 2px;
+	margin: 0px;
 }
 
 .program_req_name {

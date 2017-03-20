@@ -27033,7 +27033,9 @@ var TreeProgressReq = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (TreeProgressReq.__proto__ || Object.getPrototypeOf(TreeProgressReq)).call(this));
 
 		_this.state = {
-			percent: 10
+			percent: 0,
+			reqCreditsStr: "",
+			reqCoursesStr: ""
 		};
 		return _this;
 	}
@@ -27047,11 +27049,13 @@ var TreeProgressReq = function (_Component) {
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			console.log("TAKEN = ");
-			console.log(this.props.taken);
-			console.log(this.props.req);
+			// console.log("TAKEN = ");
+			// console.log(this.props.taken);
+			// console.log(this.props.req);
 			// console.log(determinePercent(this.props.req.courses, this.props.taken));
 			this.setState({ percent: determinePercent(this.props.req.courses, this.props.taken) });
+			this.setState({ reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken) });
+			this.setState({ reqCoursesStr: getReqCoursesStr(this.props.req) });
 		}
 	}, {
 		key: 'render',
@@ -27074,7 +27078,21 @@ var TreeProgressReq = function (_Component) {
 						_react2.default.createElement(_rcProgress.Line, { percent: this.state.percent, strokeWidth: '1', strokeColor: '#cee1ff' })
 					)
 				),
-				_react2.default.createElement('div', { className: 'program_reqs_courses' })
+				_react2.default.createElement(
+					'div',
+					{ className: 'program_reqs_courses' },
+					_react2.default.createElement(
+						'div',
+						null,
+						this.state.reqCreditsStr
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						this.state.reqCoursesStr
+					)
+				),
+				_react2.default.createElement('hr', null)
 			);
 		}
 	}]);
@@ -27082,17 +27100,13 @@ var TreeProgressReq = function (_Component) {
 	return TreeProgressReq;
 }(_react.Component);
 
-function determinePercent(reqs, taken) {
+function coursesTaken(reqs, taken) {
 	var counter = 0;
 
 	reqs.forEach(function (elem) {
-		// console.log(elem);
-		// setTimeout(function(){
-
-		//    }, 500);
 		var i = 0;
 		for (i = 0; i < elem.length; i++) {
-			console.log(elem[i]);
+			// console.log(elem[i]);
 			if (taken.indexOf(elem[i]) >= 0) {
 				counter++;
 				break;
@@ -27100,9 +27114,33 @@ function determinePercent(reqs, taken) {
 		}
 	});
 
-	console.log("END % " + counter);
-	console.log(reqs.length / counter);
-	return counter / reqs.length * 100;
+	return counter;
+}
+
+function determinePercent(reqs, taken) {
+	return coursesTaken(reqs, taken) / reqs.length * 100;
+}
+
+function getReqCreditsStr(req, taken) {
+	var reqCreditStr = "Credits needed: " + req.credits + "\tCredits completed: ";
+	var creditsTaken = coursesTaken(req.courses, taken) * 0.5;
+	reqCreditStr += creditsTaken + "\tCredits left: " + (req.credits - creditsTaken);
+
+	return reqCreditStr;
+}
+
+function getReqCoursesStr(req) {
+	var reqCourseStr = "Courses: ";
+
+	req.courses.forEach(function (courseSet) {
+		if (courseSet.length > 1) {
+			reqCourseStr += "[" + courseSet.join(",") + "] / ";
+		} else {
+			reqCourseStr += courseSet[0] + " / ";
+		}
+	});
+
+	return reqCourseStr;
 }
 
 exports.default = TreeProgressReq;
