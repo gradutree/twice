@@ -36,8 +36,12 @@ var TreeActions = {
         console.log(user);
         if(user.program){
             console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
+
+            var userSpec = user.spec.toLowerCase();
+            var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec : "specialist&spec="+user.spec.split(" ").join("");
+
             $.ajax({
-                url: "/api/programs/"+user.program.split(" ").join("")+"?post="+user.spec.toLowerCase(),
+                url: "/api/programs/"+user.program.split(" ").join("")+"?post="+programStr,
                 success: (function (result) {
                     console.log("getUserProgram success");
                     console.log(result);

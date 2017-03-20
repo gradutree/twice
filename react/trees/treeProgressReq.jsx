@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-// import { Line } from 'rc-progress';
-
-import TreeProgressReq from "./treeProgressReq.jsx";
+import { Line } from 'rc-progress';
 
 
-class TreeProgress extends Component {
+class TreeProgressReq extends Component {
 	// constructor(){
 	// 	super();
 	// 	this.state = {
@@ -15,17 +13,17 @@ class TreeProgress extends Component {
 	// }
 
 	clicked(e){
-		console.log("treeProgress clicked");
-		console.log(this.props.programReq);
+		console.log("treeProgressReq clicked");
+		// console.log(this.props.programReq);
 	}
 	
 	render() {
 		return 	<div onClick={this.clicked.bind(this)}>
 					<h3 className="search_result_name">"PROGRESS BAR"</h3>
-					<TreeProgressReq />
+					<Line percent="10" strokeWidth="4" strokeColor="#D3D3D3" />
 				</div>;
 	}
 }
 
 
-export default TreeProgress;
+export default TreeProgressReq;

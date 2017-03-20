@@ -141,7 +141,7 @@ app.get('/api/programs/:name', function (req, res) {
 
             // Trying to find specific specialization.
             if(req.query.spec != null && req.query.post == "specialist"){
-                res.json(program[req.query.post].find(spec => spec.stream == req.query.spec));
+                res.json(program[req.query.post].find(spec => spec.stream == req.query.spec).reqs);
                 return;
             }
             res.json(program[req.query.post]);
