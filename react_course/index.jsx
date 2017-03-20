@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import {
     BrowserRouter as Router,
-    Route,
-    Link,
-    IndexRoute
+    Route
 } from 'react-router-dom';
 
 import CourseView from "./components/courseView.jsx";

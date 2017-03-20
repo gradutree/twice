@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {
-    BrowserRouter as Router,
-    Route,
-    Link,
-    IndexRoute
-} from 'react-router-dom';
 
 var Store = require('../flux/store.jsx');
 var Actions = require('../flux/actions.jsx');
