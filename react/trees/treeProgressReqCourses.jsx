@@ -31,27 +31,21 @@ class TreeProgressReqCourses extends Component {
 		var thisComp = this;
 		var displayElems = [];
 		this.props.req.courses.forEach(function(courseSet){
+			var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
 			if(courseSet.length > 1){
-				var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
-				console.log(wasTaken);
-				displayElems.push(<CourseText className="course_req_name_elem" 
-					courseText={"[" + courseSet.join(", ")+"] / "} userTook={wasTaken} />);
-
+				displayElems.push(<CourseText className="course_req_name_elem" key={courseSet}
+					courseText={"[" + courseSet.join(", ")+"]"} userTook={wasTaken} />);
+				displayElems.push(<div className="course_req_name_elem" key={courseSet+"div"}>/</div>);
 			}
 			else {
-				var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
-				console.log(wasTaken);
-				displayElems.push(<CourseText className="course_req_name_elem" 
-					courseText={courseSet[0] + " / "} userTook={wasTaken} />);
+				displayElems.push(<CourseText className="course_req_name_elem" key={courseSet}
+					courseText={courseSet[0]} userTook={wasTaken} />);
+				displayElems.push(<div className="course_req_name_elem" key={courseSet+"div"}>/</div>);
 			}
 		});
 
 		this.state.courseDisplay = displayElems;
 	}
-
-	// clicko(){
-	// 	this.getCourseDisplay();
-	// }
 	
 	render() {
 		return 	<div className="list_course_req">

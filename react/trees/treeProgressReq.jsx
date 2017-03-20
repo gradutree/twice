@@ -15,23 +15,14 @@ class TreeProgressReq extends Component {
 		};
 	}
 
-	clicked(e){
-		console.log("treeProgressReq clicked");
-		// console.log(this.props.programReq);
-	}
-
 	componentDidMount() {
-		// console.log("TAKEN = ");
-		// console.log(this.props.taken);
-		// console.log(this.props.req);
-		// console.log(determinePercent(this.props.req.courses, this.props.taken));
 		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
 		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
 		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
 	}
 	
 	render() {
-		return 	<div className="program_req_div" onClick={this.clicked.bind(this)}>
+		return 	<div className="program_req_div">
 					<div className="program_req_visual">
 						<h3 className="program_req_name">Requirement {this.props.reqNum}</h3>
 						<div className="program_req_bar">
@@ -53,7 +44,6 @@ function coursesTaken(reqs, taken){
 	reqs.forEach(function(elem){
 		var i = 0;
 		for(i = 0; i <elem.length; i++){
-			// console.log(elem[i]);
 			if(taken.indexOf(elem[i]) >= 0){
 				counter++;
 				break;

@@ -14,15 +14,9 @@ class CourseText extends Component {
 			courseText: ""
 		};
 	}
-
-	componentDidMount() {
-		// this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
-		// this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
-		// this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
-	}
 	
 	render() {
-		textStyle.color = this.props.userTook ?  "#54ff7e" : "#000000";
+		textStyle.color = this.props.userTook ?  "#32cd32" : "#000000";
 		return 	<div style={textStyle}>
 					{this.props.courseText}
 				</div>;

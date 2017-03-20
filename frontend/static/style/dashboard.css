@@ -762,3 +762,7 @@ footer {
 	display: flex;
 	flex-direction: row;
 }
+
+.course_req_name_elem {
+	margin-right: 7px;
+}

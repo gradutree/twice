@@ -15,22 +15,13 @@ class TreeProgress extends Component {
 		};
 	}
 
-	clicked(e){
-		console.log("treeProgress clicked");
-		console.log(this.props.programReq);
-	}
-
 	updateProgramReq(){
-		// this.setState({reqs: TreeStore.getUserProgramReq()});
-		// console.log("In updateProgramReq ");
-		// console.log(TreeStore.getUserProgramReq());
 		var thisComp = this;
 		var programReqs = [];
 
 
 		if(TreeStore.getUserProgramReq().length > 0){
 			Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-				console.log("thisComp.props.taken = " + thisComp.props.taken);
 				programReqs.push(<TreeProgressReq key={index} reqNum={index+1} req={req} taken={thisComp.props.taken} />);
 	        })).then(function(){
 	        	programReqs.sort(function(a,b){
@@ -48,10 +39,8 @@ class TreeProgress extends Component {
 	}
 	
 	render() {
-		// this.updateProgramReq();
-
 		return 	<div className="program_req_container">
-					<div className="program_progress" onClick={this.clicked.bind(this)}>
+					<div className="program_progress">
 						<h3 className="search_result_name">Your Progress</h3>
 						<div className="program_progress_set">{this.state.reqs}</div>
 					</div>

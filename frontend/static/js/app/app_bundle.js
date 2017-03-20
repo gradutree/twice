@@ -26083,16 +26083,9 @@ var CourseText = function (_Component) {
 	}
 
 	_createClass(CourseText, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			// this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
-			// this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
-			// this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
-		}
-	}, {
 		key: 'render',
 		value: function render() {
-			textStyle.color = this.props.userTook ? "#54ff7e" : "#000000";
+			textStyle.color = this.props.userTook ? "#32cd32" : "#000000";
 			return _react2.default.createElement(
 				'div',
 				{ style: textStyle },
@@ -27013,23 +27006,13 @@ var TreeProgress = function (_Component) {
 	}
 
 	_createClass(TreeProgress, [{
-		key: 'clicked',
-		value: function clicked(e) {
-			console.log("treeProgress clicked");
-			console.log(this.props.programReq);
-		}
-	}, {
 		key: 'updateProgramReq',
 		value: function updateProgramReq() {
-			// this.setState({reqs: TreeStore.getUserProgramReq()});
-			// console.log("In updateProgramReq ");
-			// console.log(TreeStore.getUserProgramReq());
 			var thisComp = this;
 			var programReqs = [];
 
 			if (TreeStore.getUserProgramReq().length > 0) {
 				Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-					console.log("thisComp.props.taken = " + thisComp.props.taken);
 					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req, taken: thisComp.props.taken }));
 				})).then(function () {
 					programReqs.sort(function (a, b) {
@@ -27048,14 +27031,12 @@ var TreeProgress = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			// this.updateProgramReq();
-
 			return _react2.default.createElement(
 				'div',
 				{ className: 'program_req_container' },
 				_react2.default.createElement(
 					'div',
-					{ className: 'program_progress', onClick: this.clicked.bind(this) },
+					{ className: 'program_progress' },
 					_react2.default.createElement(
 						'h3',
 						{ className: 'search_result_name' },
@@ -27126,18 +27107,8 @@ var TreeProgressReq = function (_Component) {
 	}
 
 	_createClass(TreeProgressReq, [{
-		key: 'clicked',
-		value: function clicked(e) {
-			console.log("treeProgressReq clicked");
-			// console.log(this.props.programReq);
-		}
-	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			// console.log("TAKEN = ");
-			// console.log(this.props.taken);
-			// console.log(this.props.req);
-			// console.log(determinePercent(this.props.req.courses, this.props.taken));
 			this.setState({ percent: determinePercent(this.props.req.courses, this.props.taken) });
 			this.setState({ reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken) });
 			this.setState({ reqCoursesStr: getReqCoursesStr(this.props.req) });
@@ -27147,7 +27118,7 @@ var TreeProgressReq = function (_Component) {
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
-				{ className: 'program_req_div', onClick: this.clicked.bind(this) },
+				{ className: 'program_req_div' },
 				_react2.default.createElement(
 					'div',
 					{ className: 'program_req_visual' },
@@ -27187,7 +27158,6 @@ function coursesTaken(reqs, taken) {
 	reqs.forEach(function (elem) {
 		var i = 0;
 		for (i = 0; i < elem.length; i++) {
-			// console.log(elem[i]);
 			if (taken.indexOf(elem[i]) >= 0) {
 				counter++;
 				break;
@@ -27295,26 +27265,28 @@ var TreeProgressReqCourses = function (_Component) {
 			var thisComp = this;
 			var displayElems = [];
 			this.props.req.courses.forEach(function (courseSet) {
+				var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
 				if (courseSet.length > 1) {
-					var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
-					console.log(wasTaken);
-					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem',
-						courseText: "[" + courseSet.join(", ") + "] / ", userTook: wasTaken }));
+					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem', key: courseSet,
+						courseText: "[" + courseSet.join(", ") + "]", userTook: wasTaken }));
+					displayElems.push(_react2.default.createElement(
+						'div',
+						{ className: 'course_req_name_elem', key: courseSet + "div" },
+						'/'
+					));
 				} else {
-					var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
-					console.log(wasTaken);
-					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem',
-						courseText: courseSet[0] + " / ", userTook: wasTaken }));
+					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem', key: courseSet,
+						courseText: courseSet[0], userTook: wasTaken }));
+					displayElems.push(_react2.default.createElement(
+						'div',
+						{ className: 'course_req_name_elem', key: courseSet + "div" },
+						'/'
+					));
 				}
 			});
 
 			this.state.courseDisplay = displayElems;
 		}
-
-		// clicko(){
-		// 	this.getCourseDisplay();
-		// }
-
 	}, {
 		key: 'render',
 		value: function render() {
