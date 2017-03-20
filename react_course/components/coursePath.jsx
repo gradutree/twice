@@ -8,7 +8,8 @@ var node = function (data){
     this.postreq = data.postreq;
     this.source = null;
     this.target = null;
-    this.edgeNumbers = data.preq ? data.preq.length : data.postreq.length;
+    this.edgeNumbers = ((data.preq) ? data.preq.length : 0);
+    if (this.edgeNumbers == 0) this.edgeNumbers = ((data.postreq) ? data.postreq.length: 0);
     // this.rank = rank++;
 };
 
@@ -228,6 +229,7 @@ class CourseTree extends Component {
                             for (i = 0; i < data.edgeNumbers; i++) {
                                 if (findCourse(data.preq[i]) == true) return;
                                 else {
+                                    if (!data.preq[i].preq || !data.preq[i].postreq) continue;
                                     var newNode = new node(data.preq[i]);
                                     var newEdge = new edge(data, newNode);
                                     nodes.push(newNode);
