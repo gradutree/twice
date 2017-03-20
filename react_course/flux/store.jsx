@@ -31,7 +31,7 @@ var setVoteData = function (dir) {
         }
     } else if (dir == "0") {
         if (courseData.user_state == "1") courseData.liked--;
-        else if (courseData.user_state == "-1") courseData.disliked++;
+        else if (courseData.user_state == "-1") courseData.disliked--;
     } else {
         if (courseData.user_state == "0") courseData.disliked++;
         else if (courseData.user_state == "1") {

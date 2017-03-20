@@ -70,12 +70,10 @@ class Review extends Component {
         this.state = {
             display_up: 0,
             display_down: 0
-        };
+        }
     }
 
     render() {
-        this.state.display_down = this.props.review.down;
-        this.state.display_up = this.props.review.up;
         var delId = "delComment_"+this.props.review._id;
         var user_state = "box"+((this.props.review.user_state == "1") ? " vote_active" : "");
         var user_state2 = "box"+((this.props.review.user_state == "-1") ? " vote_active" : "");
@@ -90,13 +88,34 @@ class Review extends Component {
             </div>
             <div className="comment_message">{this.props.review.content}</div>
             <div className="flex-row">
-                <div className={user_state} onClick={() => { var dir = this.props.review.user_state == "1" ? "0" : "1"; Actions.voteReview(this.props.review._id, dir); this.props.review.user_state = dir; this.setState(this.state)}}>Helpful</div>
-                <h4>{this.state.display_up+(this.props.review.user_state == "1") ? parseInt(this.props.review.user_state) : 0}</h4>
-                <div className={user_state2} onClick={() => { var dir = this.props.review.user_state == "-1" ? "0" : "-1"; Actions.voteReview(this.props.review._id, dir); this.props.review.user_state = dir; this.setState(this.state)}}>Not helpful</div>
-                <h4>{this.state.display_down+(this.props.review.user_state == "-1") ? parseInt(this.props.review.user_state)*-1 : 0}</h4>
+                <div className={user_state} onClick={() => { var dir = ((this.props.review.user_state == "1") ? "0" : "1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Helpful</div>
+                <h4>{this.props.review.up}</h4>
+                <div className={user_state2} onClick={() => { var dir = ((this.props.review.user_state == "-1") ? "0" : "-1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Not helpful</div>
+                <h4>{this.props.review.down}</h4>
             </div>
         </div>;
     }
+
+    setVote(dir) {
+        if (dir == "1") {
+            if (this.props.review.user_state == "0") this.props.review.up++;
+            else if (this.props.review.user_state == "-1") {
+                this.props.review.up++;
+                this.props.review.down--;
+            }
+        } else if (dir == "0") {
+            if (this.props.review.user_state == "1") this.props.review.up--;
+            else if (this.props.review.user_state == "-1") this.props.review.down--;
+        } else {
+            if (this.props.review.user_state == "0") this.props.review.down++;
+            else if (this.props.review.user_state == "1") {
+                this.props.review.up--;
+                this.props.review.down++;
+            }
+        }
+        this.props.review.user_state = dir;
+    }
+
 }
 
 module.exports = ReviewArea;
