@@ -12,7 +12,7 @@ class ReviewArea extends Component {
             data: [],
             page: 0,
             hasReviewed: false,
-            user_state: null
+            user_state: "hidden"
         };
     }
 
@@ -35,6 +35,7 @@ class ReviewArea extends Component {
     }
 
     renderTextArea() {
+        if (this.state.user_state == "hidden") return;
         if (!this.state.user_state) return <h4 className="box">Sign in to review this course.</h4>;
         if (!this.state.hasReviewed)
             return (<div className="box review_area"> <label>Write a review</label>
@@ -112,14 +113,5 @@ class Review extends Component {
     }
 
 }
-
-var getCurrentUsername = function () {
-    var keyValuePairs = document.cookie.split('; ');
-    for(var i in keyValuePairs){
-        var keyValue = keyValuePairs[i].split('=');
-        if(keyValue[0]=== 'username') return keyValue[1];
-    }
-    return null;
-};
 
 module.exports = ReviewArea;
