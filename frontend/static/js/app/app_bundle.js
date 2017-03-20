@@ -25687,8 +25687,8 @@ function loadUserData(data) {
 }
 
 function loadUserProgram(data) {
-    console.log("TREE STORE loadUserProgram");
-    console.log(data);
+    // console.log("TREE STORE loadUserProgram");
+    // console.log(data);
     userProgram = data;
 }
 
@@ -26820,7 +26820,7 @@ var TreeActions = {
             url: "/api/user/" + getCurrentUsername() + "/info",
             success: function (result) {
                 this.cache[TreeConstants.LOAD_USERDATA] = result;
-                console.log("loadUser result: ");
+                // console.log("loadUser result: ");
                 console.log(result);
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
@@ -26835,8 +26835,8 @@ var TreeActions = {
     },
 
     getUserProgram: function getUserProgram(user) {
-        console.log("TREE ACTION getUserProgram");
-        console.log(user);
+        // console.log("TREE ACTION getUserProgram");
+        // console.log(user);
         if (user.program) {
             // console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
 
@@ -26846,8 +26846,8 @@ var TreeActions = {
             $.ajax({
                 url: "/api/programs/" + user.program.split(" ").join("") + "?post=" + programStr,
                 success: function success(result) {
-                    console.log("getUserProgram success");
-                    console.log(result);
+                    // console.log("getUserProgram success");
+                    // console.log(result);
                     AppDispatcher.handleAction({
                         actionType: "GET_USER_PROGRAM",
                         data: result
@@ -26948,7 +26948,8 @@ var TreeProgress = function (_Component) {
 
 			if (TreeStore.getUserProgramReq().length > 0) {
 				Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req }));
+					console.log("thisComp.props.taken = " + thisComp.props.taken);
+					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req, taken: thisComp.props.taken }));
 				})).then(function () {
 					programReqs.sort(function (a, b) {
 						return a - b;
@@ -27032,7 +27033,7 @@ var TreeProgressReq = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (TreeProgressReq.__proto__ || Object.getPrototypeOf(TreeProgressReq)).call(this));
 
 		_this.state = {
-			num: 2
+			percent: 10
 		};
 		return _this;
 	}
@@ -27042,6 +27043,15 @@ var TreeProgressReq = function (_Component) {
 		value: function clicked(e) {
 			console.log("treeProgressReq clicked");
 			// console.log(this.props.programReq);
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			console.log("TAKEN = ");
+			console.log(this.props.taken);
+			console.log(this.props.req);
+			// console.log(determinePercent(this.props.req.courses, this.props.taken));
+			this.setState({ percent: determinePercent(this.props.req.courses, this.props.taken) });
 		}
 	}, {
 		key: 'render',
@@ -27061,7 +27071,7 @@ var TreeProgressReq = function (_Component) {
 					_react2.default.createElement(
 						'div',
 						{ className: 'program_req_bar' },
-						_react2.default.createElement(_rcProgress.Line, { percent: '10', strokeWidth: this.state.num, strokeColor: '#cee1ff' })
+						_react2.default.createElement(_rcProgress.Line, { percent: this.state.percent, strokeWidth: '1', strokeColor: '#cee1ff' })
 					)
 				),
 				_react2.default.createElement('div', { className: 'program_reqs_courses' })
@@ -27071,6 +27081,29 @@ var TreeProgressReq = function (_Component) {
 
 	return TreeProgressReq;
 }(_react.Component);
+
+function determinePercent(reqs, taken) {
+	var counter = 0;
+
+	reqs.forEach(function (elem) {
+		// console.log(elem);
+		// setTimeout(function(){
+
+		//    }, 500);
+		var i = 0;
+		for (i = 0; i < elem.length; i++) {
+			console.log(elem[i]);
+			if (taken.indexOf(elem[i]) >= 0) {
+				counter++;
+				break;
+			}
+		}
+	});
+
+	console.log("END % " + counter);
+	console.log(reqs.length / counter);
+	return counter / reqs.length * 100;
+}
 
 exports.default = TreeProgressReq;
 
@@ -27119,7 +27152,8 @@ var Trees = function (_Component) {
 
 		_this.state = {
 			user: null,
-			program: null
+			program: null,
+			taken: null
 		};
 		return _this;
 	}
@@ -27131,23 +27165,24 @@ var Trees = function (_Component) {
 				'div',
 				null,
 				_react2.default.createElement('div', { id: 'cy' }),
-				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program })
+				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken })
 			);
 		}
 	}, {
 		key: '_onChange',
 		value: function _onChange() {
-			console.log("TREE _onChange");
+			// console.log("TREE _onChange");
 			this.setState(getUser());
-			console.log(this.state.user);
+			this.setState({ taken: TreeStore.getUserTaken() });
+			// console.log(this.state.user);
 			actions.getUserProgram(this.state.user);
 		}
 	}, {
 		key: '_onProgramChange',
 		value: function _onProgramChange() {
-			console.log("TREE _onProgramChange");
+			// console.log("TREE _onProgramChange");
 			this.setState({ program: TreeStore.getUserProgramReq() });
-			console.log(TreeStore.getUserProgramReq());
+			// console.log(TreeStore.getUserProgramReq());
 		}
 	}, {
 		key: 'componentWillUnmount',

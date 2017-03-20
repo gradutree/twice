@@ -30,7 +30,8 @@ class TreeProgress extends Component {
 
 		if(TreeStore.getUserProgramReq().length > 0){
 			Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-				programReqs.push(<TreeProgressReq key={index} reqNum={index+1} req={req} />);
+				console.log("thisComp.props.taken = " + thisComp.props.taken);
+				programReqs.push(<TreeProgressReq key={index} reqNum={index+1} req={req} taken={thisComp.props.taken} />);
 	        })).then(function(){
 	        	programReqs.sort(function(a,b){
 	        		return a - b;

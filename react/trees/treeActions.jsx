@@ -17,7 +17,7 @@ var TreeActions = {
             url: "/api/user/"+getCurrentUsername()+"/info",
             success: (function (result) {
                 this.cache[TreeConstants.LOAD_USERDATA] = result;
-                console.log("loadUser result: ");
+                // console.log("loadUser result: ");
                 console.log(result);
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
@@ -32,8 +32,8 @@ var TreeActions = {
     },
 
     getUserProgram: function(user) {
-        console.log("TREE ACTION getUserProgram");
-        console.log(user);
+        // console.log("TREE ACTION getUserProgram");
+        // console.log(user);
         if(user.program){
             // console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
 
@@ -44,8 +44,8 @@ var TreeActions = {
             $.ajax({
                 url: "/api/programs/"+user.program.split(" ").join("")+"?post="+programStr,
                 success: (function (result) {
-                    console.log("getUserProgram success");
-                    console.log(result);
+                    // console.log("getUserProgram success");
+                    // console.log(result);
                     AppDispatcher.handleAction({
                         actionType: "GET_USER_PROGRAM",
                         data: result

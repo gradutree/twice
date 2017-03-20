@@ -11,8 +11,8 @@ function loadUserData(data) {
 }
 
 function loadUserProgram(data) {
-    console.log("TREE STORE loadUserProgram");
-    console.log(data);
+    // console.log("TREE STORE loadUserProgram");
+    // console.log(data);
     userProgram = data;
 }
 

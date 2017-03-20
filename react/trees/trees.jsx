@@ -13,30 +13,31 @@ class Trees extends Component {
 		this.state = {
 			user: null,
 			program: null,
+			taken: null
 		};
 	}
 
   	render() {
 	    return (
-
 	        <div>
 	          <div id="cy"></div>
-	          <TreeProgress programReq={this.state.program}/>
+	          <TreeProgress programReq={this.state.program} taken={this.state.taken} />
 	        </div>
 	    );
   	}
 
   	_onChange() {
-  		console.log("TREE _onChange");
+  		// console.log("TREE _onChange");
         this.setState(getUser());
-        console.log(this.state.user);
+        this.setState({taken: TreeStore.getUserTaken()});
+        // console.log(this.state.user);
         actions.getUserProgram(this.state.user);
     }
 
     _onProgramChange() {
-    	console.log("TREE _onProgramChange");
+    	// console.log("TREE _onProgramChange");
     	this.setState({program: TreeStore.getUserProgramReq()});
-    	console.log(TreeStore.getUserProgramReq());
+    	// console.log(TreeStore.getUserProgramReq());
     }
 
     componentWillUnmount() {
