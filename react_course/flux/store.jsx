@@ -85,6 +85,7 @@ Dispatcher.register(function(payload) {
         case Constants.VOTE:
             setVoteData(action.data);
             break;
+
         default:
             return true;
     }

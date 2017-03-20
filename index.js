@@ -290,19 +290,19 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
             if (err) console.log(err);
             if (!review) return res.status(404).end("Cannot find review");
             switch(req.params.direction) {
-                case ("up"):
+                case ("1"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
                         res.json({});
                     });
                     break;
-                case ("down"):
+                case ("-1"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
 
                         res.json({});
                     });
                     break;
 
-                case ("neutral"):
+                case ("0"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$pop: {down: req.session.user.username, up: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });

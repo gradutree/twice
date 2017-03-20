@@ -55,6 +55,16 @@ var Actions = {
                 console.log(result);
             }
         })
+    },
+
+    voteReview: function(id, dir) {
+        $.ajax({
+            url: "/api/review/"+id+"/vote/"+dir,
+            method: "POST",
+            success: function (result) {
+                console.log(result);
+            }
+        })
     }
 
 

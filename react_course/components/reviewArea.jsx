@@ -67,10 +67,18 @@ class Review extends Component {
     constructor() {
         super();
 
+        this.state = {
+            display_up: 0,
+            display_down: 0
+        };
     }
 
     render() {
+        this.state.display_down = this.props.review.down;
+        this.state.display_up = this.props.review.up;
         var delId = "delComment_"+this.props.review._id;
+        var user_state = "box"+((this.props.review.user_state == "1") ? " vote_active" : "");
+        var user_state2 = "box"+((this.props.review.user_state == "-1") ? " vote_active" : "");
         return <div className="comment flex_col">
             <div className="flex-row flex_spaceb">
                 <div className="comment_author flex-row flex_start">
@@ -81,6 +89,12 @@ class Review extends Component {
                 <div id={delId} className="del_btn">Delete</div>
             </div>
             <div className="comment_message">{this.props.review.content}</div>
+            <div className="flex-row">
+                <div className={user_state} onClick={() => { var dir = this.props.review.user_state == "1" ? "0" : "1"; Actions.voteReview(this.props.review._id, dir); this.props.review.user_state = dir; this.setState(this.state)}}>Helpful</div>
+                <h4>{this.state.display_up+(this.props.review.user_state == "1") ? parseInt(this.props.review.user_state) : 0}</h4>
+                <div className={user_state2} onClick={() => { var dir = this.props.review.user_state == "-1" ? "0" : "-1"; Actions.voteReview(this.props.review._id, dir); this.props.review.user_state = dir; this.setState(this.state)}}>Not helpful</div>
+                <h4>{this.state.display_down+(this.props.review.user_state == "-1") ? parseInt(this.props.review.user_state)*-1 : 0}</h4>
+            </div>
         </div>;
     }
 }

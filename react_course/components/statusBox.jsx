@@ -25,7 +25,7 @@ class StatusBox extends Component {
         // load user info and keep it in the store
         this.OnChange = this._onChange.bind(this);
         Store.addChangeListener(this.OnChange);
-        Actions.loadCourseInfo(this.props.code);
+
     }
 
     componentWillUnmount() {
