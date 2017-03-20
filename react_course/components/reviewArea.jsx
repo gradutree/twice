@@ -10,7 +10,9 @@ class ReviewArea extends Component {
         super();
         this.state = {
             data: [],
-            page: 0
+            page: 0,
+            hasReviewed: false,
+            user_state: null
         };
     }
 
@@ -32,19 +34,23 @@ class ReviewArea extends Component {
         this.setState(Store.getReviews());
     }
 
+    renderTextArea() {
+        if (!this.state.user_state) return <h4 className="box">Sign in to review this course.</h4>;
+        if (!this.state.hasReviewed)
+            return (<div className="box review_area"> <label>Write a review</label>
+                        <textarea id="content_input" className="comment_area"></textarea>
+                <div className="submit_area">
+                    <input type="submit" className="btn" />
+                </div>
+            </div>);
+        else return <h4 className="box">You have already reviewed this course.</h4>;
+    }
+
     render() {
         var hidden = "box"+((this.state.more) ? "": " hidden");
         return <div>
             <form id="review_form" onSubmit={(e) => { e.preventDefault(); Actions.submitReview(this.props.code, document.getElementById("content_input").value) }}>
-                <div className="box review_area">
-                    <label>Write a review</label>
-
-                    <textarea id="content_input" className="comment_area"></textarea>
-
-                    <div className="submit_area">
-                        <input type="submit" className="btn" />
-                    </div>
-                </div>
+                    {this.renderTextArea()}
             </form>
             <div id="review_container">
                 {this.state.data.map(function (item) { return <Review key={item._id} review={item} />; })}
@@ -106,5 +112,14 @@ class Review extends Component {
     }
 
 }
+
+var getCurrentUsername = function () {
+    var keyValuePairs = document.cookie.split('; ');
+    for(var i in keyValuePairs){
+        var keyValue = keyValuePairs[i].split('=');
+        if(keyValue[0]=== 'username') return keyValue[1];
+    }
+    return null;
+};
 
 module.exports = ReviewArea;

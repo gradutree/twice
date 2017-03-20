@@ -11,9 +11,14 @@ var loadCourse = function (data) {
 };
 
 var loadReviews = function (data) {
-    console.log(data);
+    console.log(courseData);
     reviews = data;
+    reviews.hasReviewed = courseData.hasReviewed;
+    reviews.user_state = courseData.user_state;
+};
 
+var setReviewed = function (hasReviewed) {
+    courseData.hasReviewed = hasReviewed;
 };
 
 var appendReviews = function (data) {
@@ -85,7 +90,9 @@ Dispatcher.register(function(payload) {
         case Constants.VOTE:
             setVoteData(action.data);
             break;
-
+        case Constants.SET_REVIEWED:
+            setReviewed(action.data);
+            break;
         default:
             return true;
     }

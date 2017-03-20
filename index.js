@@ -118,14 +118,25 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                if (req.session.user) {
-                    course.user_state = course.liked.indexOf(req.session.user.username) != -1 ? "1" : "0";
-                    if (course.user_state == "0") course.user_state = course.disliked.indexOf(req.session.user.username) != -1 ? "-1" : "0";
-                }
-                course.liked = course.liked.length;
-                course.disliked = course.disliked.length;
+                return new Promise(function (resolve, reject) {
+                    if (req.session.user) {
+                        course.user_state = course.liked.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                        if (course.user_state == "0") course.user_state = course.disliked.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                    }
+                    course.liked = course.liked.length;
+                    course.disliked = course.disliked.length;
 
-                result.push(course);
+                    if (req.session.user) {
+                        db.collection("reviews").findOne({courseCode: req.query.code.toUpperCase(), author: req.session.user.username}, function (err, data) {
+                            if (data) course.hasReviewed = true;
+                            result.push(course);
+                            resolve();
+                        });
+                    } else {
+                        result.push(course);
+                        resolve();
+                    }
+                })
             })).then(function(){
                 res.json(result);
             });

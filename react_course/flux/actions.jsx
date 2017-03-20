@@ -38,6 +38,10 @@ var Actions = {
             processData: false,
             success: function (result) {
                 Actions.loadReviews(code, 0);
+                Dispatcher.handleAction({
+                    actionType: Constants.SET_REVIEWED,
+                    data: true
+                });
                 document.getElementById("review_form").reset();
             }
         })
