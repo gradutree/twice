@@ -11,12 +11,12 @@ class TreeProgress extends Component {
 	// 	};
 	// }
 
-	// clicked(e){
-	// 	window.location.href = "/course/"+this.props.course.code;
-	// }
+	clicked(e){
+		console.log("treeProgress");
+	}
 	
 	render() {
-		return 	<div>
+		return 	<div onClick={this.clicked.bind(this)}>
 					<h3 className="search_result_name">"PROGRESS BAR"</h3>
 				</div>;
 	}

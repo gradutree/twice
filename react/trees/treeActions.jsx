@@ -17,6 +17,8 @@ var TreeActions = {
             url: "/api/user/"+getCurrentUsername()+"/info",
             success: (function (result) {
                 this.cache[TreeConstants.LOAD_USERDATA] = result;
+                console.log("loadUser result: ");
+                console.log(result);
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
                     data: result
@@ -27,6 +29,28 @@ var TreeActions = {
             }
         });
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
+    },
+
+    getUserProgram: function(user) {
+        console.log("TREE ACTION getUserProgram");
+        console.log(user);
+        if(user.program){
+            console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
+            $.ajax({
+                url: "/api/programs/"+user.program.split(" ").join("")+"?post="+user.spec.toLowerCase(),
+                success: (function (result) {
+                    console.log("getUserProgram success");
+                    console.log(result);
+                    AppDispatcher.handleAction({
+                        actionType: "GET_USER_PROGRAM",
+                        data: result
+                    });
+                }),
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
     }
 
     // getSearchResults: function(search, callback) {

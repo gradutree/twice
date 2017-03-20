@@ -3,12 +3,16 @@ import { render } from 'react-dom';
 
 import TreeProgress from "./treeProgress.jsx";
 
+var AppDispatcher = require('../dispatcher.jsx');
+var TreeStore = require("./treeStore.jsx");
+var actions = require("./treeActions.jsx");
+
 class Trees extends Component {
 	constructor(){
 		super();
 		this.state = {
+			user: null,
 			program: null,
-			someText: "okok"
 		};
 	}
 
@@ -21,12 +25,40 @@ class Trees extends Component {
 	            <label for="qty"><abbr title="Quantity">Credit</abbr></label>
 	            <input id="qty" value="0/20"></input>
 	          </div>
-	          <TreeProgress />
+	          <TreeProgress programReq={this.state.program}/>
 	        </div>
 	    );
-  }
+  	}
+
+  	_onChange() {
+  		console.log("TREE _onChange");
+        this.setState(getUser());
+        console.log(this.state.user);
+        actions.getUserProgram(this.state.user);
+    }
+
+    _onProgramChange() {
+    	console.log("TREE _onProgramChange");
+    	this.setState({program: TreeStore.getUserProgramReq()});
+    	console.log(TreeStore.getUserProgramReq());
+    }
+
+    componentWillUnmount() {
+        TreeStore.removeChangeListener(this.treeOnChange);
+        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+    }
 
   componentDidMount() {
+  	this.treeOnChange = this._onChange.bind(this);
+  	this.treeOnProgramChange = this._onProgramChange.bind(this);
+
+    TreeStore.addChangeListener(this.treeOnChange);
+    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+
+  	actions.loadUserData(null);
+  	// actions.getUserProgram();
+
+  	this.setState({user: getUser()});
     $.ajax({
       url: "/api/path/CSCA08H3/post",
       dataType: 'json',
@@ -159,7 +191,7 @@ class Trees extends Component {
 					        {group: "nodes", data: {id: id, title: title}, position:{x:x , y:y}}
 					    ])
 				//cy.$('#'+id).lock();
-				console.log(levelCount);
+				// console.log(levelCount);
 	    	}
 
 	    	
@@ -190,7 +222,7 @@ class Trees extends Component {
 	            newCredit-=0.5;
 	          }
 	          else {
-	          	console.log("tap");
+	          	// console.log("tap");
 	            newCredit+=0.5;
 	            edgeMarker(tapid);
 	            findconnected(tapid);
@@ -285,5 +317,10 @@ class Trees extends Component {
 
 }
 
+function getUser() {
+    return {
+        user: TreeStore.getUserData()
+    }
+}
 
 export default Trees;

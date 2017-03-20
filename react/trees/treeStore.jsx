@@ -4,15 +4,17 @@ var merge = require('merge');
 var TreeConstants = require('./treeConstants.jsx');
 
 var userData = {};
-// var searchResults = [];
+var userProgram = [];
 
 function loadUserData(data) {
     userData = data;
 }
 
-// function loadSearchResults(data) {
-//     searchResults = data;
-// }
+function loadUserProgram(data) {
+    console.log("TREE STORE loadUserProgram");
+    console.log(data);
+    userProgram = data;
+}
 
 var TreeStore = merge(EventEmitter.prototype, {
 
@@ -20,8 +22,8 @@ var TreeStore = merge(EventEmitter.prototype, {
         return userData;
     },
 
-    getUserProgram: function() {
-        return userData.program;
+    getUserProgramReq: function() {
+        return userProgram;
     },
 
     getUserSpec: function() {
@@ -40,12 +42,24 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('change');
     },
 
+    emitProgramChange: function() {
+        this.emit('programChange');
+    },
+
     addChangeListener: function(callback) {
         this.on('change', callback);
     },
 
     removeChangeListener: function(callback) {
         this.removeListener('change', callback);
+    },
+
+    addProgramChangeListener: function(callback) {
+        this.on('programChange', callback);
+    },
+
+    removeProgramChangeListener: function(callback) {
+        this.removeListener('programChange', callback);
     }
 
 });
@@ -58,18 +72,20 @@ AppDispatcher.register(function(payload) {
         case TreeConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
+            TreeStore.emitChange();
             break;
 
-        // case 'SEARCH_RESULTS':
-        //     loadSearchResults(action.data);
-        //     break;
+        case 'GET_USER_PROGRAM':
+            loadUserProgram(action.data);
+            TreeStore.emitProgramChange();
+            break;
 
         default:
             return true;
     }
 
-    // If action was acted upon, emit change event
-    TreeStore.emitChange();
+    // // If action was acted upon, emit change event
+    // TreeStore.emitChange();
 
     return true;
 
