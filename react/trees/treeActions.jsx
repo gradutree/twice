@@ -35,10 +35,11 @@ var TreeActions = {
         console.log("TREE ACTION getUserProgram");
         console.log(user);
         if(user.program){
-            console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
+            // console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
 
             var userSpec = user.spec.toLowerCase();
-            var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec : "specialist&spec="+user.spec.split(" ").join("");
+            var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec : 
+                "specialist&spec="+user.spec.split(" ").join("");
 
             $.ajax({
                 url: "/api/programs/"+user.program.split(" ").join("")+"?post="+programStr,

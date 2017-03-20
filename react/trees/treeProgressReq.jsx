@@ -4,13 +4,12 @@ import { Line } from 'rc-progress';
 
 
 class TreeProgressReq extends Component {
-	// constructor(){
-	// 	super();
-	// 	this.state = {
-	// 		preq: "N/A", 
-	// 		currStyle: null
-	// 	};
-	// }
+	constructor(){
+		super();
+		this.state = {
+			num: 2
+		};
+	}
 
 	clicked(e){
 		console.log("treeProgressReq clicked");
@@ -18,9 +17,16 @@ class TreeProgressReq extends Component {
 	}
 	
 	render() {
-		return 	<div onClick={this.clicked.bind(this)}>
-					<h3 className="search_result_name">"PROGRESS BAR"</h3>
-					<Line percent="10" strokeWidth="4" strokeColor="#D3D3D3" />
+		return 	<div className="program_req_div" onClick={this.clicked.bind(this)}>
+					<div className="program_req_visual">
+						<h3 className="program_req_name">Requirement {this.props.reqNum}</h3>
+						<div className="program_req_bar">
+							<Line percent="10" strokeWidth={this.state.num} strokeColor="#cee1ff" />
+						</div>
+					</div>
+					<div className="program_reqs_courses">
+
+					</div>
 				</div>;
 	}
 }

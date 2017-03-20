@@ -708,3 +708,48 @@ footer {
 	width: 65%;
 	margin: auto;
 }
+
+.program_req_container {
+	display: flex;
+	flex-direction: column;
+	/*align-self: center;*/
+}
+
+.program_progress {
+	display: flex;
+	flex-direction: column;
+	margin: 50px 100px 50px 100px;
+	border: 1px outset #e8ebef;
+	padding: 10px;
+	max-width: 1000px;
+	width: 100%;
+	align-self:center;
+}
+
+.program_progress_set {
+	margin-top: 10px;
+}
+
+.program_req_div {
+	display: flex;
+	flex-direction: column;
+	/*margin: 2px;*/
+}
+
+.program_req_visual {
+	display: flex;
+	flex-direction: row;
+	margin: 2px;
+}
+
+.program_req_name {
+	/*flex-grow: 1;*/
+	width: 120px;
+	font-size: 15px;
+}
+
+.program_req_bar {
+	flex-grow: 1;
+	height: 30px;
+	margin-left: 20px;
+}

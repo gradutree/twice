@@ -21,10 +21,6 @@ class Trees extends Component {
 
 	        <div>
 	          <div id="cy"></div>
-	          <div id="box">
-	            <label for="qty"><abbr title="Quantity">Credit</abbr></label>
-	            <input id="qty" value="0/20"></input>
-	          </div>
 	          <TreeProgress programReq={this.state.program}/>
 	        </div>
 	    );

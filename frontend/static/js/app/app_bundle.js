@@ -25668,11 +25668,112 @@ module.exports = keyMirror({
 });
 
 /***/ }),
-/* 224 */,
+/* 224 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var AppDispatcher = __webpack_require__(37);
+var EventEmitter = __webpack_require__(64).EventEmitter;
+var merge = __webpack_require__(70);
+var TreeConstants = __webpack_require__(223);
+
+var userData = {};
+var userProgram = [];
+
+function loadUserData(data) {
+    userData = data;
+}
+
+function loadUserProgram(data) {
+    console.log("TREE STORE loadUserProgram");
+    console.log(data);
+    userProgram = data;
+}
+
+var TreeStore = merge(EventEmitter.prototype, {
+
+    getUserData: function getUserData() {
+        return userData;
+    },
+
+    getUserProgramReq: function getUserProgramReq() {
+        return userProgram;
+    },
+
+    getUserSpec: function getUserSpec() {
+        return userData.spec;
+    },
+
+    getUserTaken: function getUserTaken() {
+        return userData.taken;
+    },
+
+    // getSearchResults: function() {
+    //     return searchResults;
+    // },
+
+    emitChange: function emitChange() {
+        this.emit('change');
+    },
+
+    emitProgramChange: function emitProgramChange() {
+        this.emit('programChange');
+    },
+
+    addChangeListener: function addChangeListener(callback) {
+        this.on('change', callback);
+    },
+
+    removeChangeListener: function removeChangeListener(callback) {
+        this.removeListener('change', callback);
+    },
+
+    addProgramChangeListener: function addProgramChangeListener(callback) {
+        this.on('programChange', callback);
+    },
+
+    removeProgramChangeListener: function removeProgramChangeListener(callback) {
+        this.removeListener('programChange', callback);
+    }
+
+});
+
+// Register dispatcher callback
+AppDispatcher.register(function (payload) {
+    var action = payload.action;
+    // Define what to do for certain actions
+    switch (action.actionType) {
+        case TreeConstants.LOAD_USERDATA:
+            // Call internal method based upon dispatched action
+            loadUserData(action.data);
+            TreeStore.emitChange();
+            break;
+
+        case 'GET_USER_PROGRAM':
+            loadUserProgram(action.data);
+            TreeStore.emitProgramChange();
+            break;
+
+        default:
+            return true;
+    }
+
+    // // If action was acted upon, emit change event
+    // TreeStore.emitChange();
+
+    return true;
+});
+
+module.exports = TreeStore;
+
+/***/ }),
 /* 225 */,
 /* 226 */,
 /* 227 */,
-/* 228 */
+/* 228 */,
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25718,7 +25819,7 @@ exports["default"] = {
 module.exports = exports['default'];
 
 /***/ }),
-/* 229 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25738,7 +25839,7 @@ var _reactDom = __webpack_require__(16);
 
 var _reactRouterDom = __webpack_require__(38);
 
-var _dashboard = __webpack_require__(236);
+var _dashboard = __webpack_require__(237);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
@@ -25746,7 +25847,7 @@ var _trees = __webpack_require__(245);
 
 var _trees2 = _interopRequireDefault(_trees);
 
-var _search = __webpack_require__(237);
+var _search = __webpack_require__(238);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -25904,11 +26005,11 @@ var Nav = function Nav() {
 exports.default = Nav;
 
 /***/ }),
-/* 230 */,
 /* 231 */,
 /* 232 */,
 /* 233 */,
-/* 234 */
+/* 234 */,
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25959,7 +26060,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = DashActions;
 
 /***/ }),
-/* 235 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26027,7 +26128,7 @@ AppDispatcher.register(function (payload) {
 module.exports = DashStore;
 
 /***/ }),
-/* 236 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26053,8 +26154,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DashStore = __webpack_require__(235);
-var actions = __webpack_require__(234);
+var DashStore = __webpack_require__(236);
+var actions = __webpack_require__(235);
 
 var Dashboard = function (_Component) {
     _inherits(Dashboard, _Component);
@@ -26251,7 +26352,7 @@ var Spec = function (_Component3) {
 exports.default = Dashboard;
 
 /***/ }),
-/* 237 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26269,7 +26370,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _searchResult = __webpack_require__(239);
+var _searchResult = __webpack_require__(240);
 
 var _searchResult2 = _interopRequireDefault(_searchResult);
 
@@ -26282,8 +26383,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AppDispatcher = __webpack_require__(37);
-var SearchStore = __webpack_require__(240);
-var actions = __webpack_require__(238);
+var SearchStore = __webpack_require__(241);
+var actions = __webpack_require__(239);
 
 var Search = function (_Component) {
 	_inherits(Search, _Component);
@@ -26471,7 +26572,7 @@ function getUser() {
 exports.default = Search;
 
 /***/ }),
-/* 238 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26532,7 +26633,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = SearchActions;
 
 /***/ }),
-/* 239 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26609,7 +26710,7 @@ var SearchResult = function (_Component) {
 exports.default = SearchResult;
 
 /***/ }),
-/* 240 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26694,7 +26795,7 @@ AppDispatcher.register(function (payload) {
 module.exports = SearchStore;
 
 /***/ }),
-/* 241 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26737,7 +26838,7 @@ var TreeActions = {
         console.log("TREE ACTION getUserProgram");
         console.log(user);
         if (user.program) {
-            console.log("REQUEST=" + user.program.split(" ").join("") + "?post=" + user.spec.toLowerCase());
+            // console.log("REQUEST=" + user.program.split(" ").join("")+"?post="+user.spec.toLowerCase());
 
             var userSpec = user.spec.toLowerCase();
             var programStr = userSpec == 'major' || userSpec == 'minor' ? userSpec : "specialist&spec=" + user.spec.split(" ").join("");
@@ -26783,7 +26884,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = TreeActions;
 
 /***/ }),
-/* 242 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26801,7 +26902,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _treeProgressReq = __webpack_require__(243);
+var _treeProgressReq = __webpack_require__(244);
 
 var _treeProgressReq2 = _interopRequireDefault(_treeProgressReq);
 
@@ -26814,42 +26915,76 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 // import { Line } from 'rc-progress';
 
+var TreeStore = __webpack_require__(224);
+
 var TreeProgress = function (_Component) {
 	_inherits(TreeProgress, _Component);
 
 	function TreeProgress() {
 		_classCallCheck(this, TreeProgress);
 
-		return _possibleConstructorReturn(this, (TreeProgress.__proto__ || Object.getPrototypeOf(TreeProgress)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (TreeProgress.__proto__ || Object.getPrototypeOf(TreeProgress)).call(this));
+
+		_this.state = {
+			reqs: []
+		};
+		return _this;
 	}
 
 	_createClass(TreeProgress, [{
 		key: 'clicked',
-
-		// constructor(){
-		// 	super();
-		// 	this.state = {
-		// 		preq: "N/A", 
-		// 		currStyle: null
-		// 	};
-		// }
-
 		value: function clicked(e) {
 			console.log("treeProgress clicked");
 			console.log(this.props.programReq);
 		}
 	}, {
+		key: 'updateProgramReq',
+		value: function updateProgramReq() {
+			// this.setState({reqs: TreeStore.getUserProgramReq()});
+			// console.log("In updateProgramReq ");
+			// console.log(TreeStore.getUserProgramReq());
+			var thisComp = this;
+			var programReqs = [];
+
+			if (TreeStore.getUserProgramReq().length > 0) {
+				Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
+					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req }));
+				})).then(function () {
+					programReqs.sort(function (a, b) {
+						return a - b;
+					});
+					thisComp.setState({ reqs: programReqs });
+				});
+			}
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this.treeOnProgramChange = this.updateProgramReq.bind(this);
+			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			// this.updateProgramReq();
+
 			return _react2.default.createElement(
 				'div',
-				{ onClick: this.clicked.bind(this) },
+				{ className: 'program_req_container' },
 				_react2.default.createElement(
-					'h3',
-					{ className: 'search_result_name' },
-					'"PROGRESS BAR"'
-				),
-				_react2.default.createElement(_treeProgressReq2.default, null)
+					'div',
+					{ className: 'program_progress', onClick: this.clicked.bind(this) },
+					_react2.default.createElement(
+						'h3',
+						{ className: 'search_result_name' },
+						'Your Progress'
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'program_progress_set' },
+						this.state.reqs
+					)
+				)
 			);
 		}
 	}]);
@@ -26860,7 +26995,7 @@ var TreeProgress = function (_Component) {
 exports.default = TreeProgress;
 
 /***/ }),
-/* 243 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26894,20 +27029,16 @@ var TreeProgressReq = function (_Component) {
 	function TreeProgressReq() {
 		_classCallCheck(this, TreeProgressReq);
 
-		return _possibleConstructorReturn(this, (TreeProgressReq.__proto__ || Object.getPrototypeOf(TreeProgressReq)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (TreeProgressReq.__proto__ || Object.getPrototypeOf(TreeProgressReq)).call(this));
+
+		_this.state = {
+			num: 2
+		};
+		return _this;
 	}
 
 	_createClass(TreeProgressReq, [{
 		key: 'clicked',
-
-		// constructor(){
-		// 	super();
-		// 	this.state = {
-		// 		preq: "N/A", 
-		// 		currStyle: null
-		// 	};
-		// }
-
 		value: function clicked(e) {
 			console.log("treeProgressReq clicked");
 			// console.log(this.props.programReq);
@@ -26917,13 +27048,23 @@ var TreeProgressReq = function (_Component) {
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
-				{ onClick: this.clicked.bind(this) },
+				{ className: 'program_req_div', onClick: this.clicked.bind(this) },
 				_react2.default.createElement(
-					'h3',
-					{ className: 'search_result_name' },
-					'"PROGRESS BAR"'
+					'div',
+					{ className: 'program_req_visual' },
+					_react2.default.createElement(
+						'h3',
+						{ className: 'program_req_name' },
+						'Requirement ',
+						this.props.reqNum
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'program_req_bar' },
+						_react2.default.createElement(_rcProgress.Line, { percent: '10', strokeWidth: this.state.num, strokeColor: '#cee1ff' })
+					)
 				),
-				_react2.default.createElement(_rcProgress.Line, { percent: '10', strokeWidth: '4', strokeColor: '#D3D3D3' })
+				_react2.default.createElement('div', { className: 'program_reqs_courses' })
 			);
 		}
 	}]);
@@ -26932,107 +27073,6 @@ var TreeProgressReq = function (_Component) {
 }(_react.Component);
 
 exports.default = TreeProgressReq;
-
-/***/ }),
-/* 244 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var AppDispatcher = __webpack_require__(37);
-var EventEmitter = __webpack_require__(64).EventEmitter;
-var merge = __webpack_require__(70);
-var TreeConstants = __webpack_require__(223);
-
-var userData = {};
-var userProgram = [];
-
-function loadUserData(data) {
-    userData = data;
-}
-
-function loadUserProgram(data) {
-    console.log("TREE STORE loadUserProgram");
-    console.log(data);
-    userProgram = data;
-}
-
-var TreeStore = merge(EventEmitter.prototype, {
-
-    getUserData: function getUserData() {
-        return userData;
-    },
-
-    getUserProgramReq: function getUserProgramReq() {
-        return userProgram;
-    },
-
-    getUserSpec: function getUserSpec() {
-        return userData.spec;
-    },
-
-    getUserTaken: function getUserTaken() {
-        return userData.taken;
-    },
-
-    // getSearchResults: function() {
-    //     return searchResults;
-    // },
-
-    emitChange: function emitChange() {
-        this.emit('change');
-    },
-
-    emitProgramChange: function emitProgramChange() {
-        this.emit('programChange');
-    },
-
-    addChangeListener: function addChangeListener(callback) {
-        this.on('change', callback);
-    },
-
-    removeChangeListener: function removeChangeListener(callback) {
-        this.removeListener('change', callback);
-    },
-
-    addProgramChangeListener: function addProgramChangeListener(callback) {
-        this.on('programChange', callback);
-    },
-
-    removeProgramChangeListener: function removeProgramChangeListener(callback) {
-        this.removeListener('programChange', callback);
-    }
-
-});
-
-// Register dispatcher callback
-AppDispatcher.register(function (payload) {
-    var action = payload.action;
-    // Define what to do for certain actions
-    switch (action.actionType) {
-        case TreeConstants.LOAD_USERDATA:
-            // Call internal method based upon dispatched action
-            loadUserData(action.data);
-            TreeStore.emitChange();
-            break;
-
-        case 'GET_USER_PROGRAM':
-            loadUserProgram(action.data);
-            TreeStore.emitProgramChange();
-            break;
-
-        default:
-            return true;
-    }
-
-    // // If action was acted upon, emit change event
-    // TreeStore.emitChange();
-
-    return true;
-});
-
-module.exports = TreeStore;
 
 /***/ }),
 /* 245 */
@@ -27053,7 +27093,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _treeProgress = __webpack_require__(242);
+var _treeProgress = __webpack_require__(243);
 
 var _treeProgress2 = _interopRequireDefault(_treeProgress);
 
@@ -27066,8 +27106,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AppDispatcher = __webpack_require__(37);
-var TreeStore = __webpack_require__(244);
-var actions = __webpack_require__(241);
+var TreeStore = __webpack_require__(224);
+var actions = __webpack_require__(242);
 
 var Trees = function (_Component) {
 	_inherits(Trees, _Component);
@@ -27091,20 +27131,6 @@ var Trees = function (_Component) {
 				'div',
 				null,
 				_react2.default.createElement('div', { id: 'cy' }),
-				_react2.default.createElement(
-					'div',
-					{ id: 'box' },
-					_react2.default.createElement(
-						'label',
-						{ 'for': 'qty' },
-						_react2.default.createElement(
-							'abbr',
-							{ title: 'Quantity' },
-							'Credit'
-						)
-					),
-					_react2.default.createElement('input', { id: 'qty', value: '0/20' })
-				),
 				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program })
 			);
 		}
@@ -27393,7 +27419,7 @@ var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mixin = __webpack_require__(228);
+var _mixin = __webpack_require__(229);
 
 var _mixin2 = _interopRequireDefault(_mixin);
 
@@ -27536,7 +27562,7 @@ var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mixin = __webpack_require__(228);
+var _mixin = __webpack_require__(229);
 
 var _mixin2 = _interopRequireDefault(_mixin);
 
@@ -27649,7 +27675,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _app = __webpack_require__(229);
+var _app = __webpack_require__(230);
 
 var _app2 = _interopRequireDefault(_app);
 
