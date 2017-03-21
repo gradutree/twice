@@ -20,8 +20,10 @@ class Trees extends Component {
   	render() {
 	    return (
 	        <div>
-	          <div id="cy"></div>
-	          <TreeProgress programReq={this.state.program} taken={this.state.taken} />
+	        	<div className="tree_graph">
+	          		<div id="cy"></div>
+	          	</div>
+	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} />
 	        </div>
 	    );
   	}

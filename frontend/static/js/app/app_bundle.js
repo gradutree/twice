@@ -27381,7 +27381,11 @@ var Trees = function (_Component) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement('div', { id: 'cy' }),
+				_react2.default.createElement(
+					'div',
+					{ className: 'tree_graph' },
+					_react2.default.createElement('div', { id: 'cy' })
+				),
 				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken })
 			);
 		}

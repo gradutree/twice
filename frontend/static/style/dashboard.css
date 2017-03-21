@@ -718,10 +718,10 @@ footer {
 .program_progress {
 	display: flex;
 	flex-direction: column;
-	margin: 50px 100px 50px 100px;
+	margin: 25px 50px 25px 50px;
 	border: 1px outset #e8ebef;
-	padding: 10px;
-	max-width: 1000px;
+	padding: 30px;
+	max-width: 900px;
 	width: 100%;
 	align-self:center;
 }
@@ -765,4 +765,8 @@ footer {
 
 .course_req_name_elem {
 	margin-right: 7px;
+}
+
+.tree_graph {
+	padding: 50px;
 }
