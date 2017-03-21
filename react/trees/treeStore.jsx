@@ -5,6 +5,7 @@ var TreeConstants = require('./treeConstants.jsx');
 
 var userData = {};
 var userProgram = [];
+var nodeClicked = "";
 
 function loadUserData(data) {
     userData = data;
@@ -16,6 +17,10 @@ function loadUserProgram(data) {
     userProgram = data;
 }
 
+function loadNodeClicked(courseCode){
+    nodeClicked = courseCode;
+}
+
 
 var TreeStore = merge(EventEmitter.prototype, {
 
@@ -25,6 +30,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     getUserProgramReq: function() {
         return userProgram;
+    },
+
+    getNodeClicked: function() {
+        return nodeClicked;
     },
 
     getUserSpec: function() {
@@ -47,6 +56,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('programChange');
     },
 
+    emitNodeClicked: function() {
+        this.emit('nodeClicked');
+    },
+
     addChangeListener: function(callback) {
         this.on('change', callback);
     },
@@ -61,6 +74,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeProgramChangeListener: function(callback) {
         this.removeListener('programChange', callback);
+    },
+
+    addNodeClickedListener: function(callback) {
+        this.on('nodeClicked', callback);
+    },
+
+    removeNodeClickedListener: function(callback) {
+        this.removeListener('nodeClicked', callback);
     },
 
 });
@@ -79,6 +100,11 @@ AppDispatcher.register(function(payload) {
         case 'GET_USER_PROGRAM':
             loadUserProgram(action.data);
             TreeStore.emitProgramChange();
+            break;
+
+        case 'NODE_CLICKED':
+            loadNodeClicked(action.data);
+            TreeStore.emitNodeClicked();
             break;
 
         default:

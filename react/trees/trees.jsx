@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
+import SkyLight from 'react-skylight';
 import TreeProgress from "./treeProgress.jsx";
 
 var AppDispatcher = require('../dispatcher.jsx');
 var TreeStore = require("./treeStore.jsx");
+var CourseInfo = require("./courseInfo.jsx");
 var actions = require("./treeActions.jsx");
 
 class Trees extends Component {
@@ -13,7 +15,8 @@ class Trees extends Component {
 		this.state = {
 			user: null,
 			program: null,
-			taken: null
+			taken: null,
+			nodeClicked: ""
 		};
 	}
 
@@ -24,8 +27,15 @@ class Trees extends Component {
 	          		<div id="cy"></div>
 	          	</div>
 	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} />
+	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" title={this.state.nodeClicked}>
+		        	Something
+		        </SkyLight>
 	        </div>
 	    );
+  	}
+
+  	_beforePopupOpen(){
+  		// this.state.
   	}
 
   	_onChange() {
@@ -38,22 +48,33 @@ class Trees extends Component {
     	this.setState({program: TreeStore.getUserProgramReq()});
     }
 
+    _onNodeClicked() {
+    	console.log("_onNodeClicked");
+    	console.log(TreeStore.getNodeClicked());
+    	this.setState({nodeClicked: TreeStore.getNodeClicked()})
+    }
+
     componentWillUnmount() {
         TreeStore.removeChangeListener(this.treeOnChange);
         TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+        TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
     }
 
   componentDidMount() {
   	this.treeOnChange = this._onChange.bind(this);
   	this.treeOnProgramChange = this._onProgramChange.bind(this);
+  	this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 
     TreeStore.addChangeListener(this.treeOnChange);
     TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+    TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 
   	actions.loadUserData(null);
   	actions.getUserProgram(this.state.user);
 
   	this.setState({user: getUser()});
+
+  	var thisComp = this;
     $.ajax({
       url: "/api/path/CSCA08H3/post",
       dataType: 'json',
@@ -202,11 +223,15 @@ class Trees extends Component {
 	    	}
 
 	    	cy.minZoom(1);
-	    	cy.maxZoom(5);
+	    	cy.maxZoom(1);
 
 
 	        cy.on('tap', function(evt){
-	          // if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+	          if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+
+	          thisComp.refs.courseInfo.show()
+	          actions.nodeClicked(evt.cyTarget.id());
+	          console.log(evt.cyTarget.id());
 	          // var tapid= cy.$('#'+evt.cyTarget.id());
 	          // var creditCounter=document.getElementById('qty').value;
 	          // creditCounter = creditCounter.split("/")[0];
@@ -251,7 +276,6 @@ class Trees extends Component {
 	            });
 	        }
 
-
 	        var edgeMarker = function(node){
 	          node.data('marked',1);
 	          node.outgoers().forEach(function(ele){
@@ -260,8 +284,6 @@ class Trees extends Component {
 	          });
 	        }
 
-
-
 	        var edgeUnmarker = function(node){
 	          node.data('marked',0);
 	          unhighLighter(node);
@@ -269,7 +291,6 @@ class Trees extends Component {
 	          		ele.data('marked',0);
 	          });
 	        }
-
 
 	        var markChecker = function(node){
 	        	var result = true;
@@ -280,9 +301,6 @@ class Trees extends Component {
 	          		//console.log("Ddd");
 	          		return result;
 	        }
-
-
-
 
 	        var highLighter = function(node){
 	          node.connectedEdges().forEach(function(ele){

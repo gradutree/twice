@@ -39,6 +39,13 @@ var TreeActions = {
                 }
             });
         }
+    },
+
+    nodeClicked: function(courseCode) {
+        AppDispatcher.handleAction({
+            actionType: "NODE_CLICKED",
+            data: courseCode
+        });
     }
 
 };
