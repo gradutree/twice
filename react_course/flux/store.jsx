@@ -17,6 +17,10 @@ var loadReviews = function (data) {
     reviews.user_state = courseData.user_state;
 };
 
+var setUserState = function () {
+    reviews.user_state = courseData.user_state;
+};
+
 var setReviewed = function (hasReviewed) {
     courseData.hasReviewed = hasReviewed;
 };
@@ -79,6 +83,7 @@ Dispatcher.register(function(payload) {
         case Constants.LOAD_COURSE:
             // Call internal method based upon dispatched action
             loadCourse(action.data);
+            setUserState();
             break;
         case Constants.LOAD_REVIEWS:
             // Call internal method based upon dispatched action
