@@ -26513,6 +26513,7 @@ var Search = function (_Component) {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			SearchStore.removeChangeListener(this.searchOnChange);
+			SearchStore.removeSearchChangeListener(this.searchOnSearchChange);
 		}
 	}, {
 		key: 'changeSchool',
@@ -26913,20 +26914,10 @@ var TreeConstants = __webpack_require__(224);
 
 var TreeActions = {
 
-    cache: {},
-
     loadUserData: function loadUserData() {
-        if (this.cache[TreeConstants.LOAD_USERDATA]) {
-            AppDispatcher.handleAction({
-                actionType: TreeConstants.LOAD_USERDATA,
-                data: this.cache[TreeConstants.LOAD_USERDATA]
-            });
-            return;
-        }
         $.ajax({
             url: "/api/user/" + getCurrentUsername() + "/info",
             success: function (result) {
-                this.cache[TreeConstants.LOAD_USERDATA] = result;
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
                     data: result
@@ -27037,6 +27028,11 @@ var TreeProgress = function (_Component) {
 					thisComp.setState({ reqs: programReqs });
 				});
 			}
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
 		}
 	}, {
 		key: 'componentDidMount',
@@ -27392,18 +27388,14 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onChange',
 		value: function _onChange() {
-			// console.log("TREE _onChange");
 			this.setState(getUser());
 			this.setState({ taken: TreeStore.getUserTaken() });
-			// console.log(this.state.user);
 			actions.getUserProgram(this.state.user);
 		}
 	}, {
 		key: '_onProgramChange',
 		value: function _onProgramChange() {
-			// console.log("TREE _onProgramChange");
 			this.setState({ program: TreeStore.getUserProgramReq() });
-			// console.log(TreeStore.getUserProgramReq());
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -27421,7 +27413,7 @@ var Trees = function (_Component) {
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 
 			actions.loadUserData(null);
-			// actions.getUserProgram();
+			actions.getUserProgram(this.state.user);
 
 			this.setState({ user: getUser() });
 			$.ajax({

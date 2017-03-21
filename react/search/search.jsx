@@ -34,6 +34,7 @@ class Search extends Component {
 
 	componentWillUnmount() {
         SearchStore.removeChangeListener(this.searchOnChange);
+        SearchStore.removeSearchChangeListener(this.searchOnSearchChange);
     }
 
 	changeSchool(e){

@@ -16,6 +16,7 @@ function loadUserProgram(data) {
     userProgram = data;
 }
 
+
 var TreeStore = merge(EventEmitter.prototype, {
 
     getUserData: function() {
@@ -60,7 +61,7 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeProgramChangeListener: function(callback) {
         this.removeListener('programChange', callback);
-    }
+    },
 
 });
 

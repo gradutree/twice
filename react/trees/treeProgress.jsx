@@ -30,8 +30,11 @@ class TreeProgress extends Component {
 				thisComp.setState({reqs: programReqs});
 	        });
 		}
-		
 	}
+
+	componentWillUnmount() {
+        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+    }
 
 	componentDidMount() {
 		this.treeOnProgramChange = this.updateProgramReq.bind(this);

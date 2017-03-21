@@ -3,20 +3,10 @@ var TreeConstants = require('./treeConstants.jsx');
 
 var TreeActions = {
 
-    cache: {},
-
     loadUserData: function() {
-        if (this.cache[TreeConstants.LOAD_USERDATA]) {
-            AppDispatcher.handleAction({
-                actionType: TreeConstants.LOAD_USERDATA,
-                data: this.cache[TreeConstants.LOAD_USERDATA]
-            });
-            return;
-        }
         $.ajax({
             url: "/api/user/"+getCurrentUsername()+"/info",
             success: (function (result) {
-                this.cache[TreeConstants.LOAD_USERDATA] = result;
                 AppDispatcher.handleAction({
                     actionType: TreeConstants.LOAD_USERDATA,
                     data: result

@@ -27,17 +27,13 @@ class Trees extends Component {
   	}
 
   	_onChange() {
-  		// console.log("TREE _onChange");
         this.setState(getUser());
         this.setState({taken: TreeStore.getUserTaken()});
-        // console.log(this.state.user);
         actions.getUserProgram(this.state.user);
     }
 
     _onProgramChange() {
-    	// console.log("TREE _onProgramChange");
     	this.setState({program: TreeStore.getUserProgramReq()});
-    	// console.log(TreeStore.getUserProgramReq());
     }
 
     componentWillUnmount() {
@@ -53,7 +49,7 @@ class Trees extends Component {
     TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 
   	actions.loadUserData(null);
-  	// actions.getUserProgram();
+  	actions.getUserProgram(this.state.user);
 
   	this.setState({user: getUser()});
     $.ajax({
