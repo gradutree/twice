@@ -22,7 +22,7 @@ var Actions = {
             url: "/api/course/"+code+"/review/"+page,
             success: function (result) {
                 Dispatcher.handleAction({
-                    actionType: Constants.LOAD_REVIEWS,
+                    actionType: page > 0 ? Constants.APPEND_REVIEWS : Constants.LOAD_REVIEWS,
                     data: result
                 });
             }
@@ -37,10 +37,41 @@ var Actions = {
             contentType: "application/json",
             processData: false,
             success: function (result) {
+                Actions.loadReviews(code, 0);
+                Dispatcher.handleAction({
+                    actionType: Constants.SET_REVIEWED,
+                    data: true
+                });
+                document.getElementById("review_form").reset();
+            }
+        })
+    },
+    
+    vote: function (code, dir) {
+        Dispatcher.handleAction({
+            actionType: Constants.VOTE,
+            data: dir
+        });
+        $.ajax({
+            url: "/api/course/"+code+"/vote/"+dir,
+            method: "POST",
+            success: function (result) {
+                console.log(result);
+            }
+        })
+    },
+
+    voteReview: function(id, dir) {
+        $.ajax({
+            url: "/api/review/"+id+"/vote/"+dir,
+            method: "POST",
+            success: function (result) {
                 console.log(result);
             }
         })
     }
+
+
         //var data = {program: "Computer Science", user: "gengp", spec: "Software Engineering"};
 
 

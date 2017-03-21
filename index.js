@@ -118,9 +118,25 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                //course.liked = course.liked.length;
-                //course.disliked = course.disliked.length;
-                result.push(course);
+                return new Promise(function (resolve, reject) {
+                    if (req.session.user) {
+                        course.user_state = course.liked.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                        if (course.user_state == "0") course.user_state = course.disliked.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                    }
+                    course.liked = course.liked.length;
+                    course.disliked = course.disliked.length;
+
+                    if (req.session.user) {
+                        db.collection("reviews").findOne({courseCode: req.query.code.toUpperCase(), author: req.session.user.username}, function (err, data) {
+                            if (data) course.hasReviewed = true;
+                            result.push(course);
+                            resolve();
+                        });
+                    } else {
+                        result.push(course);
+                        resolve();
+                    }
+                })
             })).then(function(){
                 res.json(result);
             });
@@ -239,21 +255,22 @@ app.get("/api/path/:start/pre", function (req, res) {
 });
 
 app.post("/api/course/:code/vote/:direction", function (req, res) {
+    req.params.code = req.params.code.toUpperCase();
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({ code: req.params.code }, function (err, course) {
             switch(req.params.direction) {
-                case ("up"):
-                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}}, function (err, result) {
+                case ("1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}, $pop: {disliked: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
-                case ("down"):
-                    db.collection("social").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}}, function (err, result) {
+                case ("-1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}, $pop: {liked: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
-                case ("neutral"):
-                    db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
+                case ("0"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
                         res.json({});
                     });
                     break;
@@ -261,10 +278,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                     return res.status(400).end("Invalid api action");
                     break;
             }
-
         });
-
-
     });
 });
 
@@ -295,7 +309,10 @@ app.get("/api/course/:code/review/:page", function (req, res) {
                 item.up = item.up.length;
                 item.down = item.down.length;
             });
-            res.json(data);
+            db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
+                res.json({data: data, page: page/10, more: count > page+10});
+            });
+
         });
     });
 });
@@ -306,24 +323,19 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
             if (err) console.log(err);
             if (!review) return res.status(404).end("Cannot find review");
             switch(req.params.direction) {
-                case ("up"):
-
+                case ("1"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
                         res.json({});
                     });
-
-
                     break;
-                case ("down"):
-
+                case ("-1"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
 
                         res.json({});
                     });
-
                     break;
 
-                case ("neutral"):
+                case ("0"):
                     db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$pop: {down: req.session.user.username, up: req.session.user.username}}, function (err, result) {
                         res.json({});
                     });

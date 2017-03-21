@@ -770,3 +770,14 @@ footer {
 .tree_graph {
 	padding: 50px;
 }
+
+.vote_active {
+	border-color: #ffa230 !important;
+	color: #ffa230;
+}
+
+.path_vis {
+	height: 65vh !important;
+	width: 75% !important;
+	text-align: left !important;
+}
