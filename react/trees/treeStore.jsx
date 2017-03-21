@@ -6,6 +6,7 @@ var TreeConstants = require('./treeConstants.jsx');
 var userData = {};
 var userProgram = [];
 var nodeClicked = "";
+var courseInfo = null;
 
 function loadUserData(data) {
     userData = data;
@@ -19,6 +20,10 @@ function loadUserProgram(data) {
 
 function loadNodeClicked(courseCode){
     nodeClicked = courseCode;
+}
+
+function loadCourseInfo(course){
+    courseInfo = course;
 }
 
 
@@ -36,6 +41,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         return nodeClicked;
     },
 
+    getCourseInfo: function() {
+        return courseInfo;
+    },
+
     getUserSpec: function() {
         return userData.spec;
     },
@@ -43,10 +52,6 @@ var TreeStore = merge(EventEmitter.prototype, {
     getUserTaken: function() {
         return userData.taken;
     },
-
-    // getSearchResults: function() {
-    //     return searchResults;
-    // },
 
     emitChange: function() {
         this.emit('change');
@@ -58,6 +63,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     emitNodeClicked: function() {
         this.emit('nodeClicked');
+    },
+
+    emitUpdateCourseInfo: function() {
+        this.emit('updateCourseInfo');
     },
 
     addChangeListener: function(callback) {
@@ -84,6 +93,14 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.removeListener('nodeClicked', callback);
     },
 
+    addUpdateCourseInfoListener: function(callback) {
+        this.on('updateCourseInfo', callback);
+    },
+
+    removeUpdateCourseInfoListener: function(callback) {
+        this.removeListener('updateCourseInfo', callback);
+    },
+
 });
 
 // Register dispatcher callback
@@ -105,6 +122,11 @@ AppDispatcher.register(function(payload) {
         case 'NODE_CLICKED':
             loadNodeClicked(action.data);
             TreeStore.emitNodeClicked();
+            break;
+
+        case 'UPDATE_COURSE_INFO':
+            loadCourseInfo(action.data);
+            TreeStore.emitUpdateCourseInfo();
             break;
 
         default:

@@ -46,6 +46,21 @@ var TreeActions = {
             actionType: "NODE_CLICKED",
             data: courseCode
         });
+    },
+
+    getCourseInfo: function(courseCode) {
+        $.ajax({
+            url: "/api/courses/query?code="+courseCode,
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'UPDATE_COURSE_INFO',
+                    data: result[0]
+                });
+            }),
+            error: function (err) {
+                console.log(err);
+            }
+        });
     }
 
 };
