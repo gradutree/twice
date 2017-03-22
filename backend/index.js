@@ -107,7 +107,7 @@ backend.findPostReq = function (db, callback) {
 
         Promise.all(data.map(function (item, i) {
             return new Promise(function (resolve, reject) {
-                db.collection("courses").find({ preq : { $in: [[ item.code ]] }}).toArray(function (err, courses) {
+                db.collection("courses").find({ preq : {$elemMatch: {$elemMatch: { $in: [ item.code ] }}}}).toArray(function (err, courses) {
                     if (err) {
                         console.log(err);
                         reject(err);
@@ -121,7 +121,7 @@ backend.findPostReq = function (db, callback) {
 
                         return new Promise(function (resolve2, reject2) {
                             item.postreq.push(course.code);
-                            //console.log(item.postreq.toString());
+                            console.log(item.postreq.toString());
                             resolve2();
                         });
                     })).then(function () {
@@ -158,4 +158,3 @@ var setPostReq = function () {
 // -run setPostReq
 // -then run the build functions
 module.exports = backend;
-buildPostReq();

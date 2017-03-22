@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {
-    BrowserRouter as Router,
-    Route,
-    Link,
-    IndexRoute
-} from 'react-router-dom';
 
 var Store = require('../flux/store.jsx');
 var Actions = require('../flux/actions.jsx');
@@ -18,8 +12,8 @@ class CourseView extends Component {
         this.state = {
             code: null,
             title: null,
-            preq: null,
-            description: null
+            description: null,
+            prerequisites: null
         };
     }
 
@@ -41,8 +35,7 @@ class CourseView extends Component {
     }
 
     render() {
-        var hidden = "box page"+(this.state.code ? "" : " hidden");
-        if (this.state.preq) this.state.preq = this.state.preq.length > 0 ? this.state.preq.join(" / ") : "N/A";
+        var hidden = "box page"+(this.state.code ? "" : " hidden_fade");
         return <div className={hidden}>
             <h3>{this.state.code}</h3>
 
@@ -52,7 +45,7 @@ class CourseView extends Component {
             </div>
             <div id="preq_box">
                 Prerequisites:
-                {this.state.preq}
+                {this.state.prerequisites}
             </div>
 
         </div>;

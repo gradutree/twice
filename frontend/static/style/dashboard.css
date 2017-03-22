@@ -58,8 +58,8 @@ footer a:hover {
 	border-color: #2996cc;
 }
 
-.hidden {
-	display: none;
+.hidden_fade {
+	opacity: 0;
 }
 
 .btn {
@@ -535,7 +535,7 @@ footer {
 	width: auto;
 	text-align: center;
     display: inline-block;
-	
+	transition: all 0.3s linear;
 }
 
 #content_container h4 {
@@ -686,7 +686,7 @@ footer {
 
 .desc_box {
 	text-align: justify;
-	width: 600px;
+	width: 65%;
 	margin: 20px auto;
 }
 
@@ -702,4 +702,82 @@ footer {
 .submit_area {
 	text-align: left;
 	padding: 0 5px;
+}
+
+#preq_box {
+	width: 65%;
+	margin: auto;
+}
+
+.program_req_container {
+	display: flex;
+	flex-direction: column;
+	/*align-self: center;*/
+}
+
+.program_progress {
+	display: flex;
+	flex-direction: column;
+	margin: 25px 50px 25px 50px;
+	border: 1px outset #e8ebef;
+	padding: 30px;
+	max-width: 900px;
+	width: 100%;
+	align-self:center;
+}
+
+.program_progress_set {
+	margin-top: 10px;
+}
+
+.program_req_div {
+	display: flex;
+	flex-direction: column;
+	/*margin: 2px;*/
+}
+
+.program_req_visual {
+	display: flex;
+	flex-direction: row;
+	margin: 0px;
+}
+
+.program_req_name {
+	/*flex-grow: 1;*/
+	width: 120px;
+	font-size: 15px;
+}
+
+.program_req_bar {
+	flex-grow: 1;
+	height: 30px;
+	margin-left: 20px;
+}
+
+.program_reqs_courses {
+	font-size: 12px;
+}
+
+.list_course_req {
+	display: flex;
+	flex-direction: row;
+}
+
+.course_req_name_elem {
+	margin-right: 7px;
+}
+
+.tree_graph {
+	padding: 50px;
+}
+
+.vote_active {
+	border-color: #ffa230 !important;
+	color: #ffa230;
+}
+
+.path_vis {
+	height: 65vh !important;
+	width: 75% !important;
+	text-align: left !important;
 }

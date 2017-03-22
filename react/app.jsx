@@ -8,7 +8,11 @@ import {
 } from 'react-router-dom';
 
 import DashboardContent from "./dashboard/dashboard.jsx";
+<<<<<<< HEAD
 import TreesContent from "./tree/trees.jsx";
+=======
+import TreesContent from "./trees/trees.jsx";
+>>>>>>> master
 import SearchContent from "./search/search.jsx";
 
 class Dashboard extends Component {

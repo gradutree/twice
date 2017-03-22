@@ -6,9 +6,10 @@ var expressValidator = require('express-validator');
 var path = require("path");
 var backend = require("./backend");
 
-var dbURL = "mongodb://35.167.141.109:8000/c09";
+var dbURL = "mongodb://35.167.141.109:8000/c09v2";
 var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
 var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require("mongodb").ObjectID;
 
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -32,6 +33,7 @@ var User = function(user){
     this.username = user.username;
     this.program = user.program;
     this.spec = user.spec;
+    this.taken = user.taken;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -58,7 +60,6 @@ app.get("/dashboard", function(req, res, next) {
 });
 
 app.get("/course/:code", function (req, res) {
-    console.log("COURSE/CODE");
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
@@ -67,15 +68,6 @@ app.get("/course/:code", function (req, res) {
             return res.status(404).end("No such course");
         });
     });
-});
-
-app.get("/coursegoto/:code", function(req, res, next) {
-    console.log("IN courseGOTO");
-    // res.redirect("/course/"+req.params.code);
-    // 'http://mydomain.com'+req.url
-    // req.url = "/course/"+req.params.code;
-    res.json({});
-    return next();
 });
 
 app.get("/trees", sessionRedirect, function(req, res) {
@@ -118,7 +110,7 @@ app.use(express.static('frontend/static'));
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(cobaltURL, function (err, db) {
+    MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) {
                 res.json([]);
@@ -126,10 +118,50 @@ app.get('/api/courses/query/', function (req, res) {
             }
 
             Promise.all(data.map(function (course) {
-                result.push(course);
+                return new Promise(function (resolve, reject) {
+                    if (req.session.user) {
+                        course.user_state = course.liked.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                        if (course.user_state == "0") course.user_state = course.disliked.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                    }
+                    course.liked = course.liked.length;
+                    course.disliked = course.disliked.length;
+
+                    if (req.session.user) {
+                        db.collection("reviews").findOne({courseCode: req.query.code.toUpperCase(), author: req.session.user.username}, function (err, data) {
+                            if (data) course.hasReviewed = true;
+                            result.push(course);
+                            resolve();
+                        });
+                    } else {
+                        result.push(course);
+                        resolve();
+                    }
+                })
             })).then(function(){
                 res.json(result);
             });
+        });
+    });
+});
+
+// Returns the program requirements give the program name (:name) with query params "post" and "spec"
+// Ex. curl http://localhost:8000/api/programs/ComputerScience?post=specialist&spec=SoftwareEngineering
+app.get('/api/programs/:name', function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("programs").findOne({name: req.params.name}, function (err, program) {
+            if (err) {
+                console.log("GET program error");
+                res.json([]);
+                return;
+            }
+
+            // Trying to find specific specialization.
+            if(req.query.spec != null && req.query.post == "specialist"){
+                res.json(program[req.query.post].find(spec => spec.stream == req.query.spec).reqs);
+                return;
+            }
+            res.json(program[req.query.post]);
+            return;
         });
     });
 });
@@ -222,43 +254,44 @@ app.get("/api/path/:start/pre", function (req, res) {
     });
 });
 
-app.post("/api/course/:code/vote/:action", function (req, res) {
+app.post("/api/course/:code/vote/:direction", function (req, res) {
+    req.params.code = req.params.code.toUpperCase();
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("social").findOne({ code: req.params.code }, function (err, course) {
-            switch(req.params.action) {
-                case ("up"):
-                    if (course.liked.contains(req.session.user.username))
-                        db.collection("social").updateOne({code: req.params.code}, {$pop: {liked: req.session.user.username}});
-                    else
-                        db.collection("social").updateOne({code: req.params.code}, {$push: {liked: req.session.user.username}});
+        db.collection("courses").findOne({ code: req.params.code }, function (err, course) {
+            switch(req.params.direction) {
+                case ("1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {liked: req.session.user.username}, $pop: {disliked: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
-                case ("down"):
-                    if (course.disliked.contains(req.session.user.username))
-                        db.collection("social").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username}});
-                    else
-                        db.collection("social").updateOne({code: req.params.code}, {$push: {disliked: req.session.user.username}});
+                case ("-1"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$addToSet: {disliked: req.session.user.username}, $pop: {liked: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
+                    break;
+                case ("0"):
+                    db.collection("courses").updateOne({code: req.params.code}, {$pop: {disliked: req.session.user.username, liked: req.session.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
                 default:
                     return res.status(400).end("Invalid api action");
                     break;
             }
-            res.end("success");
         });
-
-
     });
 });
 
 app.post("/api/review", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
         var review = {};
-        review.author = req.sessions.user.username;
+        review.author = req.session.user.username;
         review.content = req.body.content;
         review.timestamp = new Date();
         review.up = [];
         review.down = [];
-        review.courseCode = req.body.code;
-        db.collection("reviews").insertOne(comment, function (err, item) {
+        review.courseCode = req.body.code.toUpperCase();
+        db.collection("reviews").insertOne(review, function (err, item) {
             res.json({id: item._id});
         });
     });
@@ -267,37 +300,51 @@ app.post("/api/review", function (req, res) {
 app.get("/api/course/:code/review/:page", function (req, res) {
     var page = parseInt(req.params.page)*10;
     MongoClient.connect(dbURL, function (err, db) {
-       db.collection("reviews").find({courseCode: req.params.code}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
-           data.forEach(function (item, i) {
-               item.up = item.up.length;
-               item.down = item.down.length;
-           });
-           res.json(data);
-       });
+        db.collection("reviews").find({courseCode: req.params.code.toUpperCase()}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+            data.forEach(function (item, i) {
+                if (req.session.user){
+                    item.user_state = item.up.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                    if (item.user_state == "0") item.user_state = item.down.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                }
+                item.up = item.up.length;
+                item.down = item.down.length;
+            });
+            db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
+                res.json({data: data, page: page/10, more: count > page+10});
+            });
+
+        });
     });
 });
 
-app.post("/api/review/:id/vote/:action", function (req, res) {
+app.post("/api/review/:id/vote/:direction", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("review").findOne({ code: req.params.id }, function (err, review) {
-            switch(req.params.action) {
-                case ("up"):
-                    if (review.liked.contains(req.session.user.username))
-                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {up: req.session.user.username}});
-                    else
-                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {up: req.session.user.username}});
+        db.collection("reviews").findOne({ _id: new ObjectID(req.params.id) }, function (err, review) {
+            if (err) console.log(err);
+            if (!review) return res.status(404).end("Cannot find review");
+            switch(req.params.direction) {
+                case ("1"):
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {up: req.session.user.username}, $pop: {down: req.session.user.username}}, function (err, item) {
+                        res.json({});
+                    });
                     break;
-                case ("down"):
-                    if (review.disliked.contains(req.session.user.username))
-                        db.collection("reviews").updateOne({code: req.params.id}, {$pop: {down: req.session.user.username}});
-                    else
-                        db.collection("reviews").updateOne({code: req.params.id}, {$push: {down: req.session.user.username}});
+                case ("-1"):
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$addToSet: {down: req.session.user.username} , $pop: {up: req.session.user.username}}, function (err, item) {
+
+                        res.json({});
+                    });
+                    break;
+
+                case ("0"):
+                    db.collection("reviews").updateOne({ _id: new ObjectID(req.params.id) }, {$pop: {down: req.session.user.username, up: req.session.user.username}}, function (err, result) {
+                        res.json({});
+                    });
                     break;
                 default:
                     return res.status(400).end("Invalid api action");
                     break;
             }
-            res.end("success");
+
         });
 
 
@@ -307,4 +354,3 @@ app.post("/api/review/:id/vote/:action", function (req, res) {
 app.listen(8000, function () {
     console.log('App listening on port 8000');
 });
-

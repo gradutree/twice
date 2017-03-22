@@ -1,27 +1,30 @@
 var AppDispatcher = require('../dispatcher.jsx');
 var EventEmitter = require('events').EventEmitter;
 var merge = require('merge');
-var SearchConstants = require('./searchConstants.jsx');
+var TreeConstants = require('./treeConstants.jsx');
 
 var userData = {};
-var searchResults = [];
+var userProgram = [];
 
 function loadUserData(data) {
     userData = data;
 }
 
-function loadSearchResults(data) {
-    searchResults = data;
+function loadUserProgram(data) {
+    // console.log("TREE STORE loadUserProgram");
+    // console.log(data);
+    userProgram = data;
 }
 
-var SearchStore = merge(EventEmitter.prototype, {
+
+var TreeStore = merge(EventEmitter.prototype, {
 
     getUserData: function() {
         return userData;
     },
 
-    getUserProgram: function() {
-        return userData.program;
+    getUserProgramReq: function() {
+        return userProgram;
     },
 
     getUserSpec: function() {
@@ -32,16 +35,16 @@ var SearchStore = merge(EventEmitter.prototype, {
         return userData.taken;
     },
 
-    getSearchResults: function() {
-        return searchResults;
-    },
+    // getSearchResults: function() {
+    //     return searchResults;
+    // },
 
     emitChange: function() {
         this.emit('change');
     },
 
-    emitSearchChange: function() {
-        this.emit('searchChange');
+    emitProgramChange: function() {
+        this.emit('programChange');
     },
 
     addChangeListener: function(callback) {
@@ -52,13 +55,13 @@ var SearchStore = merge(EventEmitter.prototype, {
         this.removeListener('change', callback);
     },
 
-    addSearchChangeListener: function(callback) {
-        this.on('searchChange', callback);
+    addProgramChangeListener: function(callback) {
+        this.on('programChange', callback);
     },
 
-    removeSearchChangeListener: function(callback) {
-        this.removeListener('searchChange', callback);
-    }
+    removeProgramChangeListener: function(callback) {
+        this.removeListener('programChange', callback);
+    },
 
 });
 
@@ -67,26 +70,26 @@ AppDispatcher.register(function(payload) {
     var action = payload.action;
     // Define what to do for certain actions
     switch(action.actionType) {
-        case SearchConstants.LOAD_USERDATA:
+        case TreeConstants.LOAD_USERDATA:
             // Call internal method based upon dispatched action
             loadUserData(action.data);
-            SearchStore.emitChange();
+            TreeStore.emitChange();
             break;
 
-        case 'SEARCH_RESULTS':
-            loadSearchResults(action.data);
-            SearchStore.emitSearchChange();
+        case 'GET_USER_PROGRAM':
+            loadUserProgram(action.data);
+            TreeStore.emitProgramChange();
             break;
 
         default:
             return true;
     }
 
-    // If action was acted upon, emit change event
-    // SearchStore.emitChange();
+    // // If action was acted upon, emit change event
+    // TreeStore.emitChange();
 
     return true;
 
 });
 
-module.exports = SearchStore;
+module.exports = TreeStore;

@@ -18,10 +18,10 @@ var setupPreqs = function () {
             return new Promise(function (resolve, reject) {
                 if (item != "") item = JSON.parse(item);
                 else {resolve(); return;}
-                if (item.campus != "UTSC") {
-                    resolve();
-                    return;
-                }
+                // if (item.campus != "UTSC") {
+                //     resolve();
+                //     return;
+                // }
                 var course = {};
 
                 course.code = item.code.substring(0, item.code.length-1);
@@ -35,15 +35,27 @@ var setupPreqs = function () {
                 course.level = item.level;
                 course.description = item.description;
                 course.department = item.department;
+                course.campus = item.campus;
+                course.term = item.term;
+                course.liked = [];
+                course.disliked = [];
                 var delimiter = " & ";
                 if (item.prerequisites.indexOf(" & ") == -1) delimiter = " and ";
                 course.preq = [];
                 item.prerequisites.replace(/[^0-9a-z /&]/gi, '').replace("one of ").split(delimiter).reduce(function(result, preq) {
                     var res = preq.replace("/", " or ").split(" or ");
                     var flag = true;
+                    var pat = /[A-Z][A-Z][A-Z][1-4]|[A-D][0-9][0-9]H|Y/;
                     for (var i = 0; i < res.length; i++) {
+
                         if (res[i].length != 8) {
-                            flag = false;
+                            if (res[i].length != 7)
+                                flag = false;
+                            else if (pat.test(res[i])) {
+                                console.log(res[i]);
+                                res.splice(i, 1);
+                                i--;
+                            }
                         }
                     }
                     if (flag) result.push(res);

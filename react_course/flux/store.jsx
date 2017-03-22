@@ -10,6 +10,47 @@ var loadCourse = function (data) {
     courseData = data;
 };
 
+var loadReviews = function (data) {
+    console.log(courseData);
+    reviews = data;
+    reviews.hasReviewed = courseData.hasReviewed;
+    reviews.user_state = courseData.user_state;
+};
+
+var setUserState = function () {
+    reviews.user_state = courseData.user_state;
+};
+
+var setReviewed = function (hasReviewed) {
+    courseData.hasReviewed = hasReviewed;
+};
+
+var appendReviews = function (data) {
+    reviews.data = reviews.data.concat(data.data);
+    reviews.page = data.page;
+    reviews.more = data.more;
+};
+
+var setVoteData = function (dir) {
+    if (dir == "1") {
+        if (courseData.user_state == "0") courseData.liked++;
+        else if (courseData.user_state == "-1") {
+            courseData.liked++;
+            courseData.disliked--;
+        }
+    } else if (dir == "0") {
+        if (courseData.user_state == "1") courseData.liked--;
+        else if (courseData.user_state == "-1") courseData.disliked--;
+    } else {
+        if (courseData.user_state == "0") courseData.disliked++;
+        else if (courseData.user_state == "1") {
+            courseData.liked--;
+            courseData.disliked++;
+        }
+    }
+    courseData.user_state = dir;
+};
+
 var Store = merge(EventEmitter.prototype, {
 
     getCourseData: function() {
@@ -42,8 +83,21 @@ Dispatcher.register(function(payload) {
         case Constants.LOAD_COURSE:
             // Call internal method based upon dispatched action
             loadCourse(action.data);
+            setUserState();
             break;
-
+        case Constants.LOAD_REVIEWS:
+            // Call internal method based upon dispatched action
+            loadReviews(action.data);
+            break;
+        case Constants.APPEND_REVIEWS:
+            appendReviews(action.data);
+            break;
+        case Constants.VOTE:
+            setVoteData(action.data);
+            break;
+        case Constants.SET_REVIEWED:
+            setReviewed(action.data);
+            break;
         default:
             return true;
     }

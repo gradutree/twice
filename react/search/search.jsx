@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 
 import SearchResult from "./searchResult.jsx";
-// import model from "../../frontend/static/js/app/model.js"
 
 var AppDispatcher = require('../dispatcher.jsx');
 var SearchStore = require("./searchStore.jsx");
@@ -24,66 +23,65 @@ class Search extends Component {
 	componentDidMount() {
 		// load user info and keep it in the store
         this.searchOnChange = this._onChange.bind(this);
+        this.searchOnSearchChange = this._onSearchChange.bind(this);
+
         SearchStore.addChangeListener(this.searchOnChange);
+        SearchStore.addSearchChangeListener(this.searchOnSearchChange);
+
         actions.loadUserData(null);
         this.setState(getUser());
 	}
 
 	componentWillUnmount() {
         SearchStore.removeChangeListener(this.searchOnChange);
+        SearchStore.removeSearchChangeListener(this.searchOnSearchChange);
     }
 
 	changeSchool(e){
 		this.setState({school: e.target.value});
+		actions.getSearchResults(this.refs.searchInput.value);
 	}
 
 	// Updates the results when typing in the search bar
 	changeResults(e){
-		this.updateResults(e.target.value);
+		actions.getSearchResults(e.target.value);
+
 	}
 
 	// Updates the results to show/hide taken courses when filter clicked
 	takenFilter(e){
 		this.state.showTaken = !this.state.showTaken;
 		this.state.takenFilterText = this.state.showTaken ? "Hide" : "Show"
-		this.updateResults(this.refs.searchInput.value);
+		actions.getSearchResults(this.refs.searchInput.value);
 	}
 
-	updateResults(searchStr){
+	updateResults(){
 		var thisComp = this;
+        var searchResult = SearchStore.getSearchResults();
+		var resultCourses = [];
 
-		var callback = function (result) {
-            AppDispatcher.handleAction({
-                actionType: 'SEARCH_RESULTS',
-                data: result
-            });
-
-            var searchResult = SearchStore.getSearchResults();
-			var resultCourses = [];
-
-			Promise.all(searchResult.map(function (course) {
+		Promise.all(searchResult.map(function (course) {
+			if(thisComp.state.user && course.campus == thisComp.state.school){
 				var userTook = thisComp.state.user.taken.indexOf(course.code) > -1;
                 resultCourses.push(<SearchResult key={course.code} course={course} taken={userTook} />);
-            })).then(function(){
-            	// Sort results alphabetically
-            	resultCourses.sort(function(a, b) {
-				    var codeA = a.key.toUpperCase();
-				    var codeB = b.key.toUpperCase();
-				    return (codeA < codeB) ? -1 : (codeA > codeB) ? 1 : 0;
+            }
+        })).then(function(){
+        	// Sort results alphabetically
+        	resultCourses.sort(function(a, b) {
+			    var codeA = a.key.toUpperCase();
+			    var codeB = b.key.toUpperCase();
+			    return (codeA < codeB) ? -1 : (codeA > codeB) ? 1 : 0;
+			});
+
+        	// Remove the taken courses if the filter was selected
+			if(!thisComp.state.showTaken){
+				resultCourses = resultCourses.filter(function(course){
+					return !course.props.taken;
 				});
+			}
 
-            	// Remove the taken courses if the filter was selected
-				if(!thisComp.state.showTaken){
-					resultCourses = resultCourses.filter(function(course){
-						return !course.props.taken;
-					});
-				}
-
-                thisComp.setState({results: resultCourses});
-            });
-        }
-
-		actions.getSearchResults(searchStr, callback);
+            thisComp.setState({results: resultCourses});
+        });
 	}
 
 
@@ -120,6 +118,10 @@ class Search extends Component {
 
 	_onChange() {
         this.setState(getUser());
+    }
+
+    _onSearchChange() {
+    	this.updateResults();
     }
 	
 }
