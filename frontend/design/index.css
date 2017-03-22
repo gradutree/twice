@@ -254,6 +254,7 @@ header nav ul {
 	box-sizing: border-box;
 	height: 50px;
 	transition: all 0.3s linear;
+	border-bottom: 5px solid #a6d663;
 }
 
 .nav_pill:hover {
