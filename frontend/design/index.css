@@ -126,12 +126,12 @@ body {
 	border-width: 0;
 	padding: 0;
 	margin: 0;
-	background-color: #00bf63;
+	background-color: #a6d663;
 	height: 63px;
 }
 
 .navbar>ul>li>a {
-	color: #CFCFCF;
+	color: #DBEDC1;
 	text-decoration: none;
 	transition: all 0.1s linear;
 	vertical-align: middle;
@@ -233,4 +233,49 @@ header nav ul {
     background: #fff;
 	transform: rotate(45deg) translate(6px,6px);
     box-shadow: -1px -1px 1px -1px rgba(0,0,0,.44);
+}
+
+.sub_nav {
+	border: none;
+	border-radius: 0;
+	border-width: 0;
+	padding: 0;
+	margin: 0;
+	background-color: #a6d663;
+	height: 50px;
+}
+
+.nav_pill {
+	color: #fff;
+	line-height: 50px;
+	font-size: 20px;
+	width: 150px;
+	text-align: center;
+	box-sizing: border-box;
+	height: 50px;
+	transition: all 0.3s linear;
+}
+
+.nav_pill:hover {
+	border-bottom: 5px solid #fc995b;
+}
+
+.pill_active {
+	border-bottom: 5px solid #fc995b;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.widget {
+	box-shadow: 7px 6px 20px -13px rgba(0,0,0,0.74);
+	width: 210px;
+}
+
+.widget>div {
+	width: 70px;
+	padding: 10px;
+	background-color: #fff;
+	border: 1px solid #d5d5d5;
+	text-align: center;
+	
 }
