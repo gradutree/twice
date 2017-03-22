@@ -18,12 +18,25 @@ var TreeActions = {
         });
     },
 
+    loadTreeInfo: function (code) {
+        return $.ajax({
+            url: "/api/path/"+code+"/pre",
+            dataType: 'json',
+            success: (function (result) {
+                AppDispatcher.handleAction({
+                    actionType: TreeConstants.LOAD_TREEDATA,
+                    data: result
+                });
+            }),
+        });
+    },
+
     getUserProgram: function(user) {
         if(user && user.program){
             var userSpec = user.spec.toLowerCase();
 
             // User obj does not specifically define that they are a specialist, only the stream
-            var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec : 
+            var programStr = (userSpec == 'major' || userSpec =='minor') ? userSpec :
                 "specialist&spec="+user.spec.split(" ").join("");
 
             $.ajax({
@@ -40,7 +53,6 @@ var TreeActions = {
             });
         }
     }
-
 };
 
 var getCurrentUsername = function () {
