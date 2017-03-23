@@ -431,6 +431,22 @@ header nav ul {
 	text-align: center;
 }
 
+.helpful label {
+	margin-right: 14px;
+	margin-left: 1.5px;
+	margin-top: 19px;
+	color: #a0a0a0;
+	font-weight:  normal;
+}
+
+.helpful .active1 {
+	color: #0068D9;
+}
+
+.helpful .active2 {
+	color: #eb5e4b;
+}
+
 .helpful_btn:hover {
 	color: #eb5e4b;
 	border-color: #eb5e4b;
