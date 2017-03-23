@@ -386,8 +386,62 @@ header nav ul {
 	justify-content: flex-start;
 }
 
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
 .review {
 	background-color: #fff;
-	width: 400px;
-	padding: 10px;
+	width: 550px;
+	padding: 14px;
+}
+
+.detail_box {
+	margin-left: 12px;
+	font-size: 11px;
+}
+
+.author {
+	color: #eb5e4b;
+	font-size: 16px;
+}
+
+.time {
+	margin-top: 2px;
+	color: #b0b0b0;
+}
+
+.content {
+	margin: 10px 2px 3px;
+	font-size: 16px;
+	text-align: left;
+}
+
+.helpful_btn {
+	margin-right: 14px;
+	margin-left: 1.5px;
+	margin-top: 15px;
+	border: 1px solid #a0a0a0;
+	color: #a0a0a0;
+	padding: 5px;
+	font-size: 12px;
+	transition: all 0.2s linear;
+	width: 70px;
+	text-align: center;
+}
+
+.helpful_btn:hover {
+	color: #eb5e4b;
+	border-color: #eb5e4b;
+}
+
+.helpful_active {
+	color: #0068D9;
+	border-color: #0068D9;
+}
+
+.unhelpful_active {
+	color: #eb5e4b;
+	border-color: #eb5e4b;
 }
