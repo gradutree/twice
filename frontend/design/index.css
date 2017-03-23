@@ -348,6 +348,7 @@ header nav ul {
 	height: 140px;
 	background-color: #fff;
 	padding: 8px;
+	transition: all 0.05s linear;
 }
 
 .review_footer {

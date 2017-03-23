@@ -27,3 +27,14 @@ document.getElementById("cancel_review").addEventListener("click", function(e) {
 	arrow.classList.add("hidden");
 	footer.classList.add("hidden");
 });
+
+document.getElementById("review_text").addEventListener("input", function(e) {
+	if (this.value == "") {
+		document.getElementById("review_area").removeAttribute("style");
+		this.removeAttribute("style");
+		return;
+	}
+	if (this.scrollHeight < 93) return;
+	document.getElementById("review_area").setAttribute('style','height:'+(this.scrollHeight+50)+'px');
+	this.setAttribute('style','height:'+this.scrollHeight+'px');
+});
