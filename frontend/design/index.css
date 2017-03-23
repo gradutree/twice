@@ -235,6 +235,16 @@ header nav ul {
     box-shadow: -1px -1px 1px -1px rgba(0,0,0,.44);
 }
 
+.popover-arrow_small:after {
+    content: '';
+    display: block;
+    width: 11px;
+    height: 11px;
+    background: #fff;
+	transform: rotate(45deg) translate(6px,6px);
+    box-shadow: -1px -1px 1px -1px rgba(0,0,0,.44);
+}
+
 .sub_nav {
 	border: none;
 	border-radius: 0;
@@ -273,7 +283,7 @@ header nav ul {
 }
 
 .widget>div {
-	width: 90px;
+	width: 110px;
 	padding: 10px;
 	background-color: #fff;
 	border: 1px solid #d5d5d5;
@@ -285,7 +295,7 @@ header nav ul {
 .taken {
 	background-image: URL(taken_grey.png);
 	background-repeat: no-repeat;
-	background-position: center 5;
+	background-position: center 6;
 	transition: all 0.1s linear;
 	
 }
@@ -303,4 +313,74 @@ header nav ul {
 
 .like:hover {
 	background-image: URL(heart.png);
+}
+
+.dislike {
+	background-image: URL(heart_grey_broken.png);
+	background-repeat: no-repeat;
+	background-position: center 11;
+	transition: all 0.1s linear;
+}
+
+.dislike:hover {
+	background-image: URL(heart_broken.png);
+}
+
+.review_toggle {
+	background-color: #eb5e4b;
+	width: 200px;
+	color: #fff;
+	font-size: 15px;
+	padding: 12px;
+	
+	letter-spacing: 1px;
+	transition: all 0.3s linear;
+}
+
+.review_toggle_active {
+	width: 412px;
+}
+
+.review_wrapper {
+	border-bottom: 1px solid #dadada;
+	resize: none;
+	width: 412px;
+	height: 140px;
+	background-color: #fff;
+	padding: 8px;
+}
+
+.review_footer {
+	height: 34px;
+	width: 412px;
+	justify-content: flex-end;
+	background-color: #fff;
+	padding: 8px;
+	line-height: 1.2;
+}
+
+.review_footer div {
+	margin: 0 20px;
+	cursor: pointer;
+	font-size: 15px;
+}
+
+.review_input {
+	border: none;
+	resize: none;
+	height: 93px;
+	margin: 19px 22px;
+	font-size: 15px;
+	outline: none;
+	width: 310px;
+}
+.arrow {
+	background-image: URL("arrow-down-fill.png");
+	width: 20px;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+.flex-start {
+	justify-content: flex-start;
 }

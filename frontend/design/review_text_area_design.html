@@ -1,0 +1,30 @@
+<title>review_text_area</title>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<link href="index.css" rel="stylesheet" type="text/css">
+
+<form class="review_form">
+	
+		<div class="review_toggle flex-row flex-bet" id="review_toggle">
+			Leave a review
+			<div class="arrow"></div>
+		</div>
+		<div class="review_wrapper hidden" id="review_area">
+			<div class="flex-row flex-start">
+				<img class="profile_btn" src="user.png" style="width: 40px; height: 40px; margin-top: 12px; margin-left: 15px;"/>
+				<textarea class="review_input" placeholder="Write a review for this course"></textarea>
+			</div>
+			
+		</div>
+		<div class="review_footer flex-row hidden" id="review_footer">
+			<div style="color: #c0c0c0;" id="cancel_review">CANCEL</div>
+			<div style="color: #eb5e4b">POST</div>
+		</div>
+	
+		<div id="popover-arrow" class="popover-arrow_small hidden" style="margin-left:28px; position: absolute; top: 132px;"></div>
+</form>
+
+
+<script src="review.js"></script>
