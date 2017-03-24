@@ -10977,14 +10977,18 @@ var userData = {};
 var userProgram = [];
 var nodeClicked = "";
 var courseInfo = null;
+var treeData = [];
 
 function loadUserData(data) {
     userData = data;
 }
 
+function loadTreeData(data) {
+    var newObject = JSON.parse(JSON.stringify(data));
+    treeData.push(newObject);
+}
+
 function loadUserProgram(data) {
-    // console.log("TREE STORE loadUserProgram");
-    // console.log(data);
     userProgram = data;
 }
 
@@ -11000,6 +11004,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     getUserData: function getUserData() {
         return userData;
+    },
+
+    getTreeData: function getTreeData() {
+        return treeData;
     },
 
     getUserProgramReq: function getUserProgramReq() {
@@ -11025,6 +11033,9 @@ var TreeStore = merge(EventEmitter.prototype, {
     emitChange: function emitChange() {
         this.emit('change');
     },
+    emitTreeDataChange: function emitTreeDataChange() {
+        this.emit('treechange');
+    },
 
     emitProgramChange: function emitProgramChange() {
         this.emit('programChange');
@@ -11036,6 +11047,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     emitUpdateCourseInfo: function emitUpdateCourseInfo() {
         this.emit('updateCourseInfo');
+    },
+
+    addTreeChangeListner: function addTreeChangeListner(callback) {
+        this.on('treechange', callback);
     },
 
     addChangeListener: function addChangeListener(callback) {
@@ -11081,6 +11096,13 @@ AppDispatcher.register(function (payload) {
             // Call internal method based upon dispatched action
             loadUserData(action.data);
             TreeStore.emitChange();
+            break;
+
+        case TreeConstants.LOAD_TREEDATA:
+            // Call internal method based upon dispatched action
+            //            console.log(action.data);
+            loadTreeData(action.data);
+            TreeStore.emitTreeDataChange();
             break;
 
         case 'GET_USER_PROGRAM':
@@ -25859,6 +25881,19 @@ var TreeActions = {
         });
     },
 
+    loadTreeInfo: function loadTreeInfo(code) {
+        return $.ajax({
+            url: "/api/path/" + code + "/pre",
+            dataType: 'json',
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: TreeConstants.LOAD_TREEDATA,
+                    data: result
+                });
+            }
+        });
+    },
+
     getUserProgram: function getUserProgram(user) {
         if (user && user.program) {
             var userSpec = user.spec.toLowerCase();
@@ -25902,7 +25937,6 @@ var TreeActions = {
             }
         });
     }
-
 };
 
 var getCurrentUsername = function getCurrentUsername() {
@@ -25926,7 +25960,8 @@ module.exports = TreeActions;
 var keyMirror = __webpack_require__(68);
 
 module.exports = keyMirror({
-    LOAD_USERDATA: null
+    LOAD_USERDATA: null,
+    LOAD_TREEDATA: null
 });
 
 /***/ }),
@@ -27633,7 +27668,7 @@ exports.default = TreeProgressReqCourses;
 
 
 Object.defineProperty(exports, "__esModule", {
-		value: true
+	value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -27658,333 +27693,610 @@ var _courseInfo2 = _interopRequireDefault(_courseInfo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var AppDispatcher = __webpack_require__(37);
 var TreeStore = __webpack_require__(97);
 var actions = __webpack_require__(227);
+var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3', 'CSCD01H3', 'CSCD27H3'];
+var counter = 0;
+var nodes = [];
+var edges = [];
+
+var Node = function Node(data) {
+	_classCallCheck(this, Node);
+
+	this.id = data.courseid;
+	this.preq = data.preq;
+	if (data.preq) {
+		this.edgeNumbers = data.preq.length;
+	} else {
+		this.edgeNumbers = 0;
+	}
+};
+
+var Edge = function Edge(sourceNode, targetNode) {
+	_classCallCheck(this, Edge);
+
+	this.id = sourceNode.id + ":" + targetNode.id;
+	this.source = sourceNode.id;
+	this.target = targetNode.id;
+};
+
+;
 
 var Trees = function (_Component) {
-		_inherits(Trees, _Component);
+	_inherits(Trees, _Component);
 
-		function Trees() {
-				_classCallCheck(this, Trees);
+	function Trees() {
+		_classCallCheck(this, Trees);
 
-				var _this = _possibleConstructorReturn(this, (Trees.__proto__ || Object.getPrototypeOf(Trees)).call(this));
+		var _this = _possibleConstructorReturn(this, (Trees.__proto__ || Object.getPrototypeOf(Trees)).call(this));
 
-				_this.state = {
-						user: null,
-						program: null,
-						taken: null,
-						nodeClicked: ""
-				};
-				return _this;
+		_this.state = {
+			user: null,
+			preq: null,
+			program: null,
+			taken: null,
+			nodeClicked: ""
+		};
+		return _this;
+	}
+
+	_createClass(Trees, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'div',
+					{ className: 'tree_graph' },
+					_react2.default.createElement('div', { id: 'cy' })
+				),
+				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken }),
+				_react2.default.createElement(
+					_reactSkylight2.default,
+					{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo', title: this.state.nodeClicked },
+					_react2.default.createElement(_courseInfo2.default, { code: this.state.nodeClicked })
+				)
+			);
+		}
+	}, {
+		key: '_beforePopupOpen',
+		value: function _beforePopupOpen() {
+			// console.log(this.state.nodeClicked);
+		}
+	}, {
+		key: '_onChange',
+		value: function _onChange() {
+
+			this.setState(getUser());
+			this.setState(getTree());
+			this.setState({ taken: TreeStore.getUserTaken() });
+
+			actions.getUserProgram(this.state.user);
+		}
+	}, {
+		key: '_onProgramChange',
+		value: function _onProgramChange() {
+			this.setState({ program: TreeStore.getUserProgramReq() });
+		}
+	}, {
+		key: '_onNodeClicked',
+		value: function _onNodeClicked() {
+			this.setState({ nodeClicked: TreeStore.getNodeClicked() });
+			actions.getCourseInfo(this.state.nodeClicked);
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			TreeStore.removeChangeListener(this.treeOnChange);
+			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+			TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
 		}
 
-		_createClass(Trees, [{
-				key: 'render',
-				value: function render() {
-						return _react2.default.createElement(
-								'div',
-								null,
-								_react2.default.createElement(
-										'div',
-										{ className: 'tree_graph' },
-										_react2.default.createElement('div', { id: 'cy' })
-								),
-								_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken }),
-								_react2.default.createElement(
-										_reactSkylight2.default,
-										{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo', title: this.state.nodeClicked },
-										_react2.default.createElement(_courseInfo2.default, { code: this.state.nodeClicked })
-								)
-						);
-				}
-		}, {
-				key: '_beforePopupOpen',
-				value: function _beforePopupOpen() {
-						// console.log(this.state.nodeClicked);
-				}
-		}, {
-				key: '_onChange',
-				value: function _onChange() {
-						this.setState(getUser());
-						this.setState({ taken: TreeStore.getUserTaken() });
-						actions.getUserProgram(this.state.user);
-				}
-		}, {
-				key: '_onProgramChange',
-				value: function _onProgramChange() {
-						this.setState({ program: TreeStore.getUserProgramReq() });
-				}
-		}, {
-				key: '_onNodeClicked',
-				value: function _onNodeClicked() {
-						this.setState({ nodeClicked: TreeStore.getNodeClicked() });
-						actions.getCourseInfo(this.state.nodeClicked);
-				}
-		}, {
-				key: 'componentWillUnmount',
-				value: function componentWillUnmount() {
-						TreeStore.removeChangeListener(this.treeOnChange);
-						TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
-						TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
-				}
-		}, {
-				key: 'componentDidMount',
-				value: function componentDidMount() {
-						this.treeOnChange = this._onChange.bind(this);
-						this.treeOnProgramChange = this._onProgramChange.bind(this);
-						this.treeOnNodeClicked = this._onNodeClicked.bind(this);
+		// <<<<<<< HEAD
 
-						TreeStore.addChangeListener(this.treeOnChange);
-						TreeStore.addProgramChangeListener(this.treeOnProgramChange);
-						TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this.treeOnChange = this._onChange.bind(this);
+			this.treeOnProgramChange = this._onProgramChange.bind(this);
+			this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 
-						actions.loadUserData(null);
-						actions.getUserProgram(this.state.user);
+			TreeStore.addChangeListener(this.treeOnChange);
+			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+			TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
+			TreeStore.addTreeChangeListner(this.treeOnChange);
+			// // =======
+			// 	componentDidMount() {
+			// 	  	this.treeOnChange = this._onChange.bind(this);
+			// 	  	this.treeOnProgramChange = this._onProgramChange.bind(this);
 
-						this.setState({ user: getUser() });
+			// 	    TreeStore.addChangeListener(this.treeOnChange);
+			// 	    TreeStore.addTreeChangeListner(this.treeOnChange);
+			// 	    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+			// >>>>>>> master
 
-						var thisComp = this;
-						$.ajax({
-								url: "/api/path/CSCA08H3/post",
-								dataType: 'json',
-								success: function success(result) {
-										var data = result;
-										var rank = 0;
+			actions.loadUserData(null);
+			actions.getUserProgram(this.state.user);
 
-										var node = function node(data) {
-												this.title = data.title;
-												this.id = data.courseid;
-												this.postreq = data.postreq;
-												this.source = null;
-												this.target = null;
-												this.edgeNumbers = data.postreq.length;
-												this.rank = rank++;
-										};
+			// <<<<<<< HEAD
+			this.setState({ user: getUser() });
 
-										var edge = function edge(sourceNode, targetNode) {
-												this.id = sourceNode.id + targetNode.id;
-												this.source = sourceNode.id;
-												this.target = targetNode.id;
-												this.visited = false;
-										};
+			var thisComp = this;
+			// 	    $.ajax({
+			// 	      url: "/api/path/CSCA08H3/post",
+			// 	      dataType: 'json',
+			// 	      success: function (result) {
+			// 	      var data = result;
+			// 	      var rank = 0;
 
-										var nodes = [];
-										var edges = [];
-										var startNode = new node(data);
-										nodes.push(startNode);
-										startNode.source = startNode;
+			// 		  var node = function (data){
+			// 	   		this.title = data.title;
+			// 	   		this.id = data.courseid;
+			// 	   		this.postreq = data.postreq;
+			// 	   		this.source = null;
+			// 	   		this.target = null;
+			// 	   		this.edgeNumbers = data.postreq.length;
+			// 	   		this.rank = rank++;
+			// 	   	  };
 
-										var findCourse = function findCourse(node) {
-												for (var i = 0; i < nodes.length; i++) {
-														if (nodes[i].id == node.id) return true;
-												}
-												return false;
-										};
+			// 	   	  var edge = function (sourceNode, targetNode){ 	
+			// 	   		this.id = sourceNode.id + targetNode.id;
+			// 	   		this.source = sourceNode.id;
+			// 	   		this.target = targetNode.id;
+			// 	   		this.visited = false;
+			// 	   	  };
 
-										var courseAdder = function courseAdder(data) {
-												var i;
-												for (i = 0; i < data.edgeNumbers; i++) {
-														if (findCourse(data.postreq[i]) == true) return;else {
-																var newNode = new node(data.postreq[i]);
-																var newEdge = new edge(data, newNode);
-																nodes.push(newNode);
-																edges.push(newEdge);
-																courseAdder(newNode);
-														}
-												}
-										};
+			// 	   	   var nodes = [];
+			// 	   	   var edges = [];
+			// 	       var startNode = new node(data);
+			// 	       nodes.push(startNode);
+			// 	       startNode.source= startNode;
 
-										courseAdder(startNode); // all the courses added
 
-										$(function () {
-												// on dom ready
-												var cy = cytoscape({
-														container: document.getElementById('cy'),
+			// 	       var findCourse = function(node){
+			// 	       		for(var i=0; i<nodes.length; i++){
+			// 	       			if(nodes[i].id==node.id) return true;
+			// 	       		}
+			// 	       		return false;
+			// 	       }
 
-														boxSelectionEnabled: false,
-														autounselectify: true,
-														pan: { x: 0, y: 0 },
-														style: cytoscape.stylesheet().selector('node').css({
-																'content': 'data(id)'
-														}).selector('edge').css({
-																'target-arrow-shape': 'triangle',
-																'width': 4,
-																'line-color': '#ddd',
-																'target-arrow-color': '#ddd',
-																'curve-style': 'bezier'
-														}).selector('.highlighted').css({
-																'background-color': '#61bffc',
-																'line-color': '#61bffc',
-																'target-arrow-color': '#61bffc',
-																'transition-property': 'background-color, line-color, target-arrow-color',
-																'transition-duration': '0.5s'
-														}),
 
-														layout: {
-																name: 'breadthfirst',
-																directed: true,
-																roots: '#CSCA08H3',
-																padding: 10
-														}
-												});
+			// 	       var courseAdder = function (data){
+			// 		       	var i;
+			// 		       	for(i=0; i<data.edgeNumbers; i++){
+			// 		       		if(findCourse(data.postreq[i])==true) return;
+			// 		       		else{
+			// 		       			var newNode = new node(data.postreq[i]);
+			// 		       			var newEdge = new edge(data, newNode);
+			// 		       			nodes.push(newNode);
+			// 		       			edges.push(newEdge);
+			// 		       			courseAdder(newNode);
 
-												var levelCount = { A: 0, B: 0, C: 0, D: 0 };
-												for (var i = 0; i < nodes.length; i++) {
-														var id = nodes[i].id;
-														var title = nodes[i].title;
-														var rank = nodes[i].rank;
-														var levels = [10, 110, 210, 310];
+			// 		       		}
+			// 		       	}
+			// 	       }
 
-														var x = 50 + levelCount[id.charAt(3)] * 130;
-														var y = 50 + i * 50;
-														switch (id.charAt(3)) {
-																case "A":
-																		x = 400 + levelCount[id.charAt(3)] * 120;
-																		y = 50 + levels[0];
-																		levelCount["A"] += 1;
-																		break;
-																case "B":
-																		y = 50 + levels[1];
-																		levelCount["B"] += 1;
-																		break;
-																case "C":
-																		y = 50 + levels[2];
-																		levelCount["C"] += 1;
-																		break;
-																case "D":
-																		y = 50 + levels[3];
-																		levelCount["D"] += 1;
-																		break;
+			// 	       courseAdder(startNode); // all the courses added
 
-														}
+			// 			  $(function(){ // on dom ready
+			// 		        var cy = cytoscape({
+			// 		          container: document.getElementById('cy'),
 
-														cy.add([{ group: "nodes", data: { id: id, title: title }, position: { x: x, y: y } }]);
-														//cy.$('#'+id).lock();
-														// console.log(levelCount);
-												}
+			// 		          boxSelectionEnabled: false,
+			// 		          autounselectify: true,
+			// 		          pan: { x: 0, y: 0 },
+			// 		          style: cytoscape.stylesheet()
+			// 		            .selector('node')
+			// 		              .css({
+			// 		                'content': 'data(id)'
+			// 		              })
+			// 		            .selector('edge')
+			// 		              .css({
+			// 		                'target-arrow-shape': 'triangle',
+			// 		                'width': 4,
+			// 		                'line-color': '#ddd',
+			// 		                'target-arrow-color': '#ddd',
+			// 		                'curve-style': 'bezier'
+			// 		              })
 
-												for (var i = 0; i < edges.length; i++) {
-														var id = edges[i].id;
-														var source = edges[i].source;
-														var target = edges[i].target;
-														cy.add([{ group: "edges", data: { id: id, source: source, target: target, marked: 0 } }]);
-												}
+			// 		            .selector('.highlighted')
+			// 		              .css({
+			// 		                'background-color': '#61bffc',
+			// 		                'line-color': '#61bffc',
+			// 		                'target-arrow-color': '#61bffc',
+			// 		                'transition-property': 'background-color, line-color, target-arrow-color',
+			// 		                'transition-duration': '0.5s'
+			// 		              }),
 
-												cy.minZoom(1);
-												cy.maxZoom(1);
+			// 		          layout: {
+			// 		            name: 'breadthfirst',
+			// 		            directed: true,
+			// 		            roots: '#CSCA08H3',
+			// 		            padding: 10
+			// 		          }
+			// 		        });
 
-												cy.on('tap', function (evt) {
-														if (evt.cyTarget === cy || evt.cyTarget.isEdge()) return;
+			// 		        var levelCount = {A:0, B:0, C:0, D:0};
+			// 		        for(var i =0; i<nodes.length; i++){ 
+			// 	     	   		var id = nodes[i].id;
+			// 	     	   		var title = nodes[i].title;
+			// 	     	   		var rank = nodes[i].rank;
+			// 	     	   		var levels  = [10, 110, 210, 310];
 
-														thisComp.refs.courseInfo.show();
-														actions.nodeClicked(evt.cyTarget.id());
-														// var tapid= cy.$('#'+evt.cyTarget.id());
-														// var creditCounter=document.getElementById('qty').value;
-														// creditCounter = creditCounter.split("/")[0];
-														// var newCredit = parseFloat(creditCounter);
+			// 	    	   		var x = 50 + (levelCount[id.charAt(3)]*130);
+			// 	    	   		var y = 50 + (i*50);
+			// 	    	   		switch(id.charAt(3)) {
+			// 	    	   			case ("A"):
+			// 	    	   				x = 400 + (levelCount[id.charAt(3)]*120);
+			// 	    	   				y = 50 + levels[0];
+			// 	    	   				levelCount["A"] +=1;
+			// 	    	   				break;
+			// 	    	   			case("B"):
+			// 	    	   				y = 50 + levels[1];
+			// 	    	   				levelCount["B"] += 1;
+			// 	    	   				break;
+			// 	    	   			case("C"):
+			// 	    	   				y = 50 + levels[2];
+			// 	    	   				levelCount["C"] += 1;
+			// 	    	   				break;
+			// 	    	   			case("D"):
+			// 	    	   				y = 50 + levels[3];
+			// 	    	   				levelCount["D"] += 1;
+			// 	    	   				break;
 
-														// if(tapid.hasClass('highlighted')){
-														// 	edgeUnmarker(tapid);
-														//   newCredit-=0.5;
-														// }
-														// else {
-														// 	// console.log("tap");
-														//   newCredit+=0.5;
-														//   edgeMarker(tapid);
-														//   findconnected(tapid);
-														// }
-														// document.getElementById('qty').value = newCredit + "/20";
-												});
+			// 	    	   		}
 
-												var findconnected = function findconnected(node) {
-														//var i = 0;
-														var connectedEdges = node.incomers();
-														var length = connectedEdges.length;
-														var roots = cy.nodes().roots();
+			// 					cy.add([
+			// 						        {group: "nodes", data: {id: id, title: title}, position:{x:x , y:y}}
+			// 						    ])
+			// 					//cy.$('#'+id).lock();
+			// 					// console.log(levelCount);
+			// 		    	}
 
-														roots.forEach(function (e) {
-																if (e.id() == node.id()) {
-																		node.addClass('highlighted');
-																		edgeMarker(node);
-																		return;
-																}
-														});
 
-														connectedEdges.forEach(function (ele) {
-																var target = ele.target();
-																var source = ele.source();
-																if (source.hasClass('highlighted') && markChecker(node) == true) {
-																		highLighter(node);
-																		return;
-																}
-														});
-												};
+			// 		    	for(var i =0; i<edges.length; i++){ 
+			// 	     	   		var id = edges[i].id;
+			// 	     	   		var source = edges[i].source;
+			// 	     	   		var target = edges[i].target;
+			// 						cy.add([
+			// 						        { group: "edges", data: { id: id, source: source, target: target, marked : 0}}
+			// 						    ])
 
-												var edgeMarker = function edgeMarker(node) {
-														node.data('marked', 1);
-														node.outgoers().forEach(function (ele) {
-																//console.log(ele);
-																ele.data('marked', 1);
-														});
-												};
+			// 		    	}
 
-												var edgeUnmarker = function edgeUnmarker(node) {
-														node.data('marked', 0);
-														unhighLighter(node);
-														node.outgoers().forEach(function (ele) {
-																ele.data('marked', 0);
-														});
-												};
+			// 		    	cy.minZoom(1);
+			// 		    	cy.maxZoom(1);
 
-												var markChecker = function markChecker(node) {
-														var result = true;
-														node.incomers().forEach(function (ele) {
-																var value = ele.data('marked');
-																if (value == 0) result = false;
-														});
-														//console.log("Ddd");
-														return result;
-												};
 
-												var highLighter = function highLighter(node) {
-														node.connectedEdges().forEach(function (ele) {
-																if (ele.target().id() == node.id()) {
-																		ele.target().addClass('highlighted');
-																		ele.addClass('highlighted');
-																}
-														});
-												};
+			// 		        cy.on('tap', function(evt){
+			// 		          if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
 
-												var unhighLighter = function unhighLighter(node) {
-														node.removeClass('highlighted');
-														node.connectedEdges().forEach(function (ele) {
-																//if(ele.target().id()==node.id()) {
-																//ele.target().removeClass('highlighted');
-																ele.removeClass('highlighted');
-																//}
-														});
-												};
-										}); // on dom ready
+			// 		          thisComp.refs.courseInfo.show()
+			// 		          actions.nodeClicked(evt.cyTarget.id());
+			// 		          // var tapid= cy.$('#'+evt.cyTarget.id());
+			// 		          // var creditCounter=document.getElementById('qty').value;
+			// 		          // creditCounter = creditCounter.split("/")[0];
+			// 		          // var newCredit = parseFloat(creditCounter);
 
-								}
+			// 		          // if(tapid.hasClass('highlighted')){
+			// 		          // 	edgeUnmarker(tapid);
+			// 		          //   newCredit-=0.5;
+			// 		          // }
+			// 		          // else {
+			// 		          // 	// console.log("tap");
+			// 		          //   newCredit+=0.5;
+			// 		          //   edgeMarker(tapid);
+			// 		          //   findconnected(tapid);
+			// 		          // }
+			// 		          // document.getElementById('qty').value = newCredit + "/20";
+
+			// 		        });
+
+			// 		        var findconnected = function(node){
+			// 		            //var i = 0;
+			// 		            var connectedEdges = node.incomers();
+			// 		            var length = connectedEdges.length;
+			// 		            var roots = cy.nodes().roots();
+
+
+			// 		            roots.forEach(function(e) {
+			// 		              	if(e.id()==node.id()){ 
+			// 		              		node.addClass('highlighted');
+			// 		              		edgeMarker(node);
+			// 		              		return;
+			// 		            	}
+			// 		            })
+
+			// 		            connectedEdges.forEach(function(ele){
+			// 		                var target = ele.target();
+			// 		                var source = ele.source();
+			// 		                if(source.hasClass('highlighted') && markChecker(node)==true) {
+			// 		                	highLighter(node);
+			// 		                	return;
+			// 		                }
+			// 		            });
+			// 		        }
+
+			// 		        var edgeMarker = function(node){
+			// 		          node.data('marked',1);
+			// 		          node.outgoers().forEach(function(ele){
+			// 		          		//console.log(ele);
+			// 		          		ele.data('marked',1);
+			// 		          });
+			// 		        }
+
+			// 		        var edgeUnmarker = function(node){
+			// 		          node.data('marked',0);
+			// 		          unhighLighter(node);
+			// 		          node.outgoers().forEach(function(ele){
+			// 		          		ele.data('marked',0);
+			// 		          });
+			// 		        }
+
+			// 		        var markChecker = function(node){
+			// 		        	var result = true;
+			// 		         	node.incomers().forEach(function(ele){
+			// 		          		var value = ele.data('marked');
+			// 		          		if(value==0) result=false;
+			// 		          });
+			// 		          		//console.log("Ddd");
+			// 		          		return result;
+			// 		        }
+
+			// 		        var highLighter = function(node){
+			// 		          node.connectedEdges().forEach(function(ele){
+			// 		            if(ele.target().id()==node.id()) {
+			// 		              ele.target().addClass('highlighted');
+			// 		              ele.addClass('highlighted');
+			// 		              }
+			// 		          });
+			// 		        }
+
+			// 		        var unhighLighter = function(node){
+			// 		          node.removeClass('highlighted');
+			// 		          node.connectedEdges().forEach(function(ele){
+			// 		            //if(ele.target().id()==node.id()) {
+			// 		              //ele.target().removeClass('highlighted');
+			// 		              ele.removeClass('highlighted');
+			// 		              //}
+			// 		          });
+			// 		        }
+
+			// 		    }); // on dom ready
+
+
+			// 	      }
+			// 	    });
+			// 	}
+			// =======
+
+			$(function () {
+				// on dom ready
+
+				var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+				$.when.apply($, ajaxCalls).then(function () {
+					var findCourse = function findCourse(data) {
+						for (var i = 0; i < nodes.length; i++) {
+							if (nodes[i].id == data.courseid) {
+								return true;
+							}
+						}
+						return false;
+					};
+
+					var courseAdder = function courseAdder(node) {
+						if (node.id == 'CSCC01H3') {
+							console.log(node);
+						}
+						for (var i = 0; i < node.edgeNumbers; i++) {
+							if (node.preq[i] == null || node.preq[i].courseid == null || findCourse(node.preq[i]) == true) {
+								return;
+							} else {
+								var newNode = new Node(node.preq[i]);
+								var newEdge = new Edge(newNode, node);
+								nodes.push(newNode);
+								edges.push(newEdge);
+								courseAdder(newNode);
+							}
+						}
+					};
+
+					var roots = TreeStore.getTreeData();
+					for (var j = 0; j < roots.length; j++) {
+						var startNode = new Node(roots[j]);
+						nodes.push(startNode);
+						courseAdder(startNode);
+					}
+
+					var cy = cytoscape({
+						container: document.getElementById('cy'),
+
+						boxSelectionEnabled: false,
+						autounselectify: true,
+						pan: { x: 0, y: 0 },
+						style: cytoscape.stylesheet().selector('node').css({ 'content': 'data(id)' }).selector('edge').css({
+							'target-arrow-shape': 'triangle',
+							'width': 4,
+							'line-color': '#ddd',
+							'target-arrow-color': '#ddd',
+							'curve-style': 'bezier'
+						}).selector('.highlighted').css({
+							'background-color': '#61bffc',
+							'line-color': '#61bffc',
+							'target-arrow-color': '#61bffc',
+							'transition-property': 'background-color, line-color, target-arrow-color',
+							'transition-duration': '0.5s'
+						}),
+
+						layout: {
+							name: 'breadthfirst',
+							directed: true,
+							roots: '#CSCA08H3',
+							padding: 10
+						}
+					});
+
+					var levelCount = { A: 0, B: 0, C: 0, D: 0 };
+					for (var i = 0; i < nodes.length; i++) {
+						var id = nodes[i].id;
+						var title = nodes[i].title;
+						var levels = [10, 110, 210, 310];
+
+						var x = 50 + levelCount[id.charAt(3)] * 130;
+						var y = 50 + i * 50;
+						switch (id.charAt(3)) {
+							case "A":
+								x = 400 + levelCount[id.charAt(3)] * 120;
+								y = 50 + levels[0];
+								levelCount["A"] += 1;
+								break;
+							case "B":
+								y = 50 + levels[1];
+								levelCount["B"] += 1;
+								break;
+							case "C":
+								y = 50 + levels[2];
+								levelCount["C"] += 1;
+								break;
+							case "D":
+								y = 50 + levels[3];
+								levelCount["D"] += 1;
+								break;
+
+						}
+						cy.add([{ group: "nodes", data: { id: id, title: title }, position: { x: x, y: y } }]);
+					}
+
+					for (var i = 0; i < edges.length; i++) {
+						var id = edges[i].id;
+						var source = edges[i].source;
+						var target = edges[i].target;
+						cy.add([{ group: "edges", data: { id: id, source: source, target: target, marked: 0 } }]);
+					}
+
+					cy.minZoom(1);
+					cy.maxZoom(5);
+
+					cy.on('tap', function (evt) {
+						if (evt.cyTarget === cy || evt.cyTarget.isEdge()) return;
+
+						thisComp.refs.courseInfo.show();
+						actions.nodeClicked(evt.cyTarget.id());
+						//  if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+						// var tapid= cy.$('#'+evt.cyTarget.id());
+						// var creditCounter=document.getElementById('qty').value;
+						// creditCounter = creditCounter.split("/")[0];
+						// var newCredit = parseFloat(creditCounter);
+
+						// if(tapid.hasClass('highlighted')){
+						//    edgeUnmarker(tapid);
+						//   newCredit-=0.5;
+						// }
+						// else {
+						// 	// console.log("tap");
+						//   newCredit+=0.5;
+						//   edgeMarker(tapid);
+						//   findconnected(tapid);
+						// }
+						// document.getElementById('qty').value = newCredit + "/20";
+					});
+
+					var findconnected = function findconnected(node) {
+						//var i = 0;
+						var connectedEdges = node.incomers();
+						var length = connectedEdges.length;
+						var roots = cy.nodes().roots();
+
+						roots.forEach(function (e) {
+							if (e.id() == node.id()) {
+								node.addClass('highlighted');
+								edgeMarker(node);
+								return;
+							}
 						});
-				}
-		}]);
 
-		return Trees;
+						connectedEdges.forEach(function (ele) {
+							var target = ele.target();
+							var source = ele.source();
+							if (source.hasClass('highlighted') && markChecker(node) == true) {
+								highLighter(node);
+								return;
+							}
+						});
+					};
+
+					var edgeMarker = function edgeMarker(node) {
+						node.data('marked', 1);
+						node.outgoers().forEach(function (ele) {
+							//console.log(ele);
+							ele.data('marked', 1);
+						});
+					};
+
+					var edgeUnmarker = function edgeUnmarker(node) {
+						node.data('marked', 0);
+						unhighLighter(node);
+						node.outgoers().forEach(function (ele) {
+							ele.data('marked', 0);
+						});
+					};
+
+					var markChecker = function markChecker(node) {
+						var result = true;
+						node.incomers().forEach(function (ele) {
+							var value = ele.data('marked');
+							if (value == 0) result = false;
+						});
+						//console.log("Ddd");
+						return result;
+					};
+
+					var highLighter = function highLighter(node) {
+						node.connectedEdges().forEach(function (ele) {
+							if (ele.target().id() == node.id()) {
+								ele.target().addClass('highlighted');
+								ele.addClass('highlighted');
+							}
+						});
+					};
+
+					var unhighLighter = function unhighLighter(node) {
+						node.removeClass('highlighted');
+						node.connectedEdges().forEach(function (ele) {
+							//if(ele.target().id()==node.id()) {
+							//ele.target().removeClass('highlighted');
+							ele.removeClass('highlighted');
+							//}
+						});
+					};
+
+					// }); // on dom ready
+				});
+			});
+		}
+	}]);
+
+	return Trees;
 }(_react.Component);
 
+function getTree() {
+	return {
+		preq: TreeStore.getTreeData()
+	};
+}
+
 function getUser() {
-		return {
-				user: TreeStore.getUserData()
-		};
+	return {
+		user: TreeStore.getUserData()
+	};
 }
 
 exports.default = Trees;

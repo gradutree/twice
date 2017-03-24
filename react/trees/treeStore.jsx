@@ -7,14 +7,21 @@ var userData = {};
 var userProgram = [];
 var nodeClicked = "";
 var courseInfo = null;
+var treeData =  [];
 
 function loadUserData(data) {
     userData = data;
 }
 
+function loadTreeData(data) {
+    var newObject = JSON.parse(JSON.stringify(data));
+    treeData.push(newObject);
+
+}
+
+
+
 function loadUserProgram(data) {
-    // console.log("TREE STORE loadUserProgram");
-    // console.log(data);
     userProgram = data;
 }
 
@@ -31,6 +38,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     getUserData: function() {
         return userData;
+    },
+
+    getTreeData: function() {
+        return treeData;
     },
 
     getUserProgramReq: function() {
@@ -56,6 +67,10 @@ var TreeStore = merge(EventEmitter.prototype, {
     emitChange: function() {
         this.emit('change');
     },
+    emitTreeDataChange: function() {
+        this.emit('treechange');
+    },
+
 
     emitProgramChange: function() {
         this.emit('programChange');
@@ -67,6 +82,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     emitUpdateCourseInfo: function() {
         this.emit('updateCourseInfo');
+    },
+
+    addTreeChangeListner: function(callback) {
+        this.on('treechange', callback);
     },
 
     addChangeListener: function(callback) {
@@ -112,6 +131,13 @@ AppDispatcher.register(function(payload) {
             // Call internal method based upon dispatched action
             loadUserData(action.data);
             TreeStore.emitChange();
+            break;
+
+        case TreeConstants.LOAD_TREEDATA:
+            // Call internal method based upon dispatched action
+//            console.log(action.data);
+            loadTreeData(action.data);
+            TreeStore.emitTreeDataChange();
             break;
 
         case 'GET_USER_PROGRAM':

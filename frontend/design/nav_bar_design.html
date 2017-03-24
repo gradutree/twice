@@ -1,0 +1,44 @@
+<link href="index.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<header class="header_bar"> 
+      <nav class="navbar">
+	  <a class="header_text" href="/">
+			<h3>GraduTree</h3>
+		</a>
+        <ul class="btn_list" id="btn_list">
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup">Sign up</a></li>
+        </ul>
+      </nav>
+</header>
+
+
+<h3>Logged in:</h3>
+
+<header class="header_bar"> 
+      <nav class="navbar">
+	  <a class="header_text" href="/">
+			<h3>GraduTree</h3>
+		</a>
+        <ul class="btn_list" id="btn_list">
+         <li><a href="/login">Dashboard</a></li>
+          <li class="profile">
+			<div class="btn-group">
+				<button type="button" class="profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					
+					<img id="profile_img" src="user.png">
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="/api/signout">Sign out</a></li>
+
+				</ul>
+			</div>
+		  </li>
+        </ul>
+      </nav>
+</header>
+

@@ -238,7 +238,7 @@ app.get('/api/signout/', function (req, res) {
 
 app.get("/api/path/:start/post", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
-        courses = {};
+       var courses = {};
         backend.visualizePostreq(db, req.params.start.toUpperCase(), courses).then(function () {
             res.json(courses);
         });
@@ -247,7 +247,7 @@ app.get("/api/path/:start/post", function (req, res) {
 
 app.get("/api/path/:start/pre", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
-        courses = {};
+       var courses = {};
         backend.visualizePreq(db, req.params.start.toUpperCase(), courses).then(function () {
             res.json(courses);
         });
