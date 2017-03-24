@@ -18,7 +18,6 @@ class TreeProgressReq extends Component {
 	}
 
 	updateProgressReq() {
-		console.log("IN updateProgressReq");
 		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
 		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
 		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});

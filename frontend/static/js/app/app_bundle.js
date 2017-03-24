@@ -7380,9 +7380,7 @@ function loadCourseInfo(course) {
 
 function loadTaken(courseCode) {
     if (userData.taken && userData.taken.indexOf(courseCode) < 0) {
-        console.log(userData.taken);
         userData.taken.push(courseCode);
-        console.log(userData.taken);
     }
 }
 
@@ -7500,7 +7498,6 @@ AppDispatcher.register(function (payload) {
 
         case TreeConstants.LOAD_TREEDATA:
             // Call internal method based upon dispatched action
-            //            console.log(action.data);
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
             break;
@@ -7516,13 +7513,11 @@ AppDispatcher.register(function (payload) {
             break;
 
         case 'UPDATE_COURSE_INFO':
-            console.log("UPDATE_COURSE_INFO case");
             loadCourseInfo(action.data);
             TreeStore.emitUpdateCourseInfo();
             break;
 
         case 'SET_TAKEN':
-            console.log("emit SET_TAKEN");
             loadTaken(action.data);
             TreeStore.emitSetTaken();
 
@@ -25923,8 +25918,6 @@ var TreeActions = {
     },
 
     getUserProgram: function getUserProgram(user) {
-        // console.log("IN actions.getUserProgram");
-        // console.log(user);
         if (user && user.program) {
             var userSpec = user.spec.toLowerCase();
 
@@ -25958,7 +25951,7 @@ var TreeActions = {
         $.ajax({
             url: "/api/courses/query?code=" + courseCode,
             success: function success(result) {
-                console.log("actions.getCourseInfo success = " + courseCode);
+                // console.log("actions.getCourseInfo success = " + courseCode);
                 AppDispatcher.handleAction({
                     actionType: 'UPDATE_COURSE_INFO',
                     data: result[0]
@@ -25977,7 +25970,7 @@ var TreeActions = {
             type: "PATCH",
             data: JSON.stringify({}),
             success: function success(result) {
-                console.log("taken success");
+                // console.log("taken success");
                 AppDispatcher.handleAction({
                     actionType: 'SET_TAKEN',
                     data: courseCode
@@ -26486,8 +26479,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var textStyle = {
+var notTakenTextStyle = {
 	color: "#000000"
+};
+
+var takenTextStyle = {
+	color: "#32cd32"
 };
 
 var CourseText = function (_Component) {
@@ -26507,10 +26504,10 @@ var CourseText = function (_Component) {
 	_createClass(CourseText, [{
 		key: 'render',
 		value: function render() {
-			textStyle.color = this.props.userTook ? "#32cd32" : "#000000";
+			// textStyle.color = this.props.userTook ?  "#32cd32" : "#000000";
 			return _react2.default.createElement(
 				'div',
-				{ style: textStyle },
+				{ style: this.props.userTook ? takenTextStyle : notTakenTextStyle },
 				this.props.courseText
 			);
 		}
@@ -27597,7 +27594,6 @@ var TreeProgressReq = function (_Component) {
 	_createClass(TreeProgressReq, [{
 		key: 'updateProgressReq',
 		value: function updateProgressReq() {
-			console.log("IN updateProgressReq");
 			this.setState({ percent: determinePercent(this.props.req.courses, this.props.taken) });
 			this.setState({ reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken) });
 			this.setState({ reqCoursesStr: getReqCoursesStr(this.props.req) });

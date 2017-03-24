@@ -32,9 +32,7 @@ function loadCourseInfo(course){
 
 function loadTaken(courseCode) {
     if(userData.taken && userData.taken.indexOf(courseCode) < 0) {
-        console.log(userData.taken);
         userData.taken.push(courseCode);
-        console.log(userData.taken);
     }
 }
 
@@ -153,7 +151,6 @@ AppDispatcher.register(function(payload) {
 
         case TreeConstants.LOAD_TREEDATA:
             // Call internal method based upon dispatched action
-//            console.log(action.data);
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
             break;
@@ -169,13 +166,11 @@ AppDispatcher.register(function(payload) {
             break;
 
         case 'UPDATE_COURSE_INFO':
-            console.log("UPDATE_COURSE_INFO case");
             loadCourseInfo(action.data);
             TreeStore.emitUpdateCourseInfo();
             break;
 
         case 'SET_TAKEN':
-            console.log("emit SET_TAKEN");
             loadTaken(action.data);
             TreeStore.emitSetTaken();
 
