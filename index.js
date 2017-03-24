@@ -352,11 +352,19 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
 });
 
 app.patch('/api/users/:username/taken/:course', function (req, res, next){
-    // console.log("ADD TAKEN"); 
-    // console.log("username = " + req.params.username + "\tcourse = " + req.params.course);
     MongoClient.connect(dbURL, function (err, db) {
-        db.collection("users").updateOne({username: req.params.username}, {$addToSet: {taken: req.params.course}}, function (err, result){
+        db.collection("users").updateOne({username: req.params.username}, 
+            {$addToSet: {taken: req.params.course}}, function (err, result){
             res.json({});
+        });
+    });
+});
+
+app.delete('/api/users/:username/notTaken/:course', function (req, res, next){
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("users").update({username: req.params.username}, 
+            {$pull: {taken: req.params.course}}, function (err, result){
+            res.end();
         });
     });
 });

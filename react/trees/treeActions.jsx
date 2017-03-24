@@ -62,11 +62,9 @@ var TreeActions = {
     },
 
     getCourseInfo: function(courseCode) {
-        // console.log("actions.getCourseInfo");
         $.ajax({
             url: "/api/courses/query?code="+courseCode,
             success: (function (result){
-                // console.log("actions.getCourseInfo success = " + courseCode);
                 AppDispatcher.handleAction({
                     actionType: 'UPDATE_COURSE_INFO',
                     data: result[0]
@@ -79,13 +77,11 @@ var TreeActions = {
     },
 
     setTaken: function(username, courseCode) {
-        // console.log("setTaken: user= " + username + "\tcourse = " + courseCode);
         $.ajax({
             url: "/api/users/"+username+"/taken/"+courseCode,
             type: "PATCH",
             data: JSON.stringify({}),
             success: (function (result){
-                // console.log("taken success");
                 AppDispatcher.handleAction({
                     actionType: 'SET_TAKEN',
                     data: courseCode

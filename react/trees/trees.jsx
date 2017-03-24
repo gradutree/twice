@@ -64,13 +64,9 @@ class Trees extends Component {
   	}
 
   	_onChange() {
-  		// console.log("_onChange");
         this.setState(getUser());
         this.setState(getTree());
-        // console.log(TreeStore.getUserTaken());
         this.setState({taken: TreeStore.getUserTaken()});
-        // console.log(this.state.taken);
-        // console.log(this.state.user);
 
         actions.getUserProgram(this.state.user);
     }
@@ -85,9 +81,7 @@ class Trees extends Component {
     }
 
     _onSetTaken() {
-    	// console.log("TREE onSetTaken");
     	actions.loadUserData(null);
-    	// actions.getUserProgram(this.state.user);
     }
 
     componentWillUnmount() {
