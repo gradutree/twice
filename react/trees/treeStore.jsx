@@ -33,8 +33,29 @@ function loadCourseInfo(course){
 function loadTaken(courseCode) {
     if(userData.taken && userData.taken.indexOf(courseCode) < 0) {
         userData.taken.push(courseCode);
+        userData.allCourses.push(courseCode);
     }
 }
+
+function deleteTaken(courseCode) {
+    if(userData.taken && userData.taken.indexOf(courseCode) < 0) {
+        userData.taken.splice(userData.taken.indexOf(courseCode));
+        userData.taken.splice(userData.allCourses.indexOf(courseCode));
+    }
+}
+
+function loadAllCourses(courseCode) {
+    if(userData.allCourses && userData.allCourses.indexOf(courseCode) < 0) {
+        userData.allCourses.push(courseCode);
+    }
+}
+
+function deleteAllCourses(courseCode) {
+    if(userData.allCourses && userData.allCourses.indexOf(courseCode) < 0) {
+        userData.allCourses.splice(userData.allCourses.indexOf(courseCode));
+    }
+}
+
 
 
 var TreeStore = merge(EventEmitter.prototype, {
@@ -92,6 +113,18 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('setTaken');
     },
 
+    emitDeleteTaken: function() {
+        this.emit('deleteTaken');
+    },
+
+    emitSetAllCourses: function() {
+        this.emit('setAllCourses');
+    },
+
+    emitDeleteAllCourses: function() {
+        this.emit('deleteAllCourses');
+    },
+
     addChangeListener: function(callback) {
         this.on('change', callback);
     },
@@ -134,7 +167,31 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeSetTakenListener: function(callback) {
         this.removeListener('setTaken', callback);
-    }
+    },
+
+    addDeleteTakenListener: function(callback) {
+        this.on('deleteTaken', callback);
+    },
+
+    removeDeleteTakenListener: function(callback) {
+        this.removeListener('deleteTaken', callback);
+    },
+
+    addSetAllCoursesListener: function(callback) {
+        this.on('setAllCourses', callback);
+    },
+
+    removeSetAllCoursesListener: function(callback) {
+        this.removeListener('setAllCourses', callback);
+    },
+
+    addDeleteAllCoursesListener: function(callback) {
+        this.on('deleteAllCourses', callback);
+    },
+
+    removeDeleteAllCoursesListener: function(callback) {
+        this.removeListener('deleteAllCourses', callback);
+    },
 
 });
 
@@ -173,6 +230,18 @@ AppDispatcher.register(function(payload) {
         case 'SET_TAKEN':
             loadTaken(action.data);
             TreeStore.emitSetTaken();
+
+        case 'DELETE_TAKEN':
+            deleteTaken(action.data);
+            TreeStore.emitDeleteTaken();
+
+        case 'SET_ALL_COURSES':
+            loadAllCourses(action.data);
+            TreeStore.emitSetAllCourses();
+
+        case 'DELETE_ALL_COURSES':
+            deleteAllCourses(action.data);
+            TreeStore.emitDeleteAllCourses();
 
         default:
             return true;

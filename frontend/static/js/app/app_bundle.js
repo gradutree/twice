@@ -7381,6 +7381,26 @@ function loadCourseInfo(course) {
 function loadTaken(courseCode) {
     if (userData.taken && userData.taken.indexOf(courseCode) < 0) {
         userData.taken.push(courseCode);
+        userData.allCourses.push(courseCode);
+    }
+}
+
+function deleteTaken(courseCode) {
+    if (userData.taken && userData.taken.indexOf(courseCode) < 0) {
+        userData.taken.splice(userData.taken.indexOf(courseCode));
+        userData.taken.splice(userData.allCourses.indexOf(courseCode));
+    }
+}
+
+function loadAllCourses(courseCode) {
+    if (userData.allCourses && userData.allCourses.indexOf(courseCode) < 0) {
+        userData.allCourses.push(courseCode);
+    }
+}
+
+function deleteAllCourses(courseCode) {
+    if (userData.allCourses && userData.allCourses.indexOf(courseCode) < 0) {
+        userData.allCourses.splice(userData.allCourses.indexOf(courseCode));
     }
 }
 
@@ -7439,6 +7459,18 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('setTaken');
     },
 
+    emitDeleteTaken: function emitDeleteTaken() {
+        this.emit('deleteTaken');
+    },
+
+    emitSetAllCourses: function emitSetAllCourses() {
+        this.emit('setAllCourses');
+    },
+
+    emitDeleteAllCourses: function emitDeleteAllCourses() {
+        this.emit('deleteAllCourses');
+    },
+
     addChangeListener: function addChangeListener(callback) {
         this.on('change', callback);
     },
@@ -7481,6 +7513,30 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeSetTakenListener: function removeSetTakenListener(callback) {
         this.removeListener('setTaken', callback);
+    },
+
+    addDeleteTakenListener: function addDeleteTakenListener(callback) {
+        this.on('deleteTaken', callback);
+    },
+
+    removeDeleteTakenListener: function removeDeleteTakenListener(callback) {
+        this.removeListener('deleteTaken', callback);
+    },
+
+    addSetAllCoursesListener: function addSetAllCoursesListener(callback) {
+        this.on('setAllCourses', callback);
+    },
+
+    removeSetAllCoursesListener: function removeSetAllCoursesListener(callback) {
+        this.removeListener('setAllCourses', callback);
+    },
+
+    addDeleteAllCoursesListener: function addDeleteAllCoursesListener(callback) {
+        this.on('deleteAllCourses', callback);
+    },
+
+    removeDeleteAllCoursesListener: function removeDeleteAllCoursesListener(callback) {
+        this.removeListener('deleteAllCourses', callback);
     }
 
 });
@@ -7520,6 +7576,18 @@ AppDispatcher.register(function (payload) {
         case 'SET_TAKEN':
             loadTaken(action.data);
             TreeStore.emitSetTaken();
+
+        case 'DELETE_TAKEN':
+            deleteTaken(action.data);
+            TreeStore.emitDeleteTaken();
+
+        case 'SET_ALL_COURSES':
+            loadAllCourses(action.data);
+            TreeStore.emitSetAllCourses();
+
+        case 'DELETE_ALL_COURSES':
+            deleteAllCourses(action.data);
+            TreeStore.emitDeleteAllCourses();
 
         default:
             return true;
@@ -25976,6 +26044,55 @@ var TreeActions = {
                 console.log(err);
             }
         });
+    },
+
+    deleteTaken: function deleteTaken(username, courseCode) {
+        $.ajax({
+            url: "/api/users/" + username + "/taken/" + courseCode,
+            type: "DELETE",
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_TAKEN',
+                    data: courseCode
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
+    },
+
+    setAllCourses: function setAllCourses(username, courseCode) {
+        $.ajax({
+            url: "/api/users/" + username + "/allCourses/" + courseCode,
+            type: "PATCH",
+            data: JSON.stringify({}),
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: 'SET_ALL_COURSES',
+                    data: courseCode
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
+    },
+
+    deleteAllCourses: function deleteAllCourses(username, courseCode) {
+        $.ajax({
+            url: "/api/users/" + username + "/allCourses/" + courseCode,
+            type: "DELETE",
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_ALL_COURSES',
+                    data: courseCode
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
     }
 };
 
@@ -26480,7 +26597,11 @@ var notTakenTextStyle = {
 };
 
 var takenTextStyle = {
-	color: "#32cd32"
+	color: "#32CD32"
+};
+
+var toTakeTextStyle = {
+	color: "#FFA500"
 };
 
 var CourseText = function (_Component) {
@@ -27371,6 +27492,13 @@ var CourseInfo = function (_Component) {
 			this.setState({ course: TreeStore.getCourseInfo() });
 		}
 	}, {
+		key: 'setAllCourses',
+		value: function setAllCourses() {
+			if (this.props.user && this.state.course) {
+				actions.setAllCourses(this.props.user.username, this.state.course.code);
+			}
+		}
+	}, {
 		key: 'setTaken',
 		value: function setTaken() {
 			if (this.props.user && this.state.course) {
@@ -27408,12 +27536,14 @@ var CourseInfo = function (_Component) {
 					{ className: 'popup_buttons' },
 					_react2.default.createElement(
 						'button',
-						{ type: 'button', className: 'btn btn-primary popup_will_take_course_btn' },
+						{ type: 'button', className: 'btn btn-primary popup_will_take_course_btn',
+							onClick: this.setAllCourses.bind(this) },
 						'I Will Take This Course'
 					),
 					_react2.default.createElement(
 						'button',
-						{ type: 'button', className: 'btn btn-primary popup_took_course_btn', onClick: this.setTaken.bind(this) },
+						{ type: 'button', className: 'btn btn-primary popup_took_course_btn',
+							onClick: this.setTaken.bind(this) },
 						'I Took This Course'
 					)
 				)

@@ -7,9 +7,12 @@ var notTakenTextStyle = {
 }
 
 var takenTextStyle = {
-	color: "#32cd32"
+	color: "#32CD32"
 }
 
+var toTakeTextStyle = {
+	color: "#FFA500"
+}
 
 class CourseText extends Component {
 	constructor(){

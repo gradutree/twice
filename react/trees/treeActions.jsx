@@ -91,6 +91,55 @@ var TreeActions = {
                 console.log(err);
             }
         });
+    },
+
+    deleteTaken: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/taken/"+courseCode,
+            type: "DELETE",
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_TAKEN',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
+    },
+
+    setAllCourses: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/allCourses/"+courseCode,
+            type: "PATCH",
+            data: JSON.stringify({}),
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'SET_ALL_COURSES',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
+    },
+
+    deleteAllCourses: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/allCourses/"+courseCode,
+            type: "DELETE",
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_ALL_COURSES',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
     }
 };
 
