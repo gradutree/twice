@@ -25947,11 +25947,9 @@ var TreeActions = {
     },
 
     getCourseInfo: function getCourseInfo(courseCode) {
-        // console.log("actions.getCourseInfo");
         $.ajax({
             url: "/api/courses/query?code=" + courseCode,
             success: function success(result) {
-                // console.log("actions.getCourseInfo success = " + courseCode);
                 AppDispatcher.handleAction({
                     actionType: 'UPDATE_COURSE_INFO',
                     data: result[0]
@@ -25964,13 +25962,11 @@ var TreeActions = {
     },
 
     setTaken: function setTaken(username, courseCode) {
-        // console.log("setTaken: user= " + username + "\tcourse = " + courseCode);
         $.ajax({
             url: "/api/users/" + username + "/taken/" + courseCode,
             type: "PATCH",
             data: JSON.stringify({}),
             success: function success(result) {
-                // console.log("taken success");
                 AppDispatcher.handleAction({
                     actionType: 'SET_TAKEN',
                     data: courseCode
@@ -26504,7 +26500,6 @@ var CourseText = function (_Component) {
 	_createClass(CourseText, [{
 		key: 'render',
 		value: function render() {
-			// textStyle.color = this.props.userTook ?  "#32cd32" : "#000000";
 			return _react2.default.createElement(
 				'div',
 				{ style: this.props.userTook ? takenTextStyle : notTakenTextStyle },
@@ -27373,15 +27368,11 @@ var CourseInfo = function (_Component) {
 	_createClass(CourseInfo, [{
 		key: '_onUpdateCourseInfo',
 		value: function _onUpdateCourseInfo() {
-			// console.log("CourseInfo: _onUpdateCourseInfo");
 			this.setState({ course: TreeStore.getCourseInfo() });
 		}
 	}, {
 		key: 'setTaken',
 		value: function setTaken() {
-			// console.log("button clicked");
-			// console.log(this.props.user);
-			// console.log(this.state.course);
 			if (this.props.user && this.state.course) {
 				actions.setTaken(this.props.user.username, this.state.course.code);
 			}
@@ -27606,15 +27597,12 @@ var TreeProgressReq = function (_Component) {
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			// console.log("Mounting: " + this.props.key);
 			this.setState({ percent: determinePercent(this.props.req.courses, this.props.taken) });
 			this.setState({ reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken) });
 			this.setState({ reqCoursesStr: getReqCoursesStr(this.props.req) });
 
 			this.treeOnProgramChange = this.updateProgressReq.bind(this);
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
-
-			// updateProgressReq();
 		}
 	}, {
 		key: 'render',
@@ -27944,13 +27932,9 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onChange',
 		value: function _onChange() {
-			// console.log("_onChange");
 			this.setState(getUser());
 			this.setState(getTree());
-			// console.log(TreeStore.getUserTaken());
 			this.setState({ taken: TreeStore.getUserTaken() });
-			// console.log(this.state.taken);
-			// console.log(this.state.user);
 
 			actions.getUserProgram(this.state.user);
 		}
@@ -27968,9 +27952,7 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onSetTaken',
 		value: function _onSetTaken() {
-			// console.log("TREE onSetTaken");
 			actions.loadUserData(null);
-			// actions.getUserProgram(this.state.user);
 		}
 	}, {
 		key: 'componentWillUnmount',

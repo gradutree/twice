@@ -53,7 +53,7 @@ var view = (function(){
 			return;
 		}
 		
-		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {username: uname.value, password: pwd.value, program: "Computer Science", spec: prog.value, taken: []}}));
+		document.dispatchEvent(new CustomEvent("onSignUpSubmit", {detail: {username: uname.value, password: pwd.value, program: "Computer Science", spec: prog.value, taken: [], allCourses: []}}));
 		
 	});
 	

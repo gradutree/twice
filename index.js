@@ -34,6 +34,7 @@ var User = function(user){
     this.program = user.program;
     this.spec = user.spec;
     this.taken = user.taken;
+    this.allCourses = user.allCourses;
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -224,6 +225,7 @@ app.get("/api/user/:username/info", function (req, res) {
             info.program = data.program;
             info.spec = data.spec;
             info.taken = data.taken;
+            info.allCourses = data.allCourses;
             res.json(info);
         });
     });
@@ -351,23 +353,45 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
     });
 });
 
+// Update user's list of taken courses with new course
 app.patch('/api/users/:username/taken/:course', function (req, res, next){
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("users").updateOne({username: req.params.username}, 
-            {$addToSet: {taken: req.params.course}}, function (err, result){
+            {$addToSet: {taken: req.params.course, allCourses: req.params.course}}, function (err, result){
             res.json({});
         });
     });
 });
 
-app.delete('/api/users/:username/notTaken/:course', function (req, res, next){
+// Update user's list of taken courses by removing a course
+app.delete('/api/users/:username/taken/:course', function (req, res, next){
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("users").update({username: req.params.username}, 
-            {$pull: {taken: req.params.course}}, function (err, result){
+            {$pull: {taken: req.params.course, allCourses: req.params.course}}, function (err, result){
             res.end();
         });
     });
 });
+
+app.patch('/api/users/:username/allCourses/:course', function (req, res, next){
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("users").updateOne({username: req.params.username}, 
+            {$addToSet: {allCourses: req.params.course}}, function (err, result){
+            res.json({});
+        });
+    });
+});
+
+// Update user's list of taken courses by removing a course
+app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("users").update({username: req.params.username}, 
+            {$pull: {allCourses: req.params.course}}, function (err, result){
+            res.end();
+        });
+    });
+});
+
 
 app.listen(8000, function () {
     console.log('App listening on port 8000');
