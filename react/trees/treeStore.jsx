@@ -67,10 +67,10 @@ var TreeStore = merge(EventEmitter.prototype, {
     emitChange: function() {
         this.emit('change');
     },
+    
     emitTreeDataChange: function() {
         this.emit('treechange');
     },
-
 
     emitProgramChange: function() {
         this.emit('programChange');

@@ -74,6 +74,22 @@ var TreeActions = {
                 console.log(err);
             }
         });
+    },
+
+    setTaken: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/taken/"+courseCode,
+            type: "PATCH",
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'SET_TAKEN',
+                    data: null
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
     }
 };
 

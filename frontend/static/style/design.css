@@ -282,7 +282,7 @@ header nav ul {
 
 .widget {
 	box-shadow: 7px 6px 20px -13px rgba(0,0,0,0.74);
-	width: 210px;
+	width: 150px;
 }
 
 .widget>div {
@@ -291,7 +291,7 @@ header nav ul {
 	background-color: #fff;
 	border: 1px solid #d5d5d5;
 	text-align: center;
-	height: 70px;
+	height: 65px;
 	line-height: 6;
 }
 
