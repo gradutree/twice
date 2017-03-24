@@ -11,12 +11,22 @@ class CourseInfo extends Component {
 		super();
 		this.state = {
 			course: null,
-			userTook: false;
+			userTook: false
 		};
 	}
 
 	_onUpdateCourseInfo(){
+		console.log("CourseInfo: _onUpdateCourseInfo");
 		this.setState({course: TreeStore.getCourseInfo()});
+	}
+
+	setTaken(){
+		console.log("button clicked");
+		console.log(this.props.user);
+		console.log(this.state.course);
+		if(this.props.user && this.state.course){
+			actions.setTaken(this.props.user.username, this.state.course.code);
+		}
 	}
 
 	componentWillUnmount() {
@@ -36,7 +46,7 @@ class CourseInfo extends Component {
 					<div className="popup_description">Description: {this.state.course ? this.state.course.description : ""}</div>
 					<div className='popup_buttons'>
 						<button type="button" className="btn btn-primary popup_will_take_course_btn">I Will Take This Course</button>
-						<button type="button" className="btn btn-primary popup_took_course_btn">I Took This Course</button>
+						<button type="button" className="btn btn-primary popup_took_course_btn" onClick={this.setTaken.bind(this)}>I Took This Course</button>
 					</div>
 				</div>;
 	}

@@ -16,10 +16,7 @@ function loadUserData(data) {
 function loadTreeData(data) {
     var newObject = JSON.parse(JSON.stringify(data));
     treeData.push(newObject);
-
 }
-
-
 
 function loadUserProgram(data) {
     userProgram = data;
@@ -67,7 +64,7 @@ var TreeStore = merge(EventEmitter.prototype, {
     emitChange: function() {
         this.emit('change');
     },
-    
+
     emitTreeDataChange: function() {
         this.emit('treechange');
     },
@@ -82,6 +79,10 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     emitUpdateCourseInfo: function() {
         this.emit('updateCourseInfo');
+    },
+
+    emitSetTakenInfo: function() {
+        this.emit('setTaken');
     },
 
     addTreeChangeListner: function(callback) {
@@ -120,6 +121,14 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.removeListener('updateCourseInfo', callback);
     },
 
+    addSetTakenListener: function(callback) {
+        this.on('setTaken', callback);
+    },
+
+    removeSetTakenListener: function(callback) {
+        this.removeListener('setTaken', callback);
+    }
+
 });
 
 // Register dispatcher callback
@@ -151,9 +160,13 @@ AppDispatcher.register(function(payload) {
             break;
 
         case 'UPDATE_COURSE_INFO':
+            console.log("UPDATE_COURSE_INFO case");
             loadCourseInfo(action.data);
             TreeStore.emitUpdateCourseInfo();
             break;
+
+        case 'SET_TAKE':
+            TreeStore.emitSetTaken();
 
         default:
             return true;

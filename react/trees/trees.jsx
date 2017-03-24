@@ -53,7 +53,7 @@ class Trees extends Component {
 	          	</div>
 	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} />
 	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" title={this.state.nodeClicked}>
-		        	<CourseInfo code={this.state.nodeClicked} />
+		        	<CourseInfo user={this.state.user} code={this.state.nodeClicked} />
 		        </SkyLight>
 	        </div>
 	    );
@@ -77,6 +77,7 @@ class Trees extends Component {
     }
 
     _onNodeClicked() {
+    	console.log("_onNodeClicked");
     	this.setState({nodeClicked: TreeStore.getNodeClicked()})
     	actions.getCourseInfo(this.state.nodeClicked);
     }

@@ -11050,6 +11050,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('updateCourseInfo');
     },
 
+    emitSetTakenInfo: function emitSetTakenInfo() {
+        this.emit('setTaken');
+    },
+
     addTreeChangeListner: function addTreeChangeListner(callback) {
         this.on('treechange', callback);
     },
@@ -11084,6 +11088,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeUpdateCourseInfoListener: function removeUpdateCourseInfoListener(callback) {
         this.removeListener('updateCourseInfo', callback);
+    },
+
+    addSetTakenListener: function addSetTakenListener(callback) {
+        this.on('setTaken', callback);
+    },
+
+    removeSetTakenListener: function removeSetTakenListener(callback) {
+        this.removeListener('setTaken', callback);
     }
 
 });
@@ -11117,9 +11129,13 @@ AppDispatcher.register(function (payload) {
             break;
 
         case 'UPDATE_COURSE_INFO':
+            console.log("UPDATE_COURSE_INFO case");
             loadCourseInfo(action.data);
             TreeStore.emitUpdateCourseInfo();
             break;
+
+        case 'SET_TAKE':
+            TreeStore.emitSetTaken();
 
         default:
             return true;
@@ -25925,12 +25941,33 @@ var TreeActions = {
     },
 
     getCourseInfo: function getCourseInfo(courseCode) {
+        console.log("actions.getCourseInfo");
         $.ajax({
             url: "/api/courses/query?code=" + courseCode,
             success: function success(result) {
+                console.log("actions.getCourseInfo success = " + courseCode);
                 AppDispatcher.handleAction({
                     actionType: 'UPDATE_COURSE_INFO',
                     data: result[0]
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
+    },
+
+    setTaken: function setTaken(username, courseCode) {
+        console.log("setTaken: user= " + username + "\tcourse = " + courseCode);
+        $.ajax({
+            url: "/api/users/" + username + "/taken/" + courseCode,
+            type: "PATCH",
+            data: JSON.stringify({}),
+            success: function success(result) {
+                console.log("taken success");
+                AppDispatcher.handleAction({
+                    actionType: 'SET_TAKEN',
+                    data: null
                 });
             },
             error: function error(err) {
@@ -27343,7 +27380,7 @@ var CourseInfo = function (_Component) {
 
 		_this.state = {
 			course: null,
-			tookCourseStr: ""
+			userTook: false
 		};
 		return _this;
 	}
@@ -27351,7 +27388,18 @@ var CourseInfo = function (_Component) {
 	_createClass(CourseInfo, [{
 		key: '_onUpdateCourseInfo',
 		value: function _onUpdateCourseInfo() {
+			console.log("CourseInfo: _onUpdateCourseInfo");
 			this.setState({ course: TreeStore.getCourseInfo() });
+		}
+	}, {
+		key: 'setTaken',
+		value: function setTaken() {
+			console.log("button clicked");
+			console.log(this.props.user);
+			console.log(this.state.course);
+			if (this.props.user && this.state.course) {
+				actions.setTaken(this.props.user.username, this.state.course.code);
+			}
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -27389,7 +27437,7 @@ var CourseInfo = function (_Component) {
 					),
 					_react2.default.createElement(
 						'button',
-						{ type: 'button', className: 'btn btn-primary popup_took_course_btn' },
+						{ type: 'button', className: 'btn btn-primary popup_took_course_btn', onClick: this.setTaken.bind(this) },
 						'I Took This Course'
 					)
 				)
@@ -27864,7 +27912,7 @@ var Trees = function (_Component) {
 				_react2.default.createElement(
 					_reactSkylight2.default,
 					{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo', title: this.state.nodeClicked },
-					_react2.default.createElement(_courseInfo2.default, { code: this.state.nodeClicked })
+					_react2.default.createElement(_courseInfo2.default, { user: this.state.user, code: this.state.nodeClicked })
 				)
 			);
 		}
@@ -27891,6 +27939,7 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onNodeClicked',
 		value: function _onNodeClicked() {
+			console.log("_onNodeClicked");
 			this.setState({ nodeClicked: TreeStore.getNodeClicked() });
 			actions.getCourseInfo(this.state.nodeClicked);
 		}
