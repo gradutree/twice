@@ -11000,6 +11000,14 @@ function loadCourseInfo(course) {
     courseInfo = course;
 }
 
+function loadTaken(courseCode) {
+    if (userData.taken && userData.taken.indexOf(courseCode) < 0) {
+        console.log(userData.taken);
+        userData.taken.push(courseCode);
+        console.log(userData.taken);
+    }
+}
+
 var TreeStore = merge(EventEmitter.prototype, {
 
     getUserData: function getUserData() {
@@ -11050,7 +11058,7 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('updateCourseInfo');
     },
 
-    emitSetTakenInfo: function emitSetTakenInfo() {
+    emitSetTaken: function emitSetTaken() {
         this.emit('setTaken');
     },
 
@@ -11134,7 +11142,9 @@ AppDispatcher.register(function (payload) {
             TreeStore.emitUpdateCourseInfo();
             break;
 
-        case 'SET_TAKE':
+        case 'SET_TAKEN':
+            console.log("emit SET_TAKEN");
+            loadTaken(action.data);
             TreeStore.emitSetTaken();
 
         default:
@@ -25912,6 +25922,8 @@ var TreeActions = {
     },
 
     getUserProgram: function getUserProgram(user) {
+        console.log("IN actions.getUserProgram");
+        console.log(user);
         if (user && user.program) {
             var userSpec = user.spec.toLowerCase();
 
@@ -25967,7 +25979,7 @@ var TreeActions = {
                 console.log("taken success");
                 AppDispatcher.handleAction({
                     actionType: 'SET_TAKEN',
-                    data: null
+                    data: courseCode
                 });
             },
             error: function error(err) {
@@ -26405,10 +26417,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// var TreeStore = require("./treeStore.jsx");
-// var actions = require("./treeActions.jsx");
-
-
 var CourseStatus = function (_Component) {
 	_inherits(CourseStatus, _Component);
 
@@ -26420,27 +26428,6 @@ var CourseStatus = function (_Component) {
 
 	_createClass(CourseStatus, [{
 		key: 'render',
-
-		// constructor(){
-		// 	super();
-		// 	this.state = {
-		// 		course: null
-		// 	};
-		// }
-
-		// _onUpdateCourseInfo(){
-		// 	this.setState({course: TreeStore.getCourseInfo()});
-		// }
-
-		// componentWillUnmount() {
-		//        TreeStore.removeUpdateCourseInfoListener(this.treeOnUpdateCourseInfo);
-		//    }
-
-		// componentDidMount() {
-		// 	this.treeOnUpdateCourseInfo = this._onUpdateCourseInfo.bind(this);
-		//     TreeStore.addUpdateCourseInfoListener(this.treeOnUpdateCourseInfo);
-		// }
-
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
@@ -27939,9 +27926,15 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onNodeClicked',
 		value: function _onNodeClicked() {
-			console.log("_onNodeClicked");
 			this.setState({ nodeClicked: TreeStore.getNodeClicked() });
 			actions.getCourseInfo(this.state.nodeClicked);
+		}
+	}, {
+		key: '_onSetTaken',
+		value: function _onSetTaken() {
+			console.log("TREE onSetTaken");
+			actions.loadUserData(null);
+			// actions.getUserProgram(this.state.user);
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -27949,6 +27942,7 @@ var Trees = function (_Component) {
 			TreeStore.removeChangeListener(this.treeOnChange);
 			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
+			TreeStore.removeSetTakenListener(this.treeOnSetTaken);
 		}
 	}, {
 		key: 'componentDidMount',
@@ -27956,11 +27950,13 @@ var Trees = function (_Component) {
 			this.treeOnChange = this._onChange.bind(this);
 			this.treeOnProgramChange = this._onProgramChange.bind(this);
 			this.treeOnNodeClicked = this._onNodeClicked.bind(this);
+			this.treeOnSetTaken = this._onSetTaken.bind(this);
 
 			TreeStore.addChangeListener(this.treeOnChange);
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 			TreeStore.addTreeChangeListner(this.treeOnChange);
+			TreeStore.addSetTakenListener(this.treeOnSetTaken);
 
 			actions.loadUserData(null);
 			actions.getUserProgram(this.state.user);

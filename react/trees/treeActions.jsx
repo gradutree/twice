@@ -32,6 +32,8 @@ var TreeActions = {
     },
 
     getUserProgram: function(user) {
+        console.log("IN actions.getUserProgram");
+        console.log(user);
         if(user && user.program){
             var userSpec = user.spec.toLowerCase();
 
@@ -88,7 +90,7 @@ var TreeActions = {
                 console.log("taken success")
                 AppDispatcher.handleAction({
                     actionType: 'SET_TAKEN',
-                    data: null
+                    data: courseCode
                 });
             }),
             error: function (err){

@@ -77,26 +77,34 @@ class Trees extends Component {
     }
 
     _onNodeClicked() {
-    	console.log("_onNodeClicked");
     	this.setState({nodeClicked: TreeStore.getNodeClicked()})
     	actions.getCourseInfo(this.state.nodeClicked);
+    }
+
+    _onSetTaken() {
+    	console.log("TREE onSetTaken");
+    	actions.loadUserData(null);
+    	// actions.getUserProgram(this.state.user);
     }
 
     componentWillUnmount() {
         TreeStore.removeChangeListener(this.treeOnChange);
         TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
         TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
+        TreeStore.removeSetTakenListener(this.treeOnSetTaken);
     }
 
   	componentDidMount() {
 	  	this.treeOnChange = this._onChange.bind(this);
 	  	this.treeOnProgramChange = this._onProgramChange.bind(this);
 	  	this.treeOnNodeClicked = this._onNodeClicked.bind(this);
+	  	this.treeOnSetTaken = this._onSetTaken.bind(this);
 
 	    TreeStore.addChangeListener(this.treeOnChange);
 	    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 	    TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 	    TreeStore.addTreeChangeListner(this.treeOnChange);
+	    TreeStore.addSetTakenListener(this.treeOnSetTaken);
 
 	  	actions.loadUserData(null);
 	  	actions.getUserProgram(this.state.user);

@@ -30,6 +30,14 @@ function loadCourseInfo(course){
     courseInfo = course;
 }
 
+function loadTaken(courseCode) {
+    if(userData.taken && userData.taken.indexOf(courseCode) < 0) {
+        console.log(userData.taken);
+        userData.taken.push(courseCode);
+        console.log(userData.taken);
+    }
+}
+
 
 var TreeStore = merge(EventEmitter.prototype, {
 
@@ -81,7 +89,7 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('updateCourseInfo');
     },
 
-    emitSetTakenInfo: function() {
+    emitSetTaken: function() {
         this.emit('setTaken');
     },
 
@@ -165,7 +173,9 @@ AppDispatcher.register(function(payload) {
             TreeStore.emitUpdateCourseInfo();
             break;
 
-        case 'SET_TAKE':
+        case 'SET_TAKEN':
+            console.log("emit SET_TAKEN");
+            loadTaken(action.data);
             TreeStore.emitSetTaken();
 
         default:
