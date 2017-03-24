@@ -78,6 +78,7 @@ var TreeStore = merge(EventEmitter.prototype, {
     },
 
     emitProgramChange: function() {
+        this.setMaxListeners(100);
         this.emit('programChange');
     },
 
@@ -93,16 +94,16 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('setTaken');
     },
 
-    addTreeChangeListner: function(callback) {
-        this.on('treechange', callback);
-    },
-
     addChangeListener: function(callback) {
         this.on('change', callback);
     },
 
     removeChangeListener: function(callback) {
         this.removeListener('change', callback);
+    },
+
+    addTreeChangeListner: function(callback) {
+        this.on('treechange', callback);
     },
 
     addProgramChangeListener: function(callback) {

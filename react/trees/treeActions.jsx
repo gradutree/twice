@@ -32,8 +32,8 @@ var TreeActions = {
     },
 
     getUserProgram: function(user) {
-        console.log("IN actions.getUserProgram");
-        console.log(user);
+        // console.log("IN actions.getUserProgram");
+        // console.log(user);
         if(user && user.program){
             var userSpec = user.spec.toLowerCase();
 
@@ -64,7 +64,7 @@ var TreeActions = {
     },
 
     getCourseInfo: function(courseCode) {
-        console.log("actions.getCourseInfo");
+        // console.log("actions.getCourseInfo");
         $.ajax({
             url: "/api/courses/query?code="+courseCode,
             success: (function (result){
@@ -81,7 +81,7 @@ var TreeActions = {
     },
 
     setTaken: function(username, courseCode) {
-        console.log("setTaken: user= " + username + "\tcourse = " + courseCode);
+        // console.log("setTaken: user= " + username + "\tcourse = " + courseCode);
         $.ajax({
             url: "/api/users/"+username+"/taken/"+courseCode,
             type: "PATCH",

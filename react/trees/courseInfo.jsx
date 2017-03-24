@@ -16,14 +16,14 @@ class CourseInfo extends Component {
 	}
 
 	_onUpdateCourseInfo(){
-		console.log("CourseInfo: _onUpdateCourseInfo");
+		// console.log("CourseInfo: _onUpdateCourseInfo");
 		this.setState({course: TreeStore.getCourseInfo()});
 	}
 
 	setTaken(){
-		console.log("button clicked");
-		console.log(this.props.user);
-		console.log(this.state.course);
+		// console.log("button clicked");
+		// console.log(this.props.user);
+		// console.log(this.state.course);
 		if(this.props.user && this.state.course){
 			actions.setTaken(this.props.user.username, this.state.course.code);
 		}

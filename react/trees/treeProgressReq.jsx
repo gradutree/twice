@@ -4,6 +4,8 @@ import { Line } from 'rc-progress';
 
 import TreeProgressReqCourses from "./treeProgressReqCourses.jsx";
 
+var TreeStore = require("./treeStore.jsx");
+
 
 class TreeProgressReq extends Component {
 	constructor(){
@@ -15,10 +17,27 @@ class TreeProgressReq extends Component {
 		};
 	}
 
-	componentDidMount() {
+	updateProgressReq() {
+		console.log("IN updateProgressReq");
 		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
 		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
 		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
+	}
+
+	componentWillUnmount() {
+        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+    }
+
+	componentDidMount() {
+		// console.log("Mounting: " + this.props.key);
+		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
+		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
+		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
+
+		this.treeOnProgramChange = this.updateProgressReq.bind(this);
+    	TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+
+    	// updateProgressReq();
 	}
 	
 	render() {

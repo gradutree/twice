@@ -64,10 +64,13 @@ class Trees extends Component {
   	}
 
   	_onChange() {
-
+  		// console.log("_onChange");
         this.setState(getUser());
         this.setState(getTree());
+        // console.log(TreeStore.getUserTaken());
         this.setState({taken: TreeStore.getUserTaken()});
+        // console.log(this.state.taken);
+        // console.log(this.state.user);
 
         actions.getUserProgram(this.state.user);
     }
@@ -82,7 +85,7 @@ class Trees extends Component {
     }
 
     _onSetTaken() {
-    	console.log("TREE onSetTaken");
+    	// console.log("TREE onSetTaken");
     	actions.loadUserData(null);
     	// actions.getUserProgram(this.state.user);
     }
@@ -127,7 +130,7 @@ class Trees extends Component {
 
        var courseAdder = function (node){
          if(node.id == 'CSCC01H3') {
-            console.log(node);
+            // console.log(node);
          }
 	       	for(var i=0; i<node.edgeNumbers; i++) {
 	       		if (node.preq[i]==null ||

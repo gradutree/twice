@@ -4,6 +4,9 @@ import { Line } from 'rc-progress';
 
 import CourseText from "../components/courseText.jsx";
 
+var TreeStore = require("./treeStore.jsx");
+
+
 class TreeProgressReqCourses extends Component {
 
 	constructor(){
@@ -13,7 +16,18 @@ class TreeProgressReqCourses extends Component {
 		};
 	}
 
+	updateProgressReqCourses() {
+		this.getCourseDisplay();
+	}
+
+	componentWillUnmount() {
+        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+    }
+
 	componentDidMount() {
+		this.treeOnProgramChange = this.updateProgressReqCourses.bind(this);
+    	TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+
 		this.getCourseDisplay();
 	}
 
