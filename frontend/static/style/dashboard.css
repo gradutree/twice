@@ -808,9 +808,21 @@ footer {
 }
 
 .popup_will_take_course_btn {
+	background-color: #ff9933;
+}
 
+.popup_will_take_course_btn:hover {
+	background-color: #ffa64d;
 }
 
 .popup_took_course_btn {
 	margin-left: 20px;
+}
+
+.popup_remove_btn {
+	background-color: #ff5050;
+}
+
+.popup_remove_btn:hover {
+	background-color: #ff6666;
 }

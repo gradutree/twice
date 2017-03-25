@@ -63,14 +63,22 @@ class CourseInfo extends Component {
 								  dislikes={this.state.course ? this.state.course.disliked : 0} />
 					<div className="popup_description">Description: {this.state.course ? this.state.course.description : ""}</div>
 					{(this.props.isTaken) ? 
-						(<button type="button" className="btn btn-primary popup_took_course_btn" 
-								onClick={this.deleteTaken.bind(this)}>Remove Course From Taken Courses</button>)
+						(<div className='popup_buttons'>
+							<button type="button" className="btn btn-danger popup_remove_btn" 
+								onClick={this.deleteTaken.bind(this)}>
+								Remove Course From Taken Courses
+							</button>
+						</div>)
 						:
 						((this.props.isAllCourses) ? 
-							(<button type="button" className="btn btn-primary popup_will_take_course_btn"
-								onClick={this.deleteAllCourses.bind(this)}>Remove Course From Plan</button>)
+							(<div className='popup_buttons'>
+								<button type="button" className="btn btn-danger popup_remove_btn"
+									onClick={this.deleteAllCourses.bind(this)}>
+									Remove Course From Plan
+								</button>
+							</div>)
 							: (<div className='popup_buttons'>
-									<button type="button" className="btn btn-primary popup_will_take_course_btn"
+									<button type="button" className="btn btn-warning popup_will_take_course_btn"
 										onClick={this.setAllCourses.bind(this)}>I Will Take This Course</button>
 									<button type="button" className="btn btn-primary popup_took_course_btn" 
 										onClick={this.setTaken.bind(this)}>I Took This Course</button>

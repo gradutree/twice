@@ -27558,21 +27558,29 @@ var CourseInfo = function (_Component) {
 					this.state.course ? this.state.course.description : ""
 				),
 				this.props.isTaken ? _react2.default.createElement(
-					'button',
-					{ type: 'button', className: 'btn btn-primary popup_took_course_btn',
-						onClick: this.deleteTaken.bind(this) },
-					'Remove Course From Taken Courses'
+					'div',
+					{ className: 'popup_buttons' },
+					_react2.default.createElement(
+						'button',
+						{ type: 'button', className: 'btn btn-danger popup_remove_btn',
+							onClick: this.deleteTaken.bind(this) },
+						'Remove Course From Taken Courses'
+					)
 				) : this.props.isAllCourses ? _react2.default.createElement(
-					'button',
-					{ type: 'button', className: 'btn btn-primary popup_will_take_course_btn',
-						onClick: this.deleteAllCourses.bind(this) },
-					'Remove Course From Plan'
+					'div',
+					{ className: 'popup_buttons' },
+					_react2.default.createElement(
+						'button',
+						{ type: 'button', className: 'btn btn-danger popup_remove_btn',
+							onClick: this.deleteAllCourses.bind(this) },
+						'Remove Course From Plan'
+					)
 				) : _react2.default.createElement(
 					'div',
 					{ className: 'popup_buttons' },
 					_react2.default.createElement(
 						'button',
-						{ type: 'button', className: 'btn btn-primary popup_will_take_course_btn',
+						{ type: 'button', className: 'btn btn-warning popup_will_take_course_btn',
 							onClick: this.setAllCourses.bind(this) },
 						'I Will Take This Course'
 					),
