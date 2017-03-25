@@ -3,55 +3,51 @@
 <head>
 <meta charset="utf-8">
 <title>GraduTree</title>
-<link href="style/index.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<link href="/style/index_new.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-<div id="container" class="container">
- <div class="header_container">
-  <header class="header_bar">
-    <a class="header_text" href="/"><h3>GraduTree</h3></a>
-    <nav class="navbar">
-      <ul id="btn_list">
-		  <li><a href="login/">Login</a></li>
-		  <li><a href="signup/">Sign up</a></li>
-		  <li><a href="#about">About</a></li>
-      </ul>
-    </nav>
-  </header>
- <div>
- 	<h4 class="heading">
- 		Power up your future
- 	</h4>
-	<a href="/signup">
- 	<div class="gs_button">
- 		Get started
- 	</div>
-	</a>
-	<h4 class="sub_heading">
-		Create interactive plans and review courses or profs
-	</h4>
- </div>
- </div>
-    <footer id="footer">
-    <div class="footer_grid">
-      <div> Footer
-        <ul class="light_normal">
-           <li><a href="/">This is a footer</a></li>
+<div class="container">
+  <div class="header_container">
+    <header class="header_bar" style="position: sticky; top: 0; background-color: #fff;">
+    <div class="cont">
+     <a class="header_text" href="/">
+      <div class="logo"></div>
+      </a>
+      <nav class="navbar_clear">
+        <ul id="btn_list">
+          <li><a href="login/">Login</a></li>
+          <li><a href="signup/">Sign up</a></li>
+          <li><a href="#about">About</a></li>
         </ul>
+      </nav>
       </div>
-      <div> Footer
-        <ul class="light_normal">
-          <li><a href="/">This is a footer</a></li>
-        </ul>
-      </div>
-	  <div> Footer
-        <ul class="light_normal">
-          <li><a href="/">This is a footer</a></li>
-        </ul>
-      </div>
+    </header>
+    <div class="splash">
+    <div class="splash_inside flex-row flex-around">
+    	<div class="heading">
+    		Make planning your university path faster and easier with GraduTree.
+            <div id="btn_root">
+                <div class="flex-row flex-start">
+                    <div class="main_btn" style="margin-left:0px;">Search courses</div>
+                    <div class="main_btn2">Create a plan</div>
+                </div>
+            </div>
+    	</div>
+    	<div class="tree"></div>
+    	</div>
     </div>
-  </footer>
+    
+  </div>
+  <section id="search_screen" class="search_screen" style="text-align: center;">
+
+  </section>
 </div>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/app/main_bundle.js"></script>
 </body>
 </html>
