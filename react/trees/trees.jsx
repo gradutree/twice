@@ -42,9 +42,26 @@ class Trees extends Component {
 			program: null,
 			taken: null,
 			allCourses: null,
-			nodeClicked: ""
+			nodeClicked: "",
+			nodeClickedIsTaken: false,
+			nodeClickedIsAllCourses: false
 		};
 	}
+
+	checkIsTaken(){
+		if(this.state.user && this.state.nodeClicked != ""){
+			return this.setState({nodeClickedIsTaken: this.state.user.taken.indexOf(this.state.nodeClicked) >= 0});
+		}
+		return this.setState({nodeClickedIsTaken: false});
+	}
+
+	checkIsAllCourses(){
+		if(this.state.user && this.state.nodeClicked != ""){
+			return this.setState({nodeClickedIsAllCourses: this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0});
+		}
+		return this.setState({nodeClickedIsAllCourses: false});
+	}
+
 
   	render() {
 	    return (
@@ -53,8 +70,10 @@ class Trees extends Component {
 	          		<div id="cy"></div>
 	          	</div>
 	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} allCourses={this.state.allCourses} />
-	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" title={this.state.nodeClicked}>
-		        	<CourseInfo user={this.state.user} code={this.state.nodeClicked} />
+	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" 
+	          		title={this.state.nodeClicked} >
+		        	<CourseInfo user={this.state.user} code={this.state.nodeClicked} 
+		        		isTaken={this.state.nodeClickedIsTaken} isAllCourses={this.state.nodeClickedIsAllCourses} />
 		        </SkyLight>
 	        </div>
 	    );
@@ -69,6 +88,8 @@ class Trees extends Component {
         this.setState(getTree());
         this.setState({taken: TreeStore.getUserTaken()});
         this.setState({allCourses: TreeStore.getUserAllCourses()});
+        this.checkIsTaken();
+        this.checkIsAllCourses();
         
         actions.getUserProgram(this.state.user);
     }
@@ -80,6 +101,8 @@ class Trees extends Component {
     _onNodeClicked() {
     	this.setState({nodeClicked: TreeStore.getNodeClicked()})
     	actions.getCourseInfo(this.state.nodeClicked);
+    	this.checkIsTaken();
+        this.checkIsAllCourses();
     }
 
     _onSetTaken() {
@@ -90,6 +113,14 @@ class Trees extends Component {
     	actions.loadUserData(null);
     }
 
+    _onDeleteTaken(){
+    	actions.loadUserData(null);
+    }
+
+    _onDeleteAllCourses(){
+    	actions.loadUserData(null);
+    }
+
     componentWillUnmount() {
         TreeStore.removeChangeListener(this.treeOnChange);
         TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
@@ -97,6 +128,8 @@ class Trees extends Component {
         TreeStore.removeTreeChangeListner(this.treeOnChange);
         TreeStore.removeSetTakenListener(this.treeOnSetTaken);
         TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
+        TreeStore.removeDeleteTakenListener(this.treeOnDeleteTaken);
+        TreeStore.removeDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
     }
 
   	componentDidMount() {
@@ -105,6 +138,8 @@ class Trees extends Component {
 	  	this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 	  	this.treeOnSetTaken = this._onSetTaken.bind(this);
 	  	this.treeOnSetAllCourses = this._onSetAllCourses.bind(this);
+	  	this.treeOnDeleteTaken = this._onDeleteTaken.bind(this);
+	  	this.treeOnDeleteAllCourses = this._onDeleteAllCourses.bind(this);
 
 	    TreeStore.addChangeListener(this.treeOnChange);
 	    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
@@ -112,6 +147,8 @@ class Trees extends Component {
 	    TreeStore.addTreeChangeListner(this.treeOnChange);
 	    TreeStore.addSetTakenListener(this.treeOnSetTaken);
 	    TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
+	    TreeStore.addDeleteTakenListener(this.treeOnDeleteTaken);
+	    TreeStore.addDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
 
 	  	actions.loadUserData(null);
 	  	actions.getUserProgram(this.state.user);

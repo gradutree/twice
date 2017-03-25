@@ -33,6 +33,20 @@ class CourseInfo extends Component {
 		}
 	}
 
+	deleteAllCourses(){
+		// Make sure that user and the course info has been loaded first
+		if (this.props.user && this.state.course){
+			actions.deleteAllCourses(this.props.user.username, this.state.course.code);
+		}
+	}
+
+	deleteTaken(){
+		// Make sure that user and the course info has been loaded first
+		if (this.props.user && this.state.course){
+			actions.deleteTaken(this.props.user.username, this.state.course.code);
+		}
+	}
+
 	componentWillUnmount() {
         TreeStore.removeUpdateCourseInfoListener(this.treeOnUpdateCourseInfo);
     }
@@ -48,12 +62,21 @@ class CourseInfo extends Component {
 								  likes={this.state.course ? this.state.course.liked : 0}
 								  dislikes={this.state.course ? this.state.course.disliked : 0} />
 					<div className="popup_description">Description: {this.state.course ? this.state.course.description : ""}</div>
-					<div className='popup_buttons'>
-						<button type="button" className="btn btn-primary popup_will_take_course_btn"
-							onClick={this.setAllCourses.bind(this)}>I Will Take This Course</button>
-						<button type="button" className="btn btn-primary popup_took_course_btn" 
-							onClick={this.setTaken.bind(this)}>I Took This Course</button>
-					</div>
+					{(this.props.isTaken) ? 
+						(<button type="button" className="btn btn-primary popup_took_course_btn" 
+								onClick={this.deleteTaken.bind(this)}>Remove Course From Taken Courses</button>)
+						:
+						((this.props.isAllCourses) ? 
+							(<button type="button" className="btn btn-primary popup_will_take_course_btn"
+								onClick={this.deleteAllCourses.bind(this)}>Remove Course From Plan</button>)
+							: (<div className='popup_buttons'>
+									<button type="button" className="btn btn-primary popup_will_take_course_btn"
+										onClick={this.setAllCourses.bind(this)}>I Will Take This Course</button>
+									<button type="button" className="btn btn-primary popup_took_course_btn" 
+										onClick={this.setTaken.bind(this)}>I Took This Course</button>
+								</div>)
+						) 
+					}
 				</div>;
 	}
 }

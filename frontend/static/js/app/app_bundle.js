@@ -27516,6 +27516,22 @@ var CourseInfo = function (_Component) {
 			}
 		}
 	}, {
+		key: 'deleteAllCourses',
+		value: function deleteAllCourses() {
+			// Make sure that user and the course info has been loaded first
+			if (this.props.user && this.state.course) {
+				actions.deleteAllCourses(this.props.user.username, this.state.course.code);
+			}
+		}
+	}, {
+		key: 'deleteTaken',
+		value: function deleteTaken() {
+			// Make sure that user and the course info has been loaded first
+			if (this.props.user && this.state.course) {
+				actions.deleteTaken(this.props.user.username, this.state.course.code);
+			}
+		}
+	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			TreeStore.removeUpdateCourseInfoListener(this.treeOnUpdateCourseInfo);
@@ -27541,7 +27557,17 @@ var CourseInfo = function (_Component) {
 					'Description: ',
 					this.state.course ? this.state.course.description : ""
 				),
-				_react2.default.createElement(
+				this.props.isTaken ? _react2.default.createElement(
+					'button',
+					{ type: 'button', className: 'btn btn-primary popup_took_course_btn',
+						onClick: this.deleteTaken.bind(this) },
+					'Remove Course From Taken Courses'
+				) : this.props.isAllCourses ? _react2.default.createElement(
+					'button',
+					{ type: 'button', className: 'btn btn-primary popup_will_take_course_btn',
+						onClick: this.deleteAllCourses.bind(this) },
+					'Remove Course From Plan'
+				) : _react2.default.createElement(
 					'div',
 					{ className: 'popup_buttons' },
 					_react2.default.createElement(
@@ -28054,12 +28080,30 @@ var Trees = function (_Component) {
 			program: null,
 			taken: null,
 			allCourses: null,
-			nodeClicked: ""
+			nodeClicked: "",
+			nodeClickedIsTaken: false,
+			nodeClickedIsAllCourses: false
 		};
 		return _this;
 	}
 
 	_createClass(Trees, [{
+		key: 'checkIsTaken',
+		value: function checkIsTaken() {
+			if (this.state.user && this.state.nodeClicked != "") {
+				return this.setState({ nodeClickedIsTaken: this.state.user.taken.indexOf(this.state.nodeClicked) >= 0 });
+			}
+			return this.setState({ nodeClickedIsTaken: false });
+		}
+	}, {
+		key: 'checkIsAllCourses',
+		value: function checkIsAllCourses() {
+			if (this.state.user && this.state.nodeClicked != "") {
+				return this.setState({ nodeClickedIsAllCourses: this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0 });
+			}
+			return this.setState({ nodeClickedIsAllCourses: false });
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
@@ -28073,8 +28117,10 @@ var Trees = function (_Component) {
 				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken, allCourses: this.state.allCourses }),
 				_react2.default.createElement(
 					_reactSkylight2.default,
-					{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo', title: this.state.nodeClicked },
-					_react2.default.createElement(_courseInfo2.default, { user: this.state.user, code: this.state.nodeClicked })
+					{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo',
+						title: this.state.nodeClicked },
+					_react2.default.createElement(_courseInfo2.default, { user: this.state.user, code: this.state.nodeClicked,
+						isTaken: this.state.nodeClickedIsTaken, isAllCourses: this.state.nodeClickedIsAllCourses })
 				)
 			);
 		}
@@ -28090,6 +28136,8 @@ var Trees = function (_Component) {
 			this.setState(getTree());
 			this.setState({ taken: TreeStore.getUserTaken() });
 			this.setState({ allCourses: TreeStore.getUserAllCourses() });
+			this.checkIsTaken();
+			this.checkIsAllCourses();
 
 			actions.getUserProgram(this.state.user);
 		}
@@ -28103,6 +28151,8 @@ var Trees = function (_Component) {
 		value: function _onNodeClicked() {
 			this.setState({ nodeClicked: TreeStore.getNodeClicked() });
 			actions.getCourseInfo(this.state.nodeClicked);
+			this.checkIsTaken();
+			this.checkIsAllCourses();
 		}
 	}, {
 		key: '_onSetTaken',
@@ -28115,6 +28165,16 @@ var Trees = function (_Component) {
 			actions.loadUserData(null);
 		}
 	}, {
+		key: '_onDeleteTaken',
+		value: function _onDeleteTaken() {
+			actions.loadUserData(null);
+		}
+	}, {
+		key: '_onDeleteAllCourses',
+		value: function _onDeleteAllCourses() {
+			actions.loadUserData(null);
+		}
+	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			TreeStore.removeChangeListener(this.treeOnChange);
@@ -28123,6 +28183,8 @@ var Trees = function (_Component) {
 			TreeStore.removeTreeChangeListner(this.treeOnChange);
 			TreeStore.removeSetTakenListener(this.treeOnSetTaken);
 			TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
+			TreeStore.removeDeleteTakenListener(this.treeOnDeleteTaken);
+			TreeStore.removeDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
 		}
 	}, {
 		key: 'componentDidMount',
@@ -28132,6 +28194,8 @@ var Trees = function (_Component) {
 			this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 			this.treeOnSetTaken = this._onSetTaken.bind(this);
 			this.treeOnSetAllCourses = this._onSetAllCourses.bind(this);
+			this.treeOnDeleteTaken = this._onDeleteTaken.bind(this);
+			this.treeOnDeleteAllCourses = this._onDeleteAllCourses.bind(this);
 
 			TreeStore.addChangeListener(this.treeOnChange);
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
@@ -28139,6 +28203,8 @@ var Trees = function (_Component) {
 			TreeStore.addTreeChangeListner(this.treeOnChange);
 			TreeStore.addSetTakenListener(this.treeOnSetTaken);
 			TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
+			TreeStore.addDeleteTakenListener(this.treeOnDeleteTaken);
+			TreeStore.addDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
 
 			actions.loadUserData(null);
 			actions.getUserProgram(this.state.user);
