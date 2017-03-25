@@ -4,10 +4,14 @@
 	padding: 0;
 	text-rendering: geometricPrecision;
 	color: #414141;
+	
+}
+::-webkit-scrollbar { 
+    display: none; 
 }
 .main_btn {
 	margin: 10px;
-	background-color: #dadada;
+	background-color: #FDC424;
 	width: 200px;
 	padding: 10px;
 	color: #e94D40;
@@ -15,6 +19,7 @@
 	border: 2px solid #e94D40;
 	cursor: pointer;
 	transition: all 0.2s linear;
+	font-size: 15px;
 }
 .main_btn:hover {
 	background-color: #e94D40;
@@ -22,7 +27,7 @@
 }
 .main_btn2 {
 	margin: 10px;
-	background-color: #dadada;
+	background-color: #FDC424;
 	width: 200px;
 	padding: 10px;
 	color: #004e69;
@@ -30,6 +35,7 @@
 	border: 2px solid #004e69;
 	cursor: pointer;
 	transition: all 0.2s linear;
+	font-size: 15px;
 }
 .main_btn2:hover {
 	background-color: #004e69;
@@ -126,6 +132,7 @@
 	margin: 0;
 	background-color: #a6d663;
 	height: 63px;
+	
 }
 
 .navbar>ul>li>a {
@@ -148,19 +155,18 @@
 	user-select: none;
 	cursor: pointer;
 	text-decoration: none;
-	color: #fff;
+	color: #414141;
 }
 
 .header_text:hover {
     text-decoration: none;
-    color: #fff;
+	color: #414141;
 }
 
 .header_bar {
 	width: 100%;
 	height: 63px;
 	color: #414141;
-	
 	
 }
 
@@ -537,17 +543,19 @@ header nav ul {
 	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
-	background-color: #d8f0ff;
+	background-color: #fff;
 	z-index: 25;
 	padding: 0;
 }
 
 .header_container {
-	background-image: URL("../static/media/stock_test.jpg");
+	
 	background-size: cover;
+	background-position: 0 -100px;
 	background-repeat: no-repeat;
 	height: 100vh;
-	min-height: 700px;
+	
+	min-height: 800px;
 	transition: all 0.3s linear;
 	width: 100%;
 }
@@ -556,8 +564,39 @@ header nav ul {
 	color: #FFFFFF;
 	letter-spacing: 3px;
 	font-size: 25px;
-	margin: 200px auto 50px;
-	text-align: center;
+	margin: 80px 100px 50px;
+	text-align: left;
+	width: 500px;
+}
+
+.connector {
+	background-image: url("connector.png");
+	width: 250px;
+	height: 500px;
+	background-repeat: no-repeat;
+	position: absolute;
+	right: 5%;
+	bottom: 100vh;
+}
+
+.splash {
+	background-color: #FDC424;
+	width: 100%;
+	
+	margin: 0 auto;
+	height: 333px;
+}
+
+.tree {
+	background-image: url("fa2b3c34858473.56e6cf0cc1061.gif");
+	background-position: center;
+	width: 300px;
+	height: 300px;
+	right: 15%;
+}
+
+.flex-around {
+	justify-content: space-around;
 }
 
 .sub_heading {
@@ -574,6 +613,7 @@ header nav ul {
 	border-width: 0;
 	padding: 0;
 	margin: 0;
+	
 }
 
 .navbar_clear ul li a {
@@ -583,14 +623,25 @@ header nav ul {
 	vertical-align: middle;
 }
 .navbar_clear ul li:hover a {
-	color: #FFFFFF;
+	color: #414141;
 }
 
 .header_bar {
 	width: 100%;
 	height: 63px;
 	color: #414141;
+	margin: auto;
 	/*border-bottom: 1px solid #CCCCCC;*/
+}
+
+.header_bar .cont {
+	width: 75%;
+	margin: auto;
+}
+
+.splash_inside {
+	width: 95%;
+	margin: auto;
 }
 
 header nav ul {
@@ -608,4 +659,17 @@ nav ul li {
 	letter-spacing: 1px;
 	font-weight: lighter;
 	transition: all 0.3s linear;
+}
+
+.search_screen {
+	background-image: url(fb13b030679107.56bceca15f864.png);
+	height: 100vh;
+	background-size: contain;
+	background-repeat: repeat-x;
+}
+
+@media (min-width: 0px) and (max-width: 1200px) {
+	.search_screen {
+		background-size: cover !important;
+	}
 }
