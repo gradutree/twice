@@ -88,6 +88,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         return userData.taken;
     },
 
+    getUserAllCourses: function() {
+        return userData.allCourses;
+    },
+
     emitChange: function() {
         this.emit('change');
     },

@@ -23,7 +23,7 @@ class CourseText extends Component {
 	}
 	
 	render() {
-		return 	<div style={this.props.userTook ? takenTextStyle : notTakenTextStyle}>
+		return 	<div style={this.props.userTook ? takenTextStyle : (this.props.takeLater ? toTakeTextStyle : notTakenTextStyle)}>
 					{this.props.courseText}
 				</div>;
 	}

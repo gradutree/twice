@@ -41,6 +41,7 @@ class Trees extends Component {
 			preq: null,
 			program: null,
 			taken: null,
+			allCourses: null,
 			nodeClicked: ""
 		};
 	}
@@ -51,7 +52,7 @@ class Trees extends Component {
 	        	<div className="tree_graph">
 	          		<div id="cy"></div>
 	          	</div>
-	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} />
+	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} allCourses={this.state.allCourses} />
 	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" title={this.state.nodeClicked}>
 		        	<CourseInfo user={this.state.user} code={this.state.nodeClicked} />
 		        </SkyLight>
@@ -67,7 +68,8 @@ class Trees extends Component {
         this.setState(getUser());
         this.setState(getTree());
         this.setState({taken: TreeStore.getUserTaken()});
-
+        this.setState({allCourses: TreeStore.getUserAllCourses()});
+        
         actions.getUserProgram(this.state.user);
     }
 

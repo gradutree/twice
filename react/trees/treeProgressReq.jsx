@@ -46,7 +46,7 @@ class TreeProgressReq extends Component {
 					</div>
 					<div className="program_reqs_courses">
 						<div>{this.state.reqCreditsStr}</div>
-						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken}/>
+						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken} allCourses={this.props.allCourses} />
 					</div>
 					<hr />
 				</div>;

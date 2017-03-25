@@ -7434,6 +7434,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         return userData.taken;
     },
 
+    getUserAllCourses: function getUserAllCourses() {
+        return userData.allCourses;
+    },
+
     emitChange: function emitChange() {
         this.emit('change');
     },
@@ -26623,7 +26627,7 @@ var CourseText = function (_Component) {
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
-				{ style: this.props.userTook ? takenTextStyle : notTakenTextStyle },
+				{ style: this.props.userTook ? takenTextStyle : this.props.takeLater ? toTakeTextStyle : notTakenTextStyle },
 				this.props.courseText
 			);
 		}
@@ -27612,7 +27616,7 @@ var TreeProgress = function (_Component) {
 
 			if (TreeStore.getUserProgramReq().length > 0) {
 				Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req, taken: thisComp.props.taken }));
+					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req, taken: thisComp.props.taken, allCourses: thisComp.props.allCourses }));
 				})).then(function () {
 					programReqs.sort(function (a, b) {
 						return a - b;
@@ -27763,7 +27767,7 @@ var TreeProgressReq = function (_Component) {
 						null,
 						this.state.reqCreditsStr
 					),
-					_react2.default.createElement(_treeProgressReqCourses2.default, { req: this.props.req, taken: this.props.taken })
+					_react2.default.createElement(_treeProgressReqCourses2.default, { req: this.props.req, taken: this.props.taken, allCourses: this.props.allCourses })
 				),
 				_react2.default.createElement('hr', null)
 			);
@@ -27896,15 +27900,28 @@ var TreeProgressReqCourses = function (_Component) {
 			return took;
 		}
 	}, {
+		key: 'willTakeCourse',
+		value: function willTakeCourse(reqs, allCourses) {
+			var willTake = false;
+			reqs.forEach(function (elem) {
+				if (allCourses.indexOf(elem) >= 0) {
+					willTake = true;
+				}
+			});
+			return willTake;
+		}
+	}, {
 		key: 'getCourseDisplay',
 		value: function getCourseDisplay() {
 			var thisComp = this;
 			var displayElems = [];
 			this.props.req.courses.forEach(function (courseSet) {
 				var wasTaken = thisComp.tookCourse(courseSet, thisComp.props.taken);
+				var takeLater = thisComp.willTakeCourse(courseSet, thisComp.props.allCourses);
+				// var takeLater = false;
 				if (courseSet.length > 1) {
 					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem', key: courseSet,
-						courseText: "[" + courseSet.join(", ") + "]", userTook: wasTaken }));
+						courseText: "[" + courseSet.join(", ") + "]", userTook: wasTaken, takeLater: takeLater }));
 					displayElems.push(_react2.default.createElement(
 						'div',
 						{ className: 'course_req_name_elem', key: courseSet + "div" },
@@ -27912,7 +27929,7 @@ var TreeProgressReqCourses = function (_Component) {
 					));
 				} else {
 					displayElems.push(_react2.default.createElement(_courseText2.default, { className: 'course_req_name_elem', key: courseSet,
-						courseText: courseSet[0], userTook: wasTaken }));
+						courseText: courseSet[0], userTook: wasTaken, takeLater: takeLater }));
 					displayElems.push(_react2.default.createElement(
 						'div',
 						{ className: 'course_req_name_elem', key: courseSet + "div" },
@@ -28030,6 +28047,7 @@ var Trees = function (_Component) {
 			preq: null,
 			program: null,
 			taken: null,
+			allCourses: null,
 			nodeClicked: ""
 		};
 		return _this;
@@ -28046,7 +28064,7 @@ var Trees = function (_Component) {
 					{ className: 'tree_graph' },
 					_react2.default.createElement('div', { id: 'cy' })
 				),
-				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken }),
+				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken, allCourses: this.state.allCourses }),
 				_react2.default.createElement(
 					_reactSkylight2.default,
 					{ hideOnOverlayClicked: true, beforeOpen: this._beforePopupOpen.bind(this), ref: 'courseInfo', title: this.state.nodeClicked },
@@ -28065,6 +28083,7 @@ var Trees = function (_Component) {
 			this.setState(getUser());
 			this.setState(getTree());
 			this.setState({ taken: TreeStore.getUserTaken() });
+			this.setState({ allCourses: TreeStore.getUserAllCourses() });
 
 			actions.getUserProgram(this.state.user);
 		}
