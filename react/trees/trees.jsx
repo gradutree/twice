@@ -16,7 +16,7 @@ var edges = [];
 class Node {
   constructor(data) {
     this.id = data.courseid;
-    this.preq=data.preq;
+    this.preq = data.preq;
     if (data.preq) {
       this.edgeNumbers = data.preq.length;
     } else  {
@@ -156,29 +156,27 @@ class Trees extends Component {
 	  	this.setState({user: getUser()});
 	  	var thisComp = this;
 
-	 $(function(){ // on dom ready
+	 // $(function(){ // on dom ready
 
      var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
      $.when.apply($, ajaxCalls).then(function(){
-       var findCourse = function(data){
+     	// console.log(TreeStore.getTreeData());
+       	var findCourse = function(data){
        		for(var i=0; i<nodes.length; i++) {
        			if(nodes[i].id==data.courseid) {
-              return true;
-            }
+	              return true;
+	            }
        		}
        		return false;
-       }
+       	}
 
-       var courseAdder = function (node){
-         if(node.id == 'CSCC01H3') {
-            // console.log(node);
-         }
+       	var courseAdder = function (node){
 	       	for(var i=0; i<node.edgeNumbers; i++) {
 	       		if (node.preq[i]==null ||
-                node.preq[i].courseid == null ||
-                findCourse(node.preq[i])==true) {
-              return;
-            }
+	                node.preq[i].courseid == null ||
+	                findCourse(node.preq[i])==true) {
+              		return;
+            	}
 	       		else {
 	       			var newNode = new Node(node.preq[i]);
 	       			var newEdge = new Edge(newNode, node);
@@ -187,14 +185,14 @@ class Trees extends Component {
 	       			courseAdder(newNode);
 	       		}
 	       	}
-       }
+       	}	
 
-      var roots = TreeStore.getTreeData();
-      for(var j=0; j< roots.length; j++){
+        var roots = TreeStore.getTreeData();
+        for(var j=0; j< roots.length; j++){
   			var startNode = new Node(roots[j]);
-        nodes.push(startNode);
-      	courseAdder(startNode);
-   	  }
+	        nodes.push(startNode);
+	      	courseAdder(startNode);
+   	    }
 
 	    var cy = cytoscape({
 				container: document.getElementById('cy'),
@@ -273,7 +271,7 @@ class Trees extends Component {
       }
 
       cy.minZoom(1);
-	    cy.maxZoom(5);
+	    cy.maxZoom(1);
 
 	    cy.on('tap', function(evt){
 	    	if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
@@ -356,8 +354,6 @@ class Trees extends Component {
 	        }
 
 
-
-
 	        var highLighter = function(node){
 	          node.connectedEdges().forEach(function(ele){
 	            if(ele.target().id()==node.id()) {
@@ -380,7 +376,7 @@ class Trees extends Component {
 
 		});
 
-	});
+	// });
 
 	 }
 }
