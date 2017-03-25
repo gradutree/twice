@@ -7487,6 +7487,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.on('treechange', callback);
     },
 
+    removeTreeChangeListner: function removeTreeChangeListner(callback) {
+        this.removeListener('treechange', callback);
+    },
+
     addProgramChangeListener: function addProgramChangeListener(callback) {
         this.on('programChange', callback);
     },
@@ -27498,6 +27502,7 @@ var CourseInfo = function (_Component) {
 	}, {
 		key: 'setAllCourses',
 		value: function setAllCourses() {
+			// Make sure that user and the course info has been loaded first
 			if (this.props.user && this.state.course) {
 				actions.setAllCourses(this.props.user.username, this.state.course.code);
 			}
@@ -27505,6 +27510,7 @@ var CourseInfo = function (_Component) {
 	}, {
 		key: 'setTaken',
 		value: function setTaken() {
+			// Make sure that user and the course info has been loaded first
 			if (this.props.user && this.state.course) {
 				actions.setTaken(this.props.user.username, this.state.course.code);
 			}
@@ -28104,12 +28110,19 @@ var Trees = function (_Component) {
 			actions.loadUserData(null);
 		}
 	}, {
+		key: '_onSetAllCourses',
+		value: function _onSetAllCourses() {
+			actions.loadUserData(null);
+		}
+	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			TreeStore.removeChangeListener(this.treeOnChange);
 			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
+			TreeStore.removeTreeChangeListner(this.treeOnChange);
 			TreeStore.removeSetTakenListener(this.treeOnSetTaken);
+			TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
 		}
 	}, {
 		key: 'componentDidMount',
@@ -28118,12 +28131,14 @@ var Trees = function (_Component) {
 			this.treeOnProgramChange = this._onProgramChange.bind(this);
 			this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 			this.treeOnSetTaken = this._onSetTaken.bind(this);
+			this.treeOnSetAllCourses = this._onSetAllCourses.bind(this);
 
 			TreeStore.addChangeListener(this.treeOnChange);
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 			TreeStore.addTreeChangeListner(this.treeOnChange);
 			TreeStore.addSetTakenListener(this.treeOnSetTaken);
+			TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
 
 			actions.loadUserData(null);
 			actions.getUserProgram(this.state.user);

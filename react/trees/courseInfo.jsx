@@ -20,12 +20,14 @@ class CourseInfo extends Component {
 	}
 
 	setAllCourses() {
+		// Make sure that user and the course info has been loaded first
 		if (this.props.user && this.state.course){
 			actions.setAllCourses(this.props.user.username, this.state.course.code);
 		}
 	}
 
 	setTaken(){
+		// Make sure that user and the course info has been loaded first
 		if (this.props.user && this.state.course){
 			actions.setTaken(this.props.user.username, this.state.course.code);
 		}

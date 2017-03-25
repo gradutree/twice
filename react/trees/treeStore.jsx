@@ -141,6 +141,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.on('treechange', callback);
     },
 
+    removeTreeChangeListner: function(callback) {
+        this.removeListener('treechange', callback);
+    },
+
     addProgramChangeListener: function(callback) {
         this.on('programChange', callback);
     },
