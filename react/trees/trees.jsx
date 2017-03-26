@@ -1,6 +1,8 @@
 import React, { Component } from 'react'; import { render } from 'react-dom';
 
+import SkyLight from 'react-skylight';
 import TreeProgress from "./treeProgress.jsx";
+import CourseInfo from "./courseInfo.jsx";
 
 
 var AppDispatcher = require('../dispatcher.jsx');
@@ -38,9 +40,28 @@ class Trees extends Component {
 			user: null,
 			preq: null,
 			program: null,
-			taken: null
+			taken: null,
+			allCourses: null,
+			nodeClicked: "",
+			nodeClickedIsTaken: false,
+			nodeClickedIsAllCourses: false
 		};
 	}
+
+	checkIsTaken(){
+		if(this.state.user && this.state.nodeClicked != ""){
+			return this.setState({nodeClickedIsTaken: this.state.user.taken.indexOf(this.state.nodeClicked) >= 0});
+		}
+		return this.setState({nodeClickedIsTaken: false});
+	}
+
+	checkIsAllCourses(){
+		if(this.state.user && this.state.nodeClicked != ""){
+			return this.setState({nodeClickedIsAllCourses: this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0});
+		}
+		return this.setState({nodeClickedIsAllCourses: false});
+	}
+
 
   	render() {
 	    return (
@@ -48,17 +69,28 @@ class Trees extends Component {
 	        	<div className="tree_graph">
 	          		<div id="cy"></div>
 	          	</div>
-	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} />
+	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} allCourses={this.state.allCourses} />
+	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" 
+	          		title={this.state.nodeClicked} >
+		        	<CourseInfo user={this.state.user} code={this.state.nodeClicked} 
+		        		isTaken={this.state.nodeClickedIsTaken} isAllCourses={this.state.nodeClickedIsAllCourses} />
+		        </SkyLight>
 	        </div>
 	    );
   	}
 
-  	_onChange() {
+  	_beforePopupOpen(){
+  		// console.log(this.state.nodeClicked);
+  	}
 
+  	_onChange() {
         this.setState(getUser());
         this.setState(getTree());
         this.setState({taken: TreeStore.getUserTaken()});
-
+        this.setState({allCourses: TreeStore.getUserAllCourses()});
+        this.checkIsTaken();
+        this.checkIsAllCourses();
+        
         actions.getUserProgram(this.state.user);
     }
 
@@ -66,22 +98,63 @@ class Trees extends Component {
     	this.setState({program: TreeStore.getUserProgramReq()});
     }
 
+    _onNodeClicked() {
+    	this.setState({nodeClicked: TreeStore.getNodeClicked()})
+    	actions.getCourseInfo(this.state.nodeClicked);
+    	this.checkIsTaken();
+        this.checkIsAllCourses();
+    }
+
+    _onSetTaken() {
+    	actions.loadUserData(null);
+    }
+
+    _onSetAllCourses() {
+    	actions.loadUserData(null);
+    }
+
+    _onDeleteTaken(){
+    	actions.loadUserData(null);
+    }
+
+    _onDeleteAllCourses(){
+    	actions.loadUserData(null);
+    }
+
     componentWillUnmount() {
         TreeStore.removeChangeListener(this.treeOnChange);
         TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+        TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
+        TreeStore.removeTreeChangeListner(this.treeOnChange);
+        TreeStore.removeSetTakenListener(this.treeOnSetTaken);
+        TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
+        TreeStore.removeDeleteTakenListener(this.treeOnDeleteTaken);
+        TreeStore.removeDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
     }
 
-	componentDidMount() {
+  	componentDidMount() {
 	  	this.treeOnChange = this._onChange.bind(this);
 	  	this.treeOnProgramChange = this._onProgramChange.bind(this);
+	  	this.treeOnNodeClicked = this._onNodeClicked.bind(this);
+	  	this.treeOnSetTaken = this._onSetTaken.bind(this);
+	  	this.treeOnSetAllCourses = this._onSetAllCourses.bind(this);
+	  	this.treeOnDeleteTaken = this._onDeleteTaken.bind(this);
+	  	this.treeOnDeleteAllCourses = this._onDeleteAllCourses.bind(this);
 
 	    TreeStore.addChangeListener(this.treeOnChange);
-	    TreeStore.addTreeChangeListner(this.treeOnChange);
 	    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+	    TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
+	    TreeStore.addTreeChangeListner(this.treeOnChange);
+	    TreeStore.addSetTakenListener(this.treeOnSetTaken);
+	    TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
+	    TreeStore.addDeleteTakenListener(this.treeOnDeleteTaken);
+	    TreeStore.addDeleteAllCoursesListener(this.treeOnDeleteAllCourses);
 
 	  	actions.loadUserData(null);
 	  	actions.getUserProgram(this.state.user);
 
+	  	this.setState({user: getUser()});
+	  	var thisComp = this;
 
 	 $(function(){ // on dom ready
 
@@ -229,16 +302,20 @@ class Trees extends Component {
 	    cy.maxZoom(5);
 
 	    cy.on('tap', function(evt){
-        if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
-	      var tapid= cy.$('#'+evt.cyTarget.id());
-	      var creditCounter=document.getElementById('qty').value;
-	      creditCounter = creditCounter.split("/")[0];
-	      var newCredit = parseFloat(creditCounter);
+	    	if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
 
-	      if(tapid.hasClass('highlighted')){
-          edgeUnmarker(tapid);
-	        newCredit-=0.5;
-	      }
+            thisComp.refs.courseInfo.show()
+            actions.nodeClicked(evt.cyTarget.id());
+       //  if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
+	      // var tapid= cy.$('#'+evt.cyTarget.id());
+	      // var creditCounter=document.getElementById('qty').value;
+	      // creditCounter = creditCounter.split("/")[0];
+	      // var newCredit = parseFloat(creditCounter);
+
+	      // if(tapid.hasClass('highlighted')){
+       //    edgeUnmarker(tapid);
+	      //   newCredit-=0.5;
+	      // }
 	          // else {
 	          // 	// console.log("tap");
 	          //   newCredit+=0.5;
@@ -326,21 +403,18 @@ class Trees extends Component {
 	          });
 	        }
 
-	   // }); // on dom ready
 
-			    });
+		});
 
 	});
 
 	 }
-
 }
 
 function getTree(){
 	 return {
 	 	preq: TreeStore.getTreeData()
 	 }
-
 }
 
 function getUser() {

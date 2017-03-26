@@ -52,6 +52,94 @@ var TreeActions = {
                 }
             });
         }
+    },
+
+    nodeClicked: function(courseCode) {
+        AppDispatcher.handleAction({
+            actionType: "NODE_CLICKED",
+            data: courseCode
+        });
+    },
+
+    getCourseInfo: function(courseCode) {
+        $.ajax({
+            url: "/api/courses/query?code="+courseCode,
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'UPDATE_COURSE_INFO',
+                    data: result[0]
+                });
+            }),
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    },
+
+    setTaken: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/taken/"+courseCode,
+            type: "PATCH",
+            data: JSON.stringify({}),
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'SET_TAKEN',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
+    },
+
+    deleteTaken: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/taken/"+courseCode,
+            type: "DELETE",
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_TAKEN',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
+    },
+
+    setAllCourses: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/allCourses/"+courseCode,
+            type: "PATCH",
+            data: JSON.stringify({}),
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'SET_ALL_COURSES',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
+    },
+
+    deleteAllCourses: function(username, courseCode) {
+        $.ajax({
+            url: "/api/users/"+username+"/allCourses/"+courseCode,
+            type: "DELETE",
+            success: (function (result){
+                AppDispatcher.handleAction({
+                    actionType: 'DELETE_ALL_COURSES',
+                    data: courseCode
+                });
+            }),
+            error: function (err){
+                console.log(err);
+            }
+        });
     }
 };
 

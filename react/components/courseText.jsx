@@ -2,10 +2,17 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Line } from 'rc-progress';
 
-var textStyle = {
+var notTakenTextStyle = {
 	color: "#000000"
 }
 
+var takenTextStyle = {
+	color: "#32CD32"
+}
+
+var toTakeTextStyle = {
+	color: "#FFA500"
+}
 
 class CourseText extends Component {
 	constructor(){
@@ -16,8 +23,7 @@ class CourseText extends Component {
 	}
 	
 	render() {
-		textStyle.color = this.props.userTook ?  "#32cd32" : "#000000";
-		return 	<div style={textStyle}>
+		return 	<div style={this.props.userTook ? takenTextStyle : (this.props.takeLater ? toTakeTextStyle : notTakenTextStyle)}>
 					{this.props.courseText}
 				</div>;
 	}

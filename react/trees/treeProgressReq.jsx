@@ -4,6 +4,8 @@ import { Line } from 'rc-progress';
 
 import TreeProgressReqCourses from "./treeProgressReqCourses.jsx";
 
+var TreeStore = require("./treeStore.jsx");
+
 
 class TreeProgressReq extends Component {
 	constructor(){
@@ -15,10 +17,23 @@ class TreeProgressReq extends Component {
 		};
 	}
 
+	updateProgressReq() {
+		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
+		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
+		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
+	}
+
+	componentWillUnmount() {
+        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+    }
+
 	componentDidMount() {
 		this.setState({percent: determinePercent(this.props.req.courses, this.props.taken)});
 		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
 		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
+
+		this.treeOnProgramChange = this.updateProgressReq.bind(this);
+    	TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 	}
 	
 	render() {
@@ -31,7 +46,7 @@ class TreeProgressReq extends Component {
 					</div>
 					<div className="program_reqs_courses">
 						<div>{this.state.reqCreditsStr}</div>
-						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken}/>
+						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken} allCourses={this.props.allCourses} />
 					</div>
 					<hr />
 				</div>;
