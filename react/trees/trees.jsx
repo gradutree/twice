@@ -6,7 +6,7 @@ import TreeProgress from "./treeProgress.jsx";
 var AppDispatcher = require('../dispatcher.jsx');
 var TreeStore = require("./treeStore.jsx");
 var actions = require("./treeActions.jsx");
-var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3'];
+var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3', 'CSCD84H3'];
 var counter = 0;
 var nodes = [];
 var edges = [];
@@ -87,6 +87,7 @@ class Trees extends Component {
 
      var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
      $.when.apply($, ajaxCalls).then(function(){
+       
        var findCourse = function(data){
        		for(var i=0; i<nodes.length; i++) {
        			if(nodes[i].id==data.courseid) {
@@ -96,16 +97,34 @@ class Trees extends Component {
        		return false;
        }
 
+
+    	var edgeFinder = function (node){
+
+       		for(var i=0; i<edges.length; i++) {
+       			if(edges[i].source==data.courseid) {
+              return true;
+            }
+       		}
+       		return false;
+
+    	}
+
+
        var courseAdder = function (node){
-         if(node.id == 'CSCC01H3') {
-            console.log(node);
-         }
+
 	       	for(var i=0; i<node.edgeNumbers; i++) {
 	       		if (node.preq[i]==null ||
-                node.preq[i].courseid == null ||
-                findCourse(node.preq[i])==true) {
-              return;
-            }
+                node.preq[i].courseid == null) {
+            	return;
+            	}
+
+/*            	else if (findCourse(node.preq[i])==true && edgeFinder(node.preq[i]) == true){
+            		var newEdge = new Edge(node.preq[i], node);
+            		edge.push(newEdge);
+            		return;
+            	}
+*/
+
 	       		else {
 	       			var newNode = new Node(node.preq[i]);
 	       			var newEdge = new Edge(newNode, node);
@@ -114,7 +133,14 @@ class Trees extends Component {
 	       			courseAdder(newNode);
 	       		}
 	       	}
+
        }
+
+
+
+
+
+
 
       var roots = TreeStore.getTreeData();
       for(var j=0; j< roots.length; j++){
