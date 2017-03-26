@@ -54,6 +54,11 @@ class NavTabs extends Component {
 	render() {
 		return (<header className="header_bar">
 					<nav className="sub_nav">
+						<div className="flex-row">
+							<Link to="/dashboard"><div role="nav" className={"nav_pill"+(this.props.value == 0 ? " pill_active" : "")}>Dashboard</div></Link>
+							<Link to="/trees"><div role="nav" className={"nav_pill"+(this.props.value == 1 ? " pill_active" : "")}>Your Trees</div></Link>
+							<Link to="/search"><div role="nav" className={"nav_pill"+(this.props.value == 2 ? " pill_active" : "")}>Search courses</div></Link>
+						</div>
 					</nav>
 		</header>);
 	}
