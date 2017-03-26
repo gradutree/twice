@@ -37,7 +37,7 @@ class SearchView extends Component {
 
     render() {
         return <div>
-            <input id="main_input" className="main_input srch_icon" type="text" placeholder="Course name or code" onInput={() => {Actions.searchCourses(document.getElementById("main_input").value); console.log(document.getElementById("main_input").value)}}/>
+            <input id="main_input" className="main_input srch_icon" type="text" placeholder="Course name or code" onInput={() => {Actions.searchCourses(document.getElementById("main_input").value); }}/>
 
                 <Masonry
                     className="result_container"
@@ -73,7 +73,7 @@ class Result extends Component {
                     <div className="like_small"></div> {this.props.course.liked}
                 </div>
                 <div className="flex-row flex-start">
-                    <div className="comment"></div> 10
+                    <div className="comment"></div> {this.props.course.commentCount}
                 </div>
             </div>
 

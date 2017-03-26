@@ -52,13 +52,10 @@ class Search extends Component {
 
 class NavTabs extends Component {
 	render() {
-		return (<div className="opt_tab">
-                    <ul className="nav nav-pills">
-		                <li role="nav" id="dash_pill" className={this.props.value == 0 ? "active" : ""}><Link to="/dashboard">Dashboard</Link></li>
-		                <li role="nav" id="tree_pill" className={this.props.value == 1 ? "active" : ""}><Link to="/trees">Your Trees</Link></li>
-		                <li role="nav" id="srch_pill" className={this.props.value == 2 ? "active" : ""}><Link to="/search">Search courses</Link></li>
-		            </ul>
-                </div>);
+		return (<header className="header_bar">
+					<nav className="sub_nav">
+					</nav>
+		</header>);
 	}
 }
 
