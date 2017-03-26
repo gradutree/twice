@@ -57,44 +57,55 @@ class TreeProgressReq extends Component {
 function coursesTaken(reqs, taken){
 	var counter = 0;
 
-	reqs.forEach(function(elem){
-		var i = 0;
-		for(i = 0; i <elem.length; i++){
-			if(taken.indexOf(elem[i]) >= 0){
-				counter++;
-				break;
+	if(reqs && taken){
+		reqs.forEach(function(elem){
+			var i = 0;
+			for(i = 0; i <elem.length; i++){
+				if(taken.indexOf(elem[i]) >= 0){
+					counter++;
+					break;
+				}
 			}
-		}
-	});
+		});
+	}
 
 	return counter;
 }
 
 function determinePercent(reqs, taken){
-	return coursesTaken(reqs, taken) / reqs.length * 100;
+	if(reqs && taken){
+		return coursesTaken(reqs, taken) / reqs.length * 100;
+	}
+	return 0;
 }
 
 function getReqCreditsStr(req, taken){
-	var reqCreditStr = "Credits needed: " + req.credits + "\tCredits completed: ";
-	var creditsTaken = coursesTaken(req.courses, taken) * 0.5;
-	reqCreditStr += creditsTaken + "\tCredits left: " + Math.max((req.credits - creditsTaken), 0);
+	if(req && taken){
+		var reqCreditStr = "Credits needed: " + req.credits + "\tCredits completed: ";
+		var creditsTaken = coursesTaken(req.courses, taken) * 0.5;
+		reqCreditStr += creditsTaken + "\tCredits left: " + Math.max((req.credits - creditsTaken), 0);
 
-	return reqCreditStr;
+		return reqCreditStr;
+	}
+	return "Credits needed: N/A\tCredits completed: N/A\tCredits left: N/A";
 }
 
 function getReqCoursesStr(req){
-	var reqCourseStr = "Courses: ";
+	if(req){
+		var reqCourseStr = "Courses: ";
 
-	req.courses.forEach(function(courseSet){
-		if(courseSet.length > 1){
-			reqCourseStr += "[" + courseSet.join(",")+"] / ";
-		}
-		else {
-			reqCourseStr += courseSet[0] + " / ";
-		}
-	})
+		req.courses.forEach(function(courseSet){
+			if(courseSet.length > 1){
+				reqCourseStr += "[" + courseSet.join(",")+"] / ";
+			}
+			else {
+				reqCourseStr += courseSet[0] + " / ";
+			}
+		})
 
-	return reqCourseStr;
+		return reqCourseStr;
+	}
+	return "Courses: N/A";
 }
 
 export default TreeProgressReq;

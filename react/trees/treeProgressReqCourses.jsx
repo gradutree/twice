@@ -33,21 +33,25 @@ class TreeProgressReqCourses extends Component {
 
 	tookCourse(reqs, taken){
 		var took = false;
-		reqs.forEach(function(elem){
-			if(taken.indexOf(elem) >= 0){
-				took= true;
-			}
-		});
+		if(reqs && taken){
+			reqs.forEach(function(elem){
+				if(taken.indexOf(elem) >= 0){
+					took= true;
+				}
+			});
+		}
 		return took;
 	}
 
 	willTakeCourse(reqs, allCourses){
 		var willTake = false;
-		reqs.forEach(function(elem){
-			if(allCourses.indexOf(elem) >= 0){
-				willTake= true;
-			}
-		});
+		if(reqs && allCourses){
+			reqs.forEach(function(elem){
+				if(allCourses.indexOf(elem) >= 0){
+					willTake= true;
+				}
+			});
+		}
 		return willTake;
 	}
 
