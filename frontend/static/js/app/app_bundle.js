@@ -27277,6 +27277,7 @@ var SearchActions = {
     },
 
     getSearchResults: function getSearchResults(search) {
+        if (search.length < 3) return;
         $.ajax({
             url: "/api/courses/query?code=" + search,
             success: function success(result) {
