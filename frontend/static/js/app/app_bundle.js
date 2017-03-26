@@ -28258,17 +28258,13 @@ var Trees = function (_Component) {
 	}, {
 		key: 'createTree',
 		value: function createTree() {
-			// console.log("start");
 			var thisComp = this;
-			// var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
 			var ajaxCalls = this.getAllProgramReqs().map(actions.loadTreeInfo);
 
 			var nodes = [];
 			var edges = [];
 
 			$.when.apply($, ajaxCalls).then(function () {
-				// console.log("after");
-
 				var findCourse = function findCourse(data) {
 					for (var i = 0; i < nodes.length; i++) {
 						if (nodes[i].id == data.courseid) {
@@ -28309,8 +28305,6 @@ var Trees = function (_Component) {
 				};
 
 				var roots = TreeStore.getTreeData();
-				// console.log(TreeStore.getTreeData());
-				// var roots = thisComp.getAllProgramReqs();
 				for (var j = 0; j < roots.length; j++) {
 					var startNode = new Node(roots[j]);
 					if (startNode.id == null) continue;
@@ -28350,8 +28344,6 @@ var Trees = function (_Component) {
 					}
 				});
 
-				console.log(nodes);
-
 				var levelCount = { A: 0, B: 0, C: 0, D: 0 };
 				for (var i = 0; i < nodes.length; i++) {
 					if (nodes[i].id == null) continue;
@@ -28382,8 +28374,6 @@ var Trees = function (_Component) {
 					}
 					cy.add([{ group: "nodes", data: { id: id, title: title }, position: { x: x, y: y } }]);
 				}
-
-				// console.log(edges);
 
 				for (var i = 0; i < edges.length; i++) {
 					if (edges[i].id == null) continue;
@@ -28444,15 +28434,9 @@ var Trees = function (_Component) {
 			this.checkIsAllCourses();
 			this.highlightUserCourses();
 
-			// console.log(this.state.user);
-
 			if (this.state.program == null) {
 				actions.getUserProgram(this.state.user);
-				// actions.loadUserData(null);
 			}
-			// actions.getUserProgram(this.state.user);
-
-			// console.log(this.getAllProgramReqs());
 		}
 	}, {
 		key: '_onGraphCreated',
