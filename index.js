@@ -66,7 +66,7 @@ app.get("/course/:code", function (req, res) {
             if (data) {
                 return res.sendFile(path.resolve("frontend/views/course.html"));
             }
-            return res.status(404).end("No such course");
+            return res.redirect("/404");
         });
     });
 });
@@ -280,6 +280,10 @@ app.get("/api/course/:code/review/:page", function (req, res) {
     });
 });
 
+app.get("*", function(req, res) {
+	res.redirect("/404");
+});
+
 app.use(function(req, res, next) {
     if (!req.session.user) return res.status(401).end("Access denied");
     return next();
@@ -402,6 +406,7 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
         });
     });
 });
+
 
 
 app.listen(8000, function () {
