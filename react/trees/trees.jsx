@@ -8,7 +8,7 @@ import CourseInfo from "./courseInfo.jsx";
 var AppDispatcher = require('../dispatcher.jsx');
 var TreeStore = require("./treeStore.jsx");
 var actions = require("./treeActions.jsx");
-var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3'];
+var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3','CSCD84H3'];
 
 class Node {
   	constructor(data) {
@@ -61,6 +61,21 @@ class Trees extends Component {
 				this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0});
 		}
 		return this.setState({nodeClickedIsAllCourses: false});
+	}
+
+	// Return all of the courses reqired to meet the program reqs, in a single array
+	getAllProgramReqs() {
+		var allProgramReqs = [];
+		if(this.state.program){
+			this.state.program.forEach(function(req){
+				req.courses.forEach(function(courseSet){
+					courseSet.forEach(function(course){
+						allProgramReqs.push(course);
+					});
+				});
+			});
+		}
+		return allProgramReqs;
 	}
 
 	highlightUserCourses(){
@@ -119,13 +134,16 @@ class Trees extends Component {
 
 
 	createTree(){
+		// console.log("start");
 		var thisComp = this;
-     	var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+     	// var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+     	var ajaxCalls = this.getAllProgramReqs().map(actions.loadTreeInfo);
 
      	var nodes = [];
 		var edges = [];
 
      	$.when.apply($, ajaxCalls).then(function(){
+     		// console.log("after");
 
 	       	var findCourse = function(data){
 	       		for(var i=0; i<nodes.length; i++) {
@@ -160,6 +178,7 @@ class Trees extends Component {
 		       		else {
 		       			var newNode = new Node(node.preq[i]);
 		       			var newEdge = new Edge(newNode, node);
+		       			if (newNode.id == null) continue;
 		       			nodes.push(newNode);
 		       			edges.push(newEdge);
 		       			courseAdder(newNode);
@@ -168,8 +187,11 @@ class Trees extends Component {
 	       	}
 
 	        var roots = TreeStore.getTreeData();
+	        // console.log(TreeStore.getTreeData());
+	        // var roots = thisComp.getAllProgramReqs();
 	        for(var j=0; j< roots.length; j++){
 	  			var startNode = new Node(roots[j]);
+	  			if (startNode.id == null) continue;
 		        nodes.push(startNode);
 		      	courseAdder(startNode);
 	   	    }
@@ -214,8 +236,11 @@ class Trees extends Component {
 			    }
 			});
 
+			console.log(nodes);
+
 		    var levelCount = {A:0, B:0, C:0, D:0};
 		    for(var i =0; i<nodes.length; i++){
+		    	if (nodes[i].id == null) continue; 
 	        	var id = nodes[i].id;
 	     	  	var title = nodes[i].title;
 	     	  	var levels  = [10, 110, 210, 310];
@@ -246,7 +271,10 @@ class Trees extends Component {
 	        	]);
 	      	}
 
+	      	// console.log(edges);
+
 	      	for(var i =0; i<edges.length; i++){
+	      		if (edges[i].id == null) continue; 
 	          	var id = edges[i].id;
 	          	var source = edges[i].source;
 	          	var target = edges[i].target;
@@ -300,8 +328,16 @@ class Trees extends Component {
         this.checkIsTaken();
         this.checkIsAllCourses();
         this.highlightUserCourses();
+
+        // console.log(this.state.user);
         
-        actions.getUserProgram(this.state.user);
+        if(this.state.program == null) {
+        	actions.getUserProgram(this.state.user);
+        	// actions.loadUserData(null);
+        }
+        // actions.getUserProgram(this.state.user);
+
+        // console.log(this.getAllProgramReqs());
     }
 
     _onGraphCreated(){
@@ -309,7 +345,10 @@ class Trees extends Component {
     }
 
     _onProgramChange() {
+    	console.log("programchange");
     	this.setState({program: TreeStore.getUserProgramReq()});
+    	actions.loadUserData(null);
+    	this.createTree();
     }
 
     _onNodeClicked() {
@@ -371,7 +410,7 @@ class Trees extends Component {
 	  	actions.getUserProgram(this.state.user);
 
 	  	this.setState({user: getUser()});
-	  	this.createTree();
+	  	// this.createTree();
 	 }
 }
 

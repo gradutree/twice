@@ -61,6 +61,22 @@ var TreeActions = {
         }
     },
 
+    addTreeNode: function(courseCode) {
+        return $.ajax({
+            url: "/api/courses/query?code="+courseCode,
+            dataType: 'json',
+            success: (function (result) {
+                AppDispatcher.handleAction({
+                    actionType: "ADD_TREE_NODE",
+                    data: result
+                });
+            }),
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    },
+
     nodeClicked: function(courseCode) {
         AppDispatcher.handleAction({
             actionType: "NODE_CLICKED",

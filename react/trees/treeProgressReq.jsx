@@ -24,7 +24,7 @@ class TreeProgressReq extends Component {
 	}
 
 	componentWillUnmount() {
-        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+        TreeStore.removeChangeListener(this.treeOnChange);
     }
 
 	componentDidMount() {
@@ -32,8 +32,8 @@ class TreeProgressReq extends Component {
 		this.setState({reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken)});
 		this.setState({reqCoursesStr: getReqCoursesStr(this.props.req)});
 
-		this.treeOnProgramChange = this.updateProgressReq.bind(this);
-    	TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+		this.treeOnChange = this.updateProgressReq.bind(this);
+    	TreeStore.addChangeListener(this.treeOnChange);
 	}
 	
 	render() {
@@ -77,7 +77,7 @@ function determinePercent(reqs, taken){
 function getReqCreditsStr(req, taken){
 	var reqCreditStr = "Credits needed: " + req.credits + "\tCredits completed: ";
 	var creditsTaken = coursesTaken(req.courses, taken) * 0.5;
-	reqCreditStr += creditsTaken + "\tCredits left: " + (req.credits - creditsTaken);
+	reqCreditStr += creditsTaken + "\tCredits left: " + Math.max((req.credits - creditsTaken), 0);
 
 	return reqCreditStr;
 }

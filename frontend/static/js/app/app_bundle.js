@@ -10615,6 +10615,7 @@ var userProgram = [];
 var nodeClicked = "";
 var courseInfo = null;
 var treeData = [];
+var treeNodes = [];
 
 function loadUserData(data) {
     userData = data;
@@ -10623,6 +10624,11 @@ function loadUserData(data) {
 function loadTreeData(data) {
     var newObject = JSON.parse(JSON.stringify(data));
     treeData.push(newObject);
+}
+
+function addTreeNode(data) {
+    var newObject = JSON.parse(JSON.stringify(data));
+    treeNodes.push(newObject);
 }
 
 function loadUserProgram(data) {
@@ -10698,11 +10704,16 @@ var TreeStore = merge(EventEmitter.prototype, {
     },
 
     emitChange: function emitChange() {
+        this.setMaxListeners(100);
         this.emit('change');
     },
 
     emitTreeDataChange: function emitTreeDataChange() {
         this.emit('treechange');
+    },
+
+    emitAddTreeNode: function emitAddTreeNode() {
+        this.emit('addTreeNode');
     },
 
     emitGraphCreated: function emitGraphCreated() {
@@ -10752,6 +10763,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeTreeChangeListner: function removeTreeChangeListner(callback) {
         this.removeListener('treechange', callback);
+    },
+
+    addAddTreeNodeListner: function addAddTreeNodeListner(callback) {
+        this.on('addTreeNode', callback);
+    },
+
+    removeAddTreeNodeListner: function removeAddTreeNodeListner(callback) {
+        this.removeListener('addTreeNode', callback);
     },
 
     addGraphCreatedListner: function addGraphCreatedListner(callback) {
@@ -10835,6 +10854,12 @@ AppDispatcher.register(function (payload) {
             // Call internal method based upon dispatched action
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
+            break;
+
+        case 'ADD_TREE_NODE':
+            // Call internal method based upon dispatched action
+            addTreeNode(action.data);
+            TreeStore.emitAddTreeNode();
             break;
 
         case 'GRAPH_CREATED':
@@ -26038,6 +26063,22 @@ var TreeActions = {
         }
     },
 
+    addTreeNode: function addTreeNode(courseCode) {
+        return $.ajax({
+            url: "/api/courses/query?code=" + courseCode,
+            dataType: 'json',
+            success: function success(result) {
+                AppDispatcher.handleAction({
+                    actionType: "ADD_TREE_NODE",
+                    data: result
+                });
+            },
+            error: function error(err) {
+                console.log(err);
+            }
+        });
+    },
+
     nodeClicked: function nodeClicked(courseCode) {
         AppDispatcher.handleAction({
             actionType: "NODE_CLICKED",
@@ -27704,13 +27745,13 @@ var TreeProgress = function (_Component) {
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
-			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+			TreeStore.removeChangeListener(this.treeOnChange);
 		}
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			this.treeOnProgramChange = this.updateProgramReq.bind(this);
-			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+			this.treeOnChange = this.updateProgramReq.bind(this);
+			TreeStore.addChangeListener(this.treeOnChange);
 		}
 	}, {
 		key: 'render',
@@ -27802,7 +27843,7 @@ var TreeProgressReq = function (_Component) {
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
-			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+			TreeStore.removeChangeListener(this.treeOnChange);
 		}
 	}, {
 		key: 'componentDidMount',
@@ -27811,8 +27852,8 @@ var TreeProgressReq = function (_Component) {
 			this.setState({ reqCreditsStr: getReqCreditsStr(this.props.req, this.props.taken) });
 			this.setState({ reqCoursesStr: getReqCoursesStr(this.props.req) });
 
-			this.treeOnProgramChange = this.updateProgressReq.bind(this);
-			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+			this.treeOnChange = this.updateProgressReq.bind(this);
+			TreeStore.addChangeListener(this.treeOnChange);
 		}
 	}, {
 		key: 'render',
@@ -27877,7 +27918,7 @@ function determinePercent(reqs, taken) {
 function getReqCreditsStr(req, taken) {
 	var reqCreditStr = "Credits needed: " + req.credits + "\tCredits completed: ";
 	var creditsTaken = coursesTaken(req.courses, taken) * 0.5;
-	reqCreditStr += creditsTaken + "\tCredits left: " + (req.credits - creditsTaken);
+	reqCreditStr += creditsTaken + "\tCredits left: " + Math.max(req.credits - creditsTaken, 0);
 
 	return reqCreditStr;
 }
@@ -27955,13 +27996,13 @@ var TreeProgressReqCourses = function (_Component) {
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
-			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+			TreeStore.removeChangeListener(this.treeOnChange);
 		}
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			this.treeOnProgramChange = this.updateProgressReqCourses.bind(this);
-			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+			this.treeOnChange = this.updateProgressReqCourses.bind(this);
+			TreeStore.addChangeListener(this.treeOnChange);
 
 			this.getCourseDisplay();
 		}
@@ -28084,7 +28125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var AppDispatcher = __webpack_require__(58);
 var TreeStore = __webpack_require__(93);
 var actions = __webpack_require__(230);
-var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3', 'CSCD01H3', 'CSCD27H3'];
+var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3', 'CSCD01H3', 'CSCD27H3', 'CSCD84H3'];
 
 var Node = function Node(data) {
 	_classCallCheck(this, Node);
@@ -28146,6 +28187,24 @@ var Trees = function (_Component) {
 			}
 			return this.setState({ nodeClickedIsAllCourses: false });
 		}
+
+		// Return all of the courses reqired to meet the program reqs, in a single array
+
+	}, {
+		key: 'getAllProgramReqs',
+		value: function getAllProgramReqs() {
+			var allProgramReqs = [];
+			if (this.state.program) {
+				this.state.program.forEach(function (req) {
+					req.courses.forEach(function (courseSet) {
+						courseSet.forEach(function (course) {
+							allProgramReqs.push(course);
+						});
+					});
+				});
+			}
+			return allProgramReqs;
+		}
 	}, {
 		key: 'highlightUserCourses',
 		value: function highlightUserCourses() {
@@ -28199,13 +28258,16 @@ var Trees = function (_Component) {
 	}, {
 		key: 'createTree',
 		value: function createTree() {
+			// console.log("start");
 			var thisComp = this;
-			var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+			// var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+			var ajaxCalls = this.getAllProgramReqs().map(actions.loadTreeInfo);
 
 			var nodes = [];
 			var edges = [];
 
 			$.when.apply($, ajaxCalls).then(function () {
+				// console.log("after");
 
 				var findCourse = function findCourse(data) {
 					for (var i = 0; i < nodes.length; i++) {
@@ -28238,6 +28300,7 @@ var Trees = function (_Component) {
 						else {
 								var newNode = new Node(node.preq[i]);
 								var newEdge = new Edge(newNode, node);
+								if (newNode.id == null) continue;
 								nodes.push(newNode);
 								edges.push(newEdge);
 								courseAdder(newNode);
@@ -28246,8 +28309,11 @@ var Trees = function (_Component) {
 				};
 
 				var roots = TreeStore.getTreeData();
+				// console.log(TreeStore.getTreeData());
+				// var roots = thisComp.getAllProgramReqs();
 				for (var j = 0; j < roots.length; j++) {
 					var startNode = new Node(roots[j]);
+					if (startNode.id == null) continue;
 					nodes.push(startNode);
 					courseAdder(startNode);
 				}
@@ -28284,8 +28350,11 @@ var Trees = function (_Component) {
 					}
 				});
 
+				console.log(nodes);
+
 				var levelCount = { A: 0, B: 0, C: 0, D: 0 };
 				for (var i = 0; i < nodes.length; i++) {
+					if (nodes[i].id == null) continue;
 					var id = nodes[i].id;
 					var title = nodes[i].title;
 					var levels = [10, 110, 210, 310];
@@ -28314,7 +28383,10 @@ var Trees = function (_Component) {
 					cy.add([{ group: "nodes", data: { id: id, title: title }, position: { x: x, y: y } }]);
 				}
 
+				// console.log(edges);
+
 				for (var i = 0; i < edges.length; i++) {
+					if (edges[i].id == null) continue;
 					var id = edges[i].id;
 					var source = edges[i].source;
 					var target = edges[i].target;
@@ -28372,7 +28444,15 @@ var Trees = function (_Component) {
 			this.checkIsAllCourses();
 			this.highlightUserCourses();
 
-			actions.getUserProgram(this.state.user);
+			// console.log(this.state.user);
+
+			if (this.state.program == null) {
+				actions.getUserProgram(this.state.user);
+				// actions.loadUserData(null);
+			}
+			// actions.getUserProgram(this.state.user);
+
+			// console.log(this.getAllProgramReqs());
 		}
 	}, {
 		key: '_onGraphCreated',
@@ -28382,7 +28462,10 @@ var Trees = function (_Component) {
 	}, {
 		key: '_onProgramChange',
 		value: function _onProgramChange() {
+			console.log("programchange");
 			this.setState({ program: TreeStore.getUserProgramReq() });
+			actions.loadUserData(null);
+			this.createTree();
 		}
 	}, {
 		key: '_onNodeClicked',
@@ -28451,7 +28534,7 @@ var Trees = function (_Component) {
 			actions.getUserProgram(this.state.user);
 
 			this.setState({ user: getUser() });
-			this.createTree();
+			// this.createTree();
 		}
 	}]);
 

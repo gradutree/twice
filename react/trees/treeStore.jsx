@@ -8,6 +8,7 @@ var userProgram = [];
 var nodeClicked = "";
 var courseInfo = null;
 var treeData =  [];
+var treeNodes = [];
 
 function loadUserData(data) {
     userData = data;
@@ -16,6 +17,11 @@ function loadUserData(data) {
 function loadTreeData(data) {
     var newObject = JSON.parse(JSON.stringify(data));
     treeData.push(newObject);
+}
+
+function addTreeNode(data) {
+    var newObject = JSON.parse(JSON.stringify(data));
+    treeNodes.push(newObject);
 }
 
 function loadUserProgram(data) {
@@ -93,11 +99,16 @@ var TreeStore = merge(EventEmitter.prototype, {
     },
 
     emitChange: function() {
+        this.setMaxListeners(100);
         this.emit('change');
     },
 
     emitTreeDataChange: function() {
         this.emit('treechange');
+    },
+
+    emitAddTreeNode: function() {
+        this.emit('addTreeNode');
     },
 
     emitGraphCreated: function() {
@@ -147,6 +158,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeTreeChangeListner: function(callback) {
         this.removeListener('treechange', callback);
+    },
+
+    addAddTreeNodeListner: function(callback) {
+        this.on('addTreeNode', callback);
+    },
+
+    removeAddTreeNodeListner: function(callback) {
+        this.removeListener('addTreeNode', callback);
     },
 
     addGraphCreatedListner: function(callback) {
@@ -230,6 +249,12 @@ AppDispatcher.register(function(payload) {
             // Call internal method based upon dispatched action
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
+            break;
+
+        case 'ADD_TREE_NODE':
+            // Call internal method based upon dispatched action
+            addTreeNode(action.data);
+            TreeStore.emitAddTreeNode();
             break;
 
         case 'GRAPH_CREATED':

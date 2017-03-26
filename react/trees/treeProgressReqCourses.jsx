@@ -21,12 +21,12 @@ class TreeProgressReqCourses extends Component {
 	}
 
 	componentWillUnmount() {
-        TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
+        TreeStore.removeChangeListener(this.treeOnChange);
     }
 
 	componentDidMount() {
-		this.treeOnProgramChange = this.updateProgressReqCourses.bind(this);
-    	TreeStore.addProgramChangeListener(this.treeOnProgramChange);
+		this.treeOnChange = this.updateProgressReqCourses.bind(this);
+    	TreeStore.addChangeListener(this.treeOnChange);
 
 		this.getCourseDisplay();
 	}
