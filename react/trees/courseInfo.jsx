@@ -37,7 +37,6 @@ class CourseInfo extends Component {
 		// Make sure that user and the course info has been loaded first
 		if (this.props.user && this.state.course){
 			actions.deleteAllCourses(this.props.user.username, this.state.course.code);
-			console.log(this.state.course.preq);
 		}
 	}
 

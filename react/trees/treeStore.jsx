@@ -271,9 +271,6 @@ AppDispatcher.register(function(payload) {
             return true;
     }
 
-    // // If action was acted upon, emit change event
-    // TreeStore.emitChange();
-
     return true;
 
 });
