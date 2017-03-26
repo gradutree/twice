@@ -31,6 +31,13 @@ var TreeActions = {
         });
     },
 
+    graphCreated: function () {
+        AppDispatcher.handleAction({
+            actionType: 'GRAPH_CREATED',
+            data: null
+        });
+    },
+
     getUserProgram: function(user) {
         if(user && user.program){
             var userSpec = user.spec.toLowerCase();

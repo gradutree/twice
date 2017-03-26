@@ -66,22 +66,72 @@ class Trees extends Component {
 	highlightUserCourses(){
 		var thisComp = this;
 		if(this.state.user && this.state.cy){
-			thisComp.state.user.allCourses.forEach(function(takenCourse){
-				thisComp.state.cy.nodes().forEach(function(e) {
-			      	if(e.id()==takenCourse){
-			      		if(thisComp.state.user.taken.indexOf(takenCourse) >= 0){
-				      		e.addClass('highlighted');
-				      		e.data('marked',1);
-				      		return;
+			thisComp.state.cy.nodes().forEach(function(node){
+				var i = 0;
+				var allCourses = thisComp.state.user.allCourses;
+				for (i = 0; i < allCourses.length; i++){
+					if(node.id() == allCourses[i]){
+			      		if(thisComp.state.user.taken.indexOf(allCourses[i]) >= 0){
+				      		node.addClass('highlighted');
+				      		node.data('marked',1);
+				      		break;
 			      		}
 			      		else {
-			      			e.addClass('highlightedAllCourses');
-			      			e.data('marked',1);
-			      			return;
+			      			node.addClass('highlightedAllCourses');
+			      			node.data('marked',1);
+			      			break;
 			      		}
-			    	} 
-			    });
+			    	}
+			    	else {
+			    		node.removeClass('highlighted');
+			    		node.removeClass('highlightedAllCourses');
+			    		node.data('marked',0);
+			    	}
+				}
+				// thisComp.state.user.allCourses.forEach(function(course){
+				// 	console.log("node.id() = " + node.id() + "\tcourse = " + course);
+				// 	if(node.id() == course){
+			 //      		if(thisComp.state.user.taken.indexOf(course) >= 0){
+				//       		node.addClass('highlighted');
+				//       		node.data('marked',1);
+				//       		return;
+			 //      		}
+			 //      		else {
+			 //      			node.addClass('highlightedAllCourses');
+			 //      			node.data('marked',1);
+			 //      			return;
+			 //      		}
+			 //    	}
+			 //    	else {
+			 //    		node.removeClass('highlighted');
+			 //    		node.removeClass('highlightedAllCourses');
+			 //    		node.data('marked',0);
+			 //    		return;
+			 //    	}
+				// });
 			});
+			// thisComp.state.user.allCourses.forEach(function(course){
+			// 	thisComp.state.cy.nodes().forEach(function(node) {
+			//       	if(node.id()==course){
+			//       		if(thisComp.state.user.taken.indexOf(course) >= 0){
+			// 	      		node.addClass('highlighted');
+			// 	      		node.data('marked',1);
+			// 	      		return;
+			//       		}
+			//       		else {
+			//       			node.addClass('highlightedAllCourses');
+			//       			node.data('marked',1);
+			//       			return;
+			//       		}
+			//     	}
+			//     	else {
+			//     		node.removeClass('highlighted');
+			//     		node.removeClass('highlightedAllCourses');
+			//     		node.data('marked',0);
+			//     		return;
+			//     	}
+			//     });
+			// });
 
 			thisComp.state.cy.edges().forEach(function(edge){
 				if(thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && 
@@ -98,6 +148,12 @@ class Trees extends Component {
 		      			return;
 					}
 				}
+				else {
+					edge.removeClass('highlighted');
+			    	edge.removeClass('highlightedAllCourses');
+		    		edge.data('marked',0);
+		    		return;
+		    	}
 			});
 		}
 	}
@@ -235,7 +291,7 @@ class Trees extends Component {
 
 	            thisComp.refs.courseInfo.show();
 
-	            thisComp.highlightUserCourses();
+	            // thisComp.highlightUserCourses();
 
 	            actions.nodeClicked(evt.cyTarget.id());
 
@@ -251,6 +307,7 @@ class Trees extends Component {
 		    });
 
 		    thisComp.setState({cy: cy});
+		    actions.graphCreated();
 
 		});
 	}
@@ -284,6 +341,7 @@ class Trees extends Component {
         this.setState({allCourses: TreeStore.getUserAllCourses()});
         this.checkIsTaken();
         this.checkIsAllCourses();
+        // this.highlightUserCourses();
         
         actions.getUserProgram(this.state.user);
         // console.log("HERE");
@@ -293,6 +351,11 @@ class Trees extends Component {
         // if(this.state.user && this.state.cy == null){
         // 	this.createTree();
         // }
+        this.highlightUserCourses();
+    }
+
+    _onGraphCreated(){
+    	this.highlightUserCourses();
     }
 
     _onProgramChange() {
@@ -308,18 +371,22 @@ class Trees extends Component {
 
     _onSetTaken() {
     	actions.loadUserData(null);
+    	// this.highlightUserCourses();
     }
 
     _onSetAllCourses() {
     	actions.loadUserData(null);
+    	// this.highlightUserCourses();
     }
 
     _onDeleteTaken(){
     	actions.loadUserData(null);
+    	// this.highlightUserCourses();
     }
 
     _onDeleteAllCourses(){
     	actions.loadUserData(null);
+    	// this.highlightUserCourses();
     }
 
     componentWillUnmount() {
@@ -327,6 +394,7 @@ class Trees extends Component {
         TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
         TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
         TreeStore.removeTreeChangeListner(this.treeOnChange);
+        TreeStore.removeGraphCreatedListner(this.treeOnGraphCreated);
         TreeStore.removeSetTakenListener(this.treeOnSetTaken);
         TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
         TreeStore.removeDeleteTakenListener(this.treeOnDeleteTaken);
@@ -335,6 +403,7 @@ class Trees extends Component {
 
   	componentDidMount() {
 	  	this.treeOnChange = this._onChange.bind(this);
+	  	this.treeOnGraphCreated = this._onGraphCreated.bind(this);
 	  	this.treeOnProgramChange = this._onProgramChange.bind(this);
 	  	this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 	  	this.treeOnSetTaken = this._onSetTaken.bind(this);
@@ -346,6 +415,7 @@ class Trees extends Component {
 	    TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 	    TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 	    TreeStore.addTreeChangeListner(this.treeOnChange);
+	    TreeStore.addGraphCreatedListner(this.treeOnGraphCreated);
 	    TreeStore.addSetTakenListener(this.treeOnSetTaken);
 	    TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
 	    TreeStore.addDeleteTakenListener(this.treeOnDeleteTaken);

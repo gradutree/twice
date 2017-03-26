@@ -100,6 +100,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('treechange');
     },
 
+    emitGraphCreated: function() {
+        this.emit('graphCreated');
+    },
+
     emitProgramChange: function() {
         this.setMaxListeners(100);
         this.emit('programChange');
@@ -143,6 +147,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeTreeChangeListner: function(callback) {
         this.removeListener('treechange', callback);
+    },
+
+    addGraphCreatedListner: function(callback) {
+        this.on('graphCreated', callback);
+    },
+
+    removeGraphCreatedListner: function(callback) {
+        this.removeListener('graphCreated', callback);
     },
 
     addProgramChangeListener: function(callback) {
@@ -218,6 +230,10 @@ AppDispatcher.register(function(payload) {
             // Call internal method based upon dispatched action
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
+            break;
+
+        case 'GRAPH_CREATED':
+            TreeStore.emitGraphCreated();
             break;
 
         case 'GET_USER_PROGRAM':

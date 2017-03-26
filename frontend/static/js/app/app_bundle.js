@@ -10705,6 +10705,10 @@ var TreeStore = merge(EventEmitter.prototype, {
         this.emit('treechange');
     },
 
+    emitGraphCreated: function emitGraphCreated() {
+        this.emit('graphCreated');
+    },
+
     emitProgramChange: function emitProgramChange() {
         this.setMaxListeners(100);
         this.emit('programChange');
@@ -10748,6 +10752,14 @@ var TreeStore = merge(EventEmitter.prototype, {
 
     removeTreeChangeListner: function removeTreeChangeListner(callback) {
         this.removeListener('treechange', callback);
+    },
+
+    addGraphCreatedListner: function addGraphCreatedListner(callback) {
+        this.on('graphCreated', callback);
+    },
+
+    removeGraphCreatedListner: function removeGraphCreatedListner(callback) {
+        this.removeListener('graphCreated', callback);
     },
 
     addProgramChangeListener: function addProgramChangeListener(callback) {
@@ -10823,6 +10835,10 @@ AppDispatcher.register(function (payload) {
             // Call internal method based upon dispatched action
             loadTreeData(action.data);
             TreeStore.emitTreeDataChange();
+            break;
+
+        case 'GRAPH_CREATED':
+            TreeStore.emitGraphCreated();
             break;
 
         case 'GET_USER_PROGRAM':
@@ -25995,6 +26011,13 @@ var TreeActions = {
         });
     },
 
+    graphCreated: function graphCreated() {
+        AppDispatcher.handleAction({
+            actionType: 'GRAPH_CREATED',
+            data: null
+        });
+    },
+
     getUserProgram: function getUserProgram(user) {
         if (user && user.program) {
             var userSpec = user.spec.toLowerCase();
@@ -28126,24 +28149,72 @@ var Trees = function (_Component) {
 		value: function highlightUserCourses() {
 			var thisComp = this;
 			if (this.state.user && this.state.cy) {
-				thisComp.state.user.allCourses.forEach(function (takenCourse) {
-					thisComp.state.cy.nodes().forEach(function (e) {
-						if (e.id() == takenCourse) {
-							if (thisComp.state.user.taken.indexOf(takenCourse) >= 0) {
-								e.addClass('highlighted');
-								e.data('marked', 1);
-								return;
+				thisComp.state.cy.nodes().forEach(function (node) {
+					var i = 0;
+					var allCourses = thisComp.state.user.allCourses;
+					for (i = 0; i < allCourses.length; i++) {
+						if (node.id() == allCourses[i]) {
+							if (thisComp.state.user.taken.indexOf(allCourses[i]) >= 0) {
+								node.addClass('highlighted');
+								node.data('marked', 1);
+								break;
 							} else {
-								e.addClass('highlightedAllCourses');
-								e.data('marked', 1);
-								return;
+								node.addClass('highlightedAllCourses');
+								node.data('marked', 1);
+								break;
 							}
+						} else {
+							node.removeClass('highlighted');
+							node.removeClass('highlightedAllCourses');
+							node.data('marked', 0);
 						}
-					});
+					}
+					// thisComp.state.user.allCourses.forEach(function(course){
+					// 	console.log("node.id() = " + node.id() + "\tcourse = " + course);
+					// 	if(node.id() == course){
+					//      		if(thisComp.state.user.taken.indexOf(course) >= 0){
+					//       		node.addClass('highlighted');
+					//       		node.data('marked',1);
+					//       		return;
+					//      		}
+					//      		else {
+					//      			node.addClass('highlightedAllCourses');
+					//      			node.data('marked',1);
+					//      			return;
+					//      		}
+					//    	}
+					//    	else {
+					//    		node.removeClass('highlighted');
+					//    		node.removeClass('highlightedAllCourses');
+					//    		node.data('marked',0);
+					//    		return;
+					//    	}
+					// });
 				});
+				// thisComp.state.user.allCourses.forEach(function(course){
+				// 	thisComp.state.cy.nodes().forEach(function(node) {
+				//       	if(node.id()==course){
+				//       		if(thisComp.state.user.taken.indexOf(course) >= 0){
+				// 	      		node.addClass('highlighted');
+				// 	      		node.data('marked',1);
+				// 	      		return;
+				//       		}
+				//       		else {
+				//       			node.addClass('highlightedAllCourses');
+				//       			node.data('marked',1);
+				//       			return;
+				//       		}
+				//     	}
+				//     	else {
+				//     		node.removeClass('highlighted');
+				//     		node.removeClass('highlightedAllCourses');
+				//     		node.data('marked',0);
+				//     		return;
+				//     	}
+				//     });
+				// });
 
 				thisComp.state.cy.edges().forEach(function (edge) {
-					// var sourceId = edge.source().id(); 
 					if (thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0) {
 						//
 						if (thisComp.state.user.taken.indexOf(edge.source().id()) >= 0) {
@@ -28155,9 +28226,12 @@ var Trees = function (_Component) {
 							edge.data('marked', 1);
 							return;
 						}
+					} else {
+						edge.removeClass('highlighted');
+						edge.removeClass('highlightedAllCourses');
+						edge.data('marked', 0);
+						return;
 					}
-					// console.log("self: " + edge.source().id());
-					// console.log("target: " + edge.target().id());
 				});
 			}
 		}
@@ -28280,7 +28354,7 @@ var Trees = function (_Component) {
 
 					thisComp.refs.courseInfo.show();
 
-					thisComp.highlightUserCourses();
+					// thisComp.highlightUserCourses();
 
 					actions.nodeClicked(evt.cyTarget.id());
 
@@ -28296,6 +28370,7 @@ var Trees = function (_Component) {
 				});
 
 				thisComp.setState({ cy: cy });
+				actions.graphCreated();
 			});
 		}
 	}, {
@@ -28334,6 +28409,7 @@ var Trees = function (_Component) {
 			this.setState({ allCourses: TreeStore.getUserAllCourses() });
 			this.checkIsTaken();
 			this.checkIsAllCourses();
+			// this.highlightUserCourses();
 
 			actions.getUserProgram(this.state.user);
 			// console.log("HERE");
@@ -28343,6 +28419,12 @@ var Trees = function (_Component) {
 			// if(this.state.user && this.state.cy == null){
 			// 	this.createTree();
 			// }
+			this.highlightUserCourses();
+		}
+	}, {
+		key: '_onGraphCreated',
+		value: function _onGraphCreated() {
+			this.highlightUserCourses();
 		}
 	}, {
 		key: '_onProgramChange',
@@ -28361,21 +28443,25 @@ var Trees = function (_Component) {
 		key: '_onSetTaken',
 		value: function _onSetTaken() {
 			actions.loadUserData(null);
+			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onSetAllCourses',
 		value: function _onSetAllCourses() {
 			actions.loadUserData(null);
+			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onDeleteTaken',
 		value: function _onDeleteTaken() {
 			actions.loadUserData(null);
+			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onDeleteAllCourses',
 		value: function _onDeleteAllCourses() {
 			actions.loadUserData(null);
+			// this.highlightUserCourses();
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -28384,6 +28470,7 @@ var Trees = function (_Component) {
 			TreeStore.removeProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.removeNodeClickedListener(this.treeOnNodeClicked);
 			TreeStore.removeTreeChangeListner(this.treeOnChange);
+			TreeStore.removeGraphCreatedListner(this.treeOnGraphCreated);
 			TreeStore.removeSetTakenListener(this.treeOnSetTaken);
 			TreeStore.removeSetAllCoursesListener(this.treeOnSetAllCourses);
 			TreeStore.removeDeleteTakenListener(this.treeOnDeleteTaken);
@@ -28393,6 +28480,7 @@ var Trees = function (_Component) {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			this.treeOnChange = this._onChange.bind(this);
+			this.treeOnGraphCreated = this._onGraphCreated.bind(this);
 			this.treeOnProgramChange = this._onProgramChange.bind(this);
 			this.treeOnNodeClicked = this._onNodeClicked.bind(this);
 			this.treeOnSetTaken = this._onSetTaken.bind(this);
@@ -28404,6 +28492,7 @@ var Trees = function (_Component) {
 			TreeStore.addProgramChangeListener(this.treeOnProgramChange);
 			TreeStore.addNodeClickedListener(this.treeOnNodeClicked);
 			TreeStore.addTreeChangeListner(this.treeOnChange);
+			TreeStore.addGraphCreatedListner(this.treeOnGraphCreated);
 			TreeStore.addSetTakenListener(this.treeOnSetTaken);
 			TreeStore.addSetAllCoursesListener(this.treeOnSetAllCourses);
 			TreeStore.addDeleteTakenListener(this.treeOnDeleteTaken);
