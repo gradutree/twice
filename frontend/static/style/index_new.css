@@ -1,5 +1,5 @@
 * {
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Fira Sans Condensed', sans-serif;
 	margin: 0;
 	padding: 0;
 	text-rendering: geometricPrecision;
@@ -592,7 +592,7 @@ header nav ul {
 .heading {
 	color: #FFFFFF;
 	letter-spacing: 3px;
-	font-size: 25px;
+	font-size: 28px;
 	margin: 80px 100px 50px;
 	text-align: left;
 	width: 500px;
@@ -712,6 +712,43 @@ header nav ul {
 	letter-spacing: 1px;
 	font-weight: lighter;
 	transition: all 0.3s linear;
+}
+
+#about {
+	text-align: center;
+	margin-top: 100px;
+}
+
+#about h3 {
+	color: #FDC424;
+	font-size: 39px;
+}
+
+.blurb {
+	font-size: 20px;
+	margin: 20px;
+	line-height: 150px;
+	font-weight: bold;
+	color: #717171;
+}
+
+.nodes {
+	background-image: url(/media/test.png);
+	background-position: 0;
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 550px;
+	height: 150px;
+}
+
+.review_preview {
+	background-image: url(/media/test2.png);
+	background-position: 0;
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 450px;
+	height: 150px;
+	margin-right: 105px;
 }
 
 @media (min-width: 0px) and (max-width: 1200px) {

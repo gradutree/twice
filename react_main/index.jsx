@@ -33,15 +33,17 @@ else  document.getElementById("btn_list").innerHTML = `<li><a href="/dashboard">
     </ul> <div id="popover-arrow" class="popover-arrow hidden" style="margin-left:10px; z-index: 10; position: absolute; top: 35px;"></div>
      </div></li>`;
 
-document.getElementById("profile").addEventListener("click", function(e) {
-    var popover = document.getElementById("popover-arrow");
-    if (popover.classList.contains("hidden")) {
-        popover.classList.remove("hidden");
-    }
-    else {
-        popover.classList.add("hidden");
-    }
-});
+if (document.getElementById("profile")) {
+    document.getElementById("profile").addEventListener("click", function (e) {
+        var popover = document.getElementById("popover-arrow");
+        if (popover.classList.contains("hidden")) {
+            popover.classList.remove("hidden");
+        }
+        else {
+            popover.classList.add("hidden");
+        }
+    });
+}
 
 document.addEventListener("click", function(e) {
     var popover = document.getElementById("popover-arrow");
