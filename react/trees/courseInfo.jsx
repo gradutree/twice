@@ -80,7 +80,7 @@ class CourseInfo extends Component {
 							: (<div className='popup_buttons'>
 									<button type="button" className="btn btn-warning popup_will_take_course_btn"
 										onClick={this.setAllCourses.bind(this)}>I Will Take This Course</button>
-									<button type="button" className="btn btn-primary popup_took_course_btn" 
+									<button type="button" className="btn btn-success popup_took_course_btn" 
 										onClick={this.setTaken.bind(this)}>I Took This Course</button>
 								</div>)
 						) 

@@ -14,23 +14,24 @@ var nodes = [];
 var edges = [];
 
 class Node {
-  constructor(data) {
-    this.id = data.courseid;
-    this.preq = data.preq;
-    if (data.preq) {
-      this.edgeNumbers = data.preq.length;
-    } else  {
-      this.edgeNumbers = 0;
-    }
-  }
+  	constructor(data) {
+    	this.id = data.courseid;
+    	this.preq = data.preq;
+    	if (data.preq) {
+      		this.edgeNumbers = data.preq.length;
+    	} 
+    	else  {
+      		this.edgeNumbers = 0;
+    	}
+  	}
 }
 
 class Edge {
-  constructor(sourceNode, targetNode){
+  	constructor(sourceNode, targetNode){
 		this.id = sourceNode.id + ":" + targetNode.id;
 		this.source = sourceNode.id;
 		this.target = targetNode.id;
-  }
+  	}
 };
 
 class Trees extends Component {
@@ -51,14 +52,16 @@ class Trees extends Component {
 
 	checkIsTaken(){
 		if(this.state.user && this.state.nodeClicked != ""){
-			return this.setState({nodeClickedIsTaken: this.state.user.taken.indexOf(this.state.nodeClicked) >= 0});
+			return this.setState({nodeClickedIsTaken: 
+				this.state.user.taken.indexOf(this.state.nodeClicked) >= 0});
 		}
 		return this.setState({nodeClickedIsTaken: false});
 	}
 
 	checkIsAllCourses(){
 		if(this.state.user && this.state.nodeClicked != ""){
-			return this.setState({nodeClickedIsAllCourses: this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0});
+			return this.setState({nodeClickedIsAllCourses: 
+				this.state.user.allCourses.indexOf(this.state.nodeClicked) >= 0});
 		}
 		return this.setState({nodeClickedIsAllCourses: false});
 	}
@@ -66,6 +69,7 @@ class Trees extends Component {
 	highlightUserCourses(){
 		var thisComp = this;
 		if(this.state.user && this.state.cy){
+			// Highlight nodes
 			thisComp.state.cy.nodes().forEach(function(node){
 				var i = 0;
 				var allCourses = thisComp.state.user.allCourses;
@@ -88,56 +92,14 @@ class Trees extends Component {
 			    		node.data('marked',0);
 			    	}
 				}
-				// thisComp.state.user.allCourses.forEach(function(course){
-				// 	console.log("node.id() = " + node.id() + "\tcourse = " + course);
-				// 	if(node.id() == course){
-			 //      		if(thisComp.state.user.taken.indexOf(course) >= 0){
-				//       		node.addClass('highlighted');
-				//       		node.data('marked',1);
-				//       		return;
-			 //      		}
-			 //      		else {
-			 //      			node.addClass('highlightedAllCourses');
-			 //      			node.data('marked',1);
-			 //      			return;
-			 //      		}
-			 //    	}
-			 //    	else {
-			 //    		node.removeClass('highlighted');
-			 //    		node.removeClass('highlightedAllCourses');
-			 //    		node.data('marked',0);
-			 //    		return;
-			 //    	}
-				// });
 			});
-			// thisComp.state.user.allCourses.forEach(function(course){
-			// 	thisComp.state.cy.nodes().forEach(function(node) {
-			//       	if(node.id()==course){
-			//       		if(thisComp.state.user.taken.indexOf(course) >= 0){
-			// 	      		node.addClass('highlighted');
-			// 	      		node.data('marked',1);
-			// 	      		return;
-			//       		}
-			//       		else {
-			//       			node.addClass('highlightedAllCourses');
-			//       			node.data('marked',1);
-			//       			return;
-			//       		}
-			//     	}
-			//     	else {
-			//     		node.removeClass('highlighted');
-			//     		node.removeClass('highlightedAllCourses');
-			//     		node.data('marked',0);
-			//     		return;
-			//     	}
-			//     });
-			// });
 
+			// Highlight edges
 			thisComp.state.cy.edges().forEach(function(edge){
 				if(thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && 
 					thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0){
 					//
-					if(thisComp.state.user.taken.indexOf(edge.source().id()) >= 0){
+					if(thisComp.state.user.taken.indexOf(edge.target().id()) >= 0){
 						edge.addClass('highlighted');
 		      			edge.data('marked',1);
 		      			return;
@@ -218,9 +180,9 @@ class Trees extends Component {
 		        })
 		        .selector('.highlighted')
 		        .css({
-							'background-color': '#61bffc',
-		          'line-color': '#61bffc',
-		          'target-arrow-color': '#61bffc',
+							'background-color': '#70db70',
+		          'line-color': '#70db70',
+		          'target-arrow-color': '#70db70',
 		          'transition-property': 'background-color, line-color, target-arrow-color',
 		          'transition-duration': '0.5s'
 		        })
@@ -284,26 +246,11 @@ class Trees extends Component {
 	      	cy.minZoom(1);
 		    cy.maxZoom(1);
 
-		    // When a node is slected
+		    // When a node is selected
 		    cy.on('tap', function(evt){
 		    	if(evt.cyTarget===cy || evt.cyTarget.isEdge()) return;
-		  		console.log("TAP: " + evt.cyTarget.id());
-
 	            thisComp.refs.courseInfo.show();
-
-	            // thisComp.highlightUserCourses();
-
 	            actions.nodeClicked(evt.cyTarget.id());
-
-		      	// var tapid= cy.$('#'+evt.cyTarget.id());
-
-		      	// if(tapid.hasClass('highlighted')){
-	        //   		edgeUnmarker(tapid);
-		      	// }
-	        //   	else {
-		       //      edgeMarker(tapid);
-		       //      findconnected(this, tapid);
-		       //  }
 		    });
 
 		    thisComp.setState({cy: cy});
@@ -331,7 +278,6 @@ class Trees extends Component {
 
   	_beforePopupOpen(){
   		// console.log(this.state.nodeClicked);
-
   	}
 
   	_onChange() {
@@ -341,17 +287,9 @@ class Trees extends Component {
         this.setState({allCourses: TreeStore.getUserAllCourses()});
         this.checkIsTaken();
         this.checkIsAllCourses();
-        // this.highlightUserCourses();
+        this.highlightUserCourses();
         
         actions.getUserProgram(this.state.user);
-        // console.log("HERE");
-        // console.log(this.state.user);
-        // console.log(this.state.program);
-        // console.log(this.state.cy);
-        // if(this.state.user && this.state.cy == null){
-        // 	this.createTree();
-        // }
-        this.highlightUserCourses();
     }
 
     _onGraphCreated(){
@@ -371,22 +309,18 @@ class Trees extends Component {
 
     _onSetTaken() {
     	actions.loadUserData(null);
-    	// this.highlightUserCourses();
     }
 
     _onSetAllCourses() {
     	actions.loadUserData(null);
-    	// this.highlightUserCourses();
     }
 
     _onDeleteTaken(){
     	actions.loadUserData(null);
-    	// this.highlightUserCourses();
     }
 
     _onDeleteAllCourses(){
     	actions.loadUserData(null);
-    	// this.highlightUserCourses();
     }
 
     componentWillUnmount() {
@@ -441,73 +375,4 @@ function getUser() {
     }
 }
 
-var findconnected = function(cy, node){
-    var connectedEdges = node.incomers();
-    var length = connectedEdges.length;
-    var roots = cy.nodes().roots();
-
-    roots.forEach(function(e) {
-      	if(e.id()==node.id()){
-      		node.addClass('highlighted');
-      		edgeMarker(node);
-      		return;
-    	}
-    })
-
-    connectedEdges.forEach(function(ele){
-        var target = ele.target();
-        var source = ele.source();
-        if(source.hasClass('highlighted') && markChecker(node)==true) {
-        	highLighter(node);
-        	return;
-        }
-    });
-}
-
-
-var edgeMarker = function(node){
-  	node.data('marked',1);
-  	node.outgoers().forEach(function(ele){
-  		ele.data('marked',1);
-  	});
-}
-
-var edgeUnmarker = function(node){
-	console.log(node);
-  	node.data('marked',0);
-  	unhighLighter(node);
-  	node.outgoers().forEach(function(ele){
-  		ele.data('marked',0);
-  	});
-}
-
-var markChecker = function(node){
-	var result = true;
- 	node.incomers().forEach(function(ele){
-  		var value = ele.data('marked');
-  		if(value==0) result=false;
-  	});
-  	return result;
-}
-
-var highLighter = function(node){
-  	node.connectedEdges().forEach(function(ele){
-    	if(ele.target().id()==node.id()) {
-      		ele.target().addClass('highlighted');
-      		ele.addClass('highlighted');
-      	}
-  	});
-}
-
-var unhighLighter = function(node){
-  	node.removeClass('highlighted');
-  	node.connectedEdges().forEach(function(ele){
-    //if(ele.target().id()==node.id()) {
-      //ele.target().removeClass('highlighted');
-      ele.removeClass('highlighted');
-      //}
-  	});
-}
-
 export default Trees;
-

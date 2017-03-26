@@ -817,6 +817,10 @@ footer {
 
 .popup_took_course_btn {
 	margin-left: 20px;
+	background-color: #5cd65c;
+}
+.popup_took_course_btn:hover {
+	background-color: #70db70;
 }
 
 .popup_remove_btn {

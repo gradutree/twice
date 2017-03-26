@@ -27618,7 +27618,7 @@ var CourseInfo = function (_Component) {
 					),
 					_react2.default.createElement(
 						'button',
-						{ type: 'button', className: 'btn btn-primary popup_took_course_btn',
+						{ type: 'button', className: 'btn btn-success popup_took_course_btn',
 							onClick: this.setTaken.bind(this) },
 						'I Took This Course'
 					)
@@ -27688,7 +27688,8 @@ var TreeProgress = function (_Component) {
 
 			if (TreeStore.getUserProgramReq().length > 0) {
 				Promise.all(TreeStore.getUserProgramReq().map(function (req, index) {
-					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req, taken: thisComp.props.taken, allCourses: thisComp.props.allCourses }));
+					programReqs.push(_react2.default.createElement(_treeProgressReq2.default, { key: index, reqNum: index + 1, req: req,
+						taken: thisComp.props.taken, allCourses: thisComp.props.allCourses }));
 				})).then(function () {
 					programReqs.sort(function (a, b) {
 						return a - b;
@@ -27828,7 +27829,7 @@ var TreeProgressReq = function (_Component) {
 					_react2.default.createElement(
 						'div',
 						{ className: 'program_req_bar' },
-						_react2.default.createElement(_rcProgress.Line, { percent: this.state.percent, strokeWidth: '1', strokeColor: '#cee1ff' })
+						_react2.default.createElement(_rcProgress.Line, { percent: this.state.percent, strokeWidth: '1', strokeColor: '#b3e6ff' })
 					)
 				),
 				_react2.default.createElement(
@@ -27839,7 +27840,8 @@ var TreeProgressReq = function (_Component) {
 						null,
 						this.state.reqCreditsStr
 					),
-					_react2.default.createElement(_treeProgressReqCourses2.default, { req: this.props.req, taken: this.props.taken, allCourses: this.props.allCourses })
+					_react2.default.createElement(_treeProgressReqCourses2.default, { req: this.props.req, taken: this.props.taken,
+						allCourses: this.props.allCourses })
 				),
 				_react2.default.createElement('hr', null)
 			);
@@ -28149,6 +28151,7 @@ var Trees = function (_Component) {
 		value: function highlightUserCourses() {
 			var thisComp = this;
 			if (this.state.user && this.state.cy) {
+				// Highlight nodes
 				thisComp.state.cy.nodes().forEach(function (node) {
 					var i = 0;
 					var allCourses = thisComp.state.user.allCourses;
@@ -28169,55 +28172,13 @@ var Trees = function (_Component) {
 							node.data('marked', 0);
 						}
 					}
-					// thisComp.state.user.allCourses.forEach(function(course){
-					// 	console.log("node.id() = " + node.id() + "\tcourse = " + course);
-					// 	if(node.id() == course){
-					//      		if(thisComp.state.user.taken.indexOf(course) >= 0){
-					//       		node.addClass('highlighted');
-					//       		node.data('marked',1);
-					//       		return;
-					//      		}
-					//      		else {
-					//      			node.addClass('highlightedAllCourses');
-					//      			node.data('marked',1);
-					//      			return;
-					//      		}
-					//    	}
-					//    	else {
-					//    		node.removeClass('highlighted');
-					//    		node.removeClass('highlightedAllCourses');
-					//    		node.data('marked',0);
-					//    		return;
-					//    	}
-					// });
 				});
-				// thisComp.state.user.allCourses.forEach(function(course){
-				// 	thisComp.state.cy.nodes().forEach(function(node) {
-				//       	if(node.id()==course){
-				//       		if(thisComp.state.user.taken.indexOf(course) >= 0){
-				// 	      		node.addClass('highlighted');
-				// 	      		node.data('marked',1);
-				// 	      		return;
-				//       		}
-				//       		else {
-				//       			node.addClass('highlightedAllCourses');
-				//       			node.data('marked',1);
-				//       			return;
-				//       		}
-				//     	}
-				//     	else {
-				//     		node.removeClass('highlighted');
-				//     		node.removeClass('highlightedAllCourses');
-				//     		node.data('marked',0);
-				//     		return;
-				//     	}
-				//     });
-				// });
 
+				// Highlight edges
 				thisComp.state.cy.edges().forEach(function (edge) {
 					if (thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0) {
 						//
-						if (thisComp.state.user.taken.indexOf(edge.source().id()) >= 0) {
+						if (thisComp.state.user.taken.indexOf(edge.target().id()) >= 0) {
 							edge.addClass('highlighted');
 							edge.data('marked', 1);
 							return;
@@ -28287,9 +28248,9 @@ var Trees = function (_Component) {
 						'target-arrow-color': '#ddd',
 						'curve-style': 'bezier'
 					}).selector('.highlighted').css({
-						'background-color': '#61bffc',
-						'line-color': '#61bffc',
-						'target-arrow-color': '#61bffc',
+						'background-color': '#70db70',
+						'line-color': '#70db70',
+						'target-arrow-color': '#70db70',
 						'transition-property': 'background-color, line-color, target-arrow-color',
 						'transition-duration': '0.5s'
 					}).selector('.highlightedAllCourses').css({
@@ -28347,26 +28308,11 @@ var Trees = function (_Component) {
 				cy.minZoom(1);
 				cy.maxZoom(1);
 
-				// When a node is slected
+				// When a node is selected
 				cy.on('tap', function (evt) {
 					if (evt.cyTarget === cy || evt.cyTarget.isEdge()) return;
-					console.log("TAP: " + evt.cyTarget.id());
-
 					thisComp.refs.courseInfo.show();
-
-					// thisComp.highlightUserCourses();
-
 					actions.nodeClicked(evt.cyTarget.id());
-
-					// var tapid= cy.$('#'+evt.cyTarget.id());
-
-					// if(tapid.hasClass('highlighted')){
-					//   		edgeUnmarker(tapid);
-					// }
-					//   	else {
-					//      edgeMarker(tapid);
-					//      findconnected(this, tapid);
-					//  }
 				});
 
 				thisComp.setState({ cy: cy });
@@ -28398,7 +28344,6 @@ var Trees = function (_Component) {
 		key: '_beforePopupOpen',
 		value: function _beforePopupOpen() {
 			// console.log(this.state.nodeClicked);
-
 		}
 	}, {
 		key: '_onChange',
@@ -28409,17 +28354,9 @@ var Trees = function (_Component) {
 			this.setState({ allCourses: TreeStore.getUserAllCourses() });
 			this.checkIsTaken();
 			this.checkIsAllCourses();
-			// this.highlightUserCourses();
+			this.highlightUserCourses();
 
 			actions.getUserProgram(this.state.user);
-			// console.log("HERE");
-			// console.log(this.state.user);
-			// console.log(this.state.program);
-			// console.log(this.state.cy);
-			// if(this.state.user && this.state.cy == null){
-			// 	this.createTree();
-			// }
-			this.highlightUserCourses();
 		}
 	}, {
 		key: '_onGraphCreated',
@@ -28443,25 +28380,21 @@ var Trees = function (_Component) {
 		key: '_onSetTaken',
 		value: function _onSetTaken() {
 			actions.loadUserData(null);
-			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onSetAllCourses',
 		value: function _onSetAllCourses() {
 			actions.loadUserData(null);
-			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onDeleteTaken',
 		value: function _onDeleteTaken() {
 			actions.loadUserData(null);
-			// this.highlightUserCourses();
 		}
 	}, {
 		key: '_onDeleteAllCourses',
 		value: function _onDeleteAllCourses() {
 			actions.loadUserData(null);
-			// this.highlightUserCourses();
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -28520,73 +28453,6 @@ function getUser() {
 		user: TreeStore.getUserData()
 	};
 }
-
-var findconnected = function findconnected(cy, node) {
-	var connectedEdges = node.incomers();
-	var length = connectedEdges.length;
-	var roots = cy.nodes().roots();
-
-	roots.forEach(function (e) {
-		if (e.id() == node.id()) {
-			node.addClass('highlighted');
-			edgeMarker(node);
-			return;
-		}
-	});
-
-	connectedEdges.forEach(function (ele) {
-		var target = ele.target();
-		var source = ele.source();
-		if (source.hasClass('highlighted') && markChecker(node) == true) {
-			highLighter(node);
-			return;
-		}
-	});
-};
-
-var edgeMarker = function edgeMarker(node) {
-	node.data('marked', 1);
-	node.outgoers().forEach(function (ele) {
-		ele.data('marked', 1);
-	});
-};
-
-var edgeUnmarker = function edgeUnmarker(node) {
-	console.log(node);
-	node.data('marked', 0);
-	unhighLighter(node);
-	node.outgoers().forEach(function (ele) {
-		ele.data('marked', 0);
-	});
-};
-
-var markChecker = function markChecker(node) {
-	var result = true;
-	node.incomers().forEach(function (ele) {
-		var value = ele.data('marked');
-		if (value == 0) result = false;
-	});
-	return result;
-};
-
-var highLighter = function highLighter(node) {
-	node.connectedEdges().forEach(function (ele) {
-		if (ele.target().id() == node.id()) {
-			ele.target().addClass('highlighted');
-			ele.addClass('highlighted');
-		}
-	});
-};
-
-var unhighLighter = function unhighLighter(node) {
-	node.removeClass('highlighted');
-	node.connectedEdges().forEach(function (ele) {
-		//if(ele.target().id()==node.id()) {
-		//ele.target().removeClass('highlighted');
-		ele.removeClass('highlighted');
-		//}
-	});
-};
 
 exports.default = Trees;
 

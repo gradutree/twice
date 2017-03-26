@@ -41,12 +41,13 @@ class TreeProgressReq extends Component {
 					<div className="program_req_visual">
 						<h3 className="program_req_name">Requirement {this.props.reqNum}</h3>
 						<div className="program_req_bar">
-							<Line percent={this.state.percent} strokeWidth="1" strokeColor="#cee1ff" />
+							<Line percent={this.state.percent} strokeWidth="1" strokeColor="#b3e6ff" />
 						</div>
 					</div>
 					<div className="program_reqs_courses">
 						<div>{this.state.reqCreditsStr}</div>
-						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken} allCourses={this.props.allCourses} />
+						<TreeProgressReqCourses req={this.props.req} taken={this.props.taken} 
+							allCourses={this.props.allCourses} />
 					</div>
 					<hr />
 				</div>;
