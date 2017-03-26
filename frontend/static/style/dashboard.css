@@ -786,7 +786,6 @@ footer {
 	height: 80%;
 	display: flex;
 	flex-direction: column;
-	/*justify-content: space-between;*/
 }
 
 .popup_description {
@@ -802,9 +801,6 @@ footer {
 	align-self: flex-end;
 	display: flex;
 	flex-direction: row;
-/*	height: 100%;
-	display: table-cell;
-	vertical-align: bottom;*/
 }
 
 .popup_will_take_course_btn {

@@ -27553,6 +27553,7 @@ var CourseInfo = function (_Component) {
 			// Make sure that user and the course info has been loaded first
 			if (this.props.user && this.state.course) {
 				actions.deleteAllCourses(this.props.user.username, this.state.course.code);
+				console.log(this.state.course.preq);
 			}
 		}
 	}, {
@@ -28082,9 +28083,9 @@ var AppDispatcher = __webpack_require__(58);
 var TreeStore = __webpack_require__(93);
 var actions = __webpack_require__(229);
 var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3', 'CSCD01H3', 'CSCD27H3'];
-var counter = 0;
-var nodes = [];
-var edges = [];
+// var counter = 0;
+// var nodes = [];
+// var edges = [];
 
 var Node = function Node(data) {
 	_classCallCheck(this, Node);
@@ -28177,7 +28178,7 @@ var Trees = function (_Component) {
 				// Highlight edges
 				thisComp.state.cy.edges().forEach(function (edge) {
 					if (thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0) {
-						//
+						// Taken is a subsset of allCourses
 						if (thisComp.state.user.taken.indexOf(edge.target().id()) >= 0) {
 							edge.addClass('highlighted');
 							edge.data('marked', 1);
@@ -28202,6 +28203,9 @@ var Trees = function (_Component) {
 			var thisComp = this;
 			var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
 
+			var nodes = [];
+			var edges = [];
+
 			$.when.apply($, ajaxCalls).then(function () {
 
 				var findCourse = function findCourse(data) {
@@ -28213,27 +28217,40 @@ var Trees = function (_Component) {
 					return false;
 				};
 
+				var getNode = function getNode(data) {
+					for (var i = 0; i < nodes.length; i++) {
+						if (nodes[i].id == data.courseid) {
+							return nodes[i];
+						}
+					}
+					return null;
+				};
+
 				var courseAdder = function courseAdder(node) {
 					for (var i = 0; i < node.edgeNumbers; i++) {
-						if (node.preq[i] == null || node.preq[i].courseid == null || findCourse(node.preq[i]) == true) {
-							return;
-						} else {
-							var newNode = new Node(node.preq[i]);
-							var newEdge = new Edge(newNode, node);
-							nodes.push(newNode);
+						// Course node already exists so just add an edge to the graph
+						if (findCourse(node.preq[i])) {
+							var newEdge = new Edge(getNode(node.preq[i]), node);
 							edges.push(newEdge);
-							courseAdder(newNode);
+						} else if (node.preq[i] == null || node.preq[i].courseid == null) {
+							break;
 						}
+						// Add new course and edge to the graph
+						else {
+								var newNode = new Node(node.preq[i]);
+								var newEdge = new Edge(newNode, node);
+								nodes.push(newNode);
+								edges.push(newEdge);
+								courseAdder(newNode);
+							}
 					}
 				};
 
 				var roots = TreeStore.getTreeData();
 				for (var j = 0; j < roots.length; j++) {
-					// console.log(roots[j]);
 					var startNode = new Node(roots[j]);
 					nodes.push(startNode);
 					courseAdder(startNode);
-					// console.log(nodes);
 				}
 
 				var cy = cytoscape({

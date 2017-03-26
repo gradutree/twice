@@ -9,9 +9,9 @@ var AppDispatcher = require('../dispatcher.jsx');
 var TreeStore = require("./treeStore.jsx");
 var actions = require("./treeActions.jsx");
 var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3'];
-var counter = 0;
-var nodes = [];
-var edges = [];
+// var counter = 0;
+// var nodes = [];
+// var edges = [];
 
 class Node {
   	constructor(data) {
@@ -98,7 +98,7 @@ class Trees extends Component {
 			thisComp.state.cy.edges().forEach(function(edge){
 				if(thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && 
 					thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0){
-					//
+					// Taken is a subsset of allCourses
 					if(thisComp.state.user.taken.indexOf(edge.target().id()) >= 0){
 						edge.addClass('highlighted');
 		      			edge.data('marked',1);
@@ -125,6 +125,9 @@ class Trees extends Component {
 		var thisComp = this;
      	var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
 
+     	var nodes = [];
+		var edges = [];
+
      	$.when.apply($, ajaxCalls).then(function(){
 
 	       	var findCourse = function(data){
@@ -136,13 +139,27 @@ class Trees extends Component {
 	       		return false;
 	       	}
 
+	       	var getNode = function(data){
+	       		for(var i=0; i<nodes.length; i++) {
+	       			if(nodes[i].id==data.courseid) {
+		              return nodes[i];
+		            }
+	       		}
+	       		return null;
+	       	}
+
 	       	var courseAdder = function (node){
 		       	for(var i=0; i<node.edgeNumbers; i++) {
-		       		if (node.preq[i]==null ||
-		                node.preq[i].courseid == null ||
-		                findCourse(node.preq[i])==true) {
-	              		return;
+		       		// Course node already exists so just add an edge to the graph
+		       		if(findCourse(node.preq[i])){
+		       			var newEdge = new Edge(getNode(node.preq[i]), node);
+		       			edges.push(newEdge);
+		       		}
+		       		else if (node.preq[i]==null ||
+		                node.preq[i].courseid == null) {
+	              		break;
 	            	}
+	            	// Add new course and edge to the graph
 		       		else {
 		       			var newNode = new Node(node.preq[i]);
 		       			var newEdge = new Edge(newNode, node);
@@ -155,11 +172,9 @@ class Trees extends Component {
 
 	        var roots = TreeStore.getTreeData();
 	        for(var j=0; j< roots.length; j++){
-	        	// console.log(roots[j]);
 	  			var startNode = new Node(roots[j]);
 		        nodes.push(startNode);
 		      	courseAdder(startNode);
-		      	// console.log(nodes);
 	   	    }
 
 		    var cy = cytoscape({
