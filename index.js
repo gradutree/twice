@@ -55,7 +55,7 @@ var sessionRedirect = function(req, res, next) {
     return next();
 };
 
-app.get("/dashboard", function(req, res, next) {
+app.get("/dashboard", sessionRedirect, function(req, res, next) {
     if (!req.session.user) return res.redirect("/login");
     return next();
 });
@@ -66,7 +66,7 @@ app.get("/course/:code", function (req, res) {
             if (data) {
                 return res.sendFile(path.resolve("frontend/views/course.html"));
             }
-            return res.status(404).end("No such course");
+            return res.redirect("/404");
         });
     });
 });
@@ -81,12 +81,6 @@ app.get("/search", sessionRedirect, function(req, res) {
     return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
 });
 
-app.get("/", function(req, res, next) {
-    if (req.session.user) return res.redirect("/dashboard");
-    delete req.session.redirectTo;
-    return next();
-});
-
 app.get("/login", function(req, res, next) {
     if (req.session.user) return res.redirect("/dashboard");
     return next();
@@ -95,6 +89,10 @@ app.get("/login", function(req, res, next) {
 app.get("/signup", function(req, res, next) {
     if (req.session.user) return res.redirect("/dashboard");
     return next();
+});
+
+app.get("/search2", function(req, res) {
+    return res.sendFile(path.resolve("frontend/static/index.html"));
 });
 
 app.use(function (req, res, next){
@@ -126,17 +124,20 @@ app.get('/api/courses/query/', function (req, res) {
                     }
                     course.liked = course.liked.length;
                     course.disliked = course.disliked.length;
-
-                    if (req.session.user) {
-                        db.collection("reviews").findOne({courseCode: req.query.code.toUpperCase(), author: req.session.user.username}, function (err, data) {
-                            if (data) course.hasReviewed = true;
+                    db.collection("reviews").count({courseCode: course.code}, function (err, count) {
+                        course.commentCount = count;
+                        if (req.session.user) {
+                            db.collection("reviews").findOne({courseCode: course.code, author: req.session.user.username}, function (err, data) {
+                                if (data) course.hasReviewed = true;
+                                result.push(course);
+                                resolve();
+                            });
+                        } else {
                             result.push(course);
                             resolve();
-                        });
-                    } else {
-                        result.push(course);
-                        resolve();
-                    }
+                        }
+                    });
+
                 })
             })).then(function(){
                 res.json(result);
@@ -234,7 +235,10 @@ app.get("/api/user/:username/info", function (req, res) {
 app.get('/api/signout/', function (req, res) {
     req.session.destroy(function(err) {
         if (err) return res.status(500).end(err);
+        res.cookie('username', "", { expires: new Date() });
+
         return res.redirect("/");
+
     });
 });
 
@@ -254,6 +258,35 @@ app.get("/api/path/:start/pre", function (req, res) {
             res.json(courses);
         });
     });
+});
+
+app.get("/api/course/:code/review/:page", function (req, res) {
+    var page = parseInt(req.params.page)*10;
+    MongoClient.connect(dbURL, function (err, db) {
+        db.collection("reviews").find({courseCode: req.params.code.toUpperCase()}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
+            data.forEach(function (item, i) {
+                if (req.session.user){
+                    item.user_state = item.up.indexOf(req.session.user.username) != -1 ? "1" : "0";
+                    if (item.user_state == "0") item.user_state = item.down.indexOf(req.session.user.username) != -1 ? "-1" : "0";
+                }
+                item.up = item.up.length;
+                item.down = item.down.length;
+            });
+            db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
+                res.json({data: data, page: page/10, more: count > page+10});
+            });
+
+        });
+    });
+});
+
+app.get("*", function(req, res) {
+	res.redirect("/404");
+});
+
+app.use(function(req, res, next) {
+    if (!req.session.user) return res.status(401).end("Access denied");
+    return next();
 });
 
 app.post("/api/course/:code/vote/:direction", function (req, res) {
@@ -299,25 +332,7 @@ app.post("/api/review", function (req, res) {
     });
 });
 
-app.get("/api/course/:code/review/:page", function (req, res) {
-    var page = parseInt(req.params.page)*10;
-    MongoClient.connect(dbURL, function (err, db) {
-        db.collection("reviews").find({courseCode: req.params.code.toUpperCase()}, {skip: page, sort: [["timestamp", "desc"]], limit: 10}).toArray(function (err, data) {
-            data.forEach(function (item, i) {
-                if (req.session.user){
-                    item.user_state = item.up.indexOf(req.session.user.username) != -1 ? "1" : "0";
-                    if (item.user_state == "0") item.user_state = item.down.indexOf(req.session.user.username) != -1 ? "-1" : "0";
-                }
-                item.up = item.up.length;
-                item.down = item.down.length;
-            });
-            db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
-                res.json({data: data, page: page/10, more: count > page+10});
-            });
 
-        });
-    });
-});
 
 app.post("/api/review/:id/vote/:direction", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
@@ -391,6 +406,7 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
         });
     });
 });
+
 
 
 app.listen(8000, function () {

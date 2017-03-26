@@ -5,16 +5,21 @@ var Actions = {
 
     cache: {},
 
+    query: null,
+    
     searchCourses(query) {
         if (query.length < 3) return;
+        this.query = query;
         $.ajax({
             url: "/api/courses/query?code="+query,
             success: function (results) {
-                Dispatcher.handleAction({
-                    actionType: Constants.SEARCH,
-                    data: results
-                });
-            }
+                if (this.query == query) {
+                    Dispatcher.handleAction({
+                        actionType: Constants.SEARCH,
+                        data: results
+                    });
+                }
+            }.bind(this)
         })
     }
 
