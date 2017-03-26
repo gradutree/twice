@@ -10608,7 +10608,7 @@ var matchPath = function matchPath(pathname) {
 var AppDispatcher = __webpack_require__(58);
 var EventEmitter = __webpack_require__(86).EventEmitter;
 var merge = __webpack_require__(90);
-var TreeConstants = __webpack_require__(230);
+var TreeConstants = __webpack_require__(231);
 
 var userData = {};
 var userProgram = [];
@@ -10875,9 +10875,6 @@ AppDispatcher.register(function (payload) {
         default:
             return true;
     }
-
-    // // If action was acted upon, emit change event
-    // TreeStore.emitChange();
 
     return true;
 });
@@ -25946,19 +25943,7 @@ var valueEqual = function valueEqual(a, b) {
 exports.default = valueEqual;
 
 /***/ }),
-/* 227 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var keyMirror = __webpack_require__(89);
-
-module.exports = keyMirror({
-    LOAD_USERDATA: null
-});
-
-/***/ }),
+/* 227 */,
 /* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25978,8 +25963,21 @@ module.exports = keyMirror({
 "use strict";
 
 
+var keyMirror = __webpack_require__(89);
+
+module.exports = keyMirror({
+    LOAD_USERDATA: null
+});
+
+/***/ }),
+/* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var AppDispatcher = __webpack_require__(58);
-var TreeConstants = __webpack_require__(230);
+var TreeConstants = __webpack_require__(231);
 
 var TreeActions = {
 
@@ -26141,7 +26139,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = TreeActions;
 
 /***/ }),
-/* 230 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26155,13 +26153,13 @@ module.exports = keyMirror({
 });
 
 /***/ }),
-/* 231 */,
 /* 232 */,
 /* 233 */,
 /* 234 */,
 /* 235 */,
 /* 236 */,
-/* 237 */
+/* 237 */,
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26207,7 +26205,7 @@ exports["default"] = {
 module.exports = exports['default'];
 
 /***/ }),
-/* 238 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26345,8 +26343,8 @@ SkyLightStateless.defaultProps = {
 };
 
 /***/ }),
-/* 239 */,
-/* 240 */
+/* 240 */,
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26366,15 +26364,15 @@ var _reactDom = __webpack_require__(16);
 
 var _reactRouterDom = __webpack_require__(196);
 
-var _dashboard = __webpack_require__(251);
+var _dashboard = __webpack_require__(252);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
-var _trees = __webpack_require__(260);
+var _trees = __webpack_require__(261);
 
 var _trees2 = _interopRequireDefault(_trees);
 
-var _search = __webpack_require__(252);
+var _search = __webpack_require__(253);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -26471,36 +26469,40 @@ var NavTabs = function (_Component4) {
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
-				'div',
-				{ className: 'opt_tab' },
+				'header',
+				{ className: 'header_bar' },
 				_react2.default.createElement(
-					'ul',
-					{ className: 'nav nav-pills' },
+					'nav',
+					{ className: 'sub_nav' },
 					_react2.default.createElement(
-						'li',
-						{ role: 'nav', id: 'dash_pill', className: this.props.value == 0 ? "active" : "" },
+						'div',
+						{ className: 'flex-row' },
 						_react2.default.createElement(
 							_reactRouterDom.Link,
 							{ to: '/dashboard' },
-							'Dashboard'
-						)
-					),
-					_react2.default.createElement(
-						'li',
-						{ role: 'nav', id: 'tree_pill', className: this.props.value == 1 ? "active" : "" },
+							_react2.default.createElement(
+								'div',
+								{ role: 'nav', className: "nav_pill" + (this.props.value == 0 ? " pill_active" : "") },
+								'Dashboard'
+							)
+						),
 						_react2.default.createElement(
 							_reactRouterDom.Link,
 							{ to: '/trees' },
-							'Your Trees'
-						)
-					),
-					_react2.default.createElement(
-						'li',
-						{ role: 'nav', id: 'srch_pill', className: this.props.value == 2 ? "active" : "" },
+							_react2.default.createElement(
+								'div',
+								{ role: 'nav', className: "nav_pill" + (this.props.value == 1 ? " pill_active" : "") },
+								'Your Trees'
+							)
+						),
 						_react2.default.createElement(
 							_reactRouterDom.Link,
 							{ to: '/search' },
-							'Search courses'
+							_react2.default.createElement(
+								'div',
+								{ role: 'nav', className: "nav_pill" + (this.props.value == 2 ? " pill_active" : "") },
+								'Search courses'
+							)
 						)
 					)
 				)
@@ -26532,13 +26534,13 @@ var Nav = function Nav() {
 exports.default = Nav;
 
 /***/ }),
-/* 241 */,
 /* 242 */,
 /* 243 */,
 /* 244 */,
 /* 245 */,
 /* 246 */,
-/* 247 */
+/* 247 */,
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26604,7 +26606,7 @@ var CourseStatus = function (_Component) {
 exports.default = CourseStatus;
 
 /***/ }),
-/* 248 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26675,14 +26677,14 @@ var CourseText = function (_Component) {
 exports.default = CourseText;
 
 /***/ }),
-/* 249 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var AppDispatcher = __webpack_require__(58);
-var DashConstants = __webpack_require__(227);
+var DashConstants = __webpack_require__(228);
 
 var DashActions = {
 
@@ -26726,7 +26728,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = DashActions;
 
 /***/ }),
-/* 250 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26735,7 +26737,7 @@ module.exports = DashActions;
 var AppDispatcher = __webpack_require__(58);
 var EventEmitter = __webpack_require__(86).EventEmitter;
 var merge = __webpack_require__(90);
-var DashConstants = __webpack_require__(227);
+var DashConstants = __webpack_require__(228);
 
 var userData = {};
 
@@ -26794,7 +26796,7 @@ AppDispatcher.register(function (payload) {
 module.exports = DashStore;
 
 /***/ }),
-/* 251 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26820,8 +26822,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DashStore = __webpack_require__(250);
-var actions = __webpack_require__(249);
+var DashStore = __webpack_require__(251);
+var actions = __webpack_require__(250);
 
 var Dashboard = function (_Component) {
     _inherits(Dashboard, _Component);
@@ -27018,7 +27020,7 @@ var Spec = function (_Component3) {
 exports.default = Dashboard;
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27036,7 +27038,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _searchResult = __webpack_require__(254);
+var _searchResult = __webpack_require__(255);
 
 var _searchResult2 = _interopRequireDefault(_searchResult);
 
@@ -27049,8 +27051,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AppDispatcher = __webpack_require__(58);
-var SearchStore = __webpack_require__(255);
-var actions = __webpack_require__(253);
+var SearchStore = __webpack_require__(256);
+var actions = __webpack_require__(254);
 
 var Search = function (_Component) {
 	_inherits(Search, _Component);
@@ -27238,14 +27240,14 @@ function getUser() {
 exports.default = Search;
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var AppDispatcher = __webpack_require__(58);
-var SearchConstants = __webpack_require__(228);
+var SearchConstants = __webpack_require__(229);
 
 var SearchActions = {
 
@@ -27303,7 +27305,7 @@ var getCurrentUsername = function getCurrentUsername() {
 module.exports = SearchActions;
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27379,7 +27381,7 @@ var SearchResult = function (_Component) {
 exports.default = SearchResult;
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27388,7 +27390,7 @@ exports.default = SearchResult;
 var AppDispatcher = __webpack_require__(58);
 var EventEmitter = __webpack_require__(86).EventEmitter;
 var merge = __webpack_require__(90);
-var SearchConstants = __webpack_require__(228);
+var SearchConstants = __webpack_require__(229);
 
 var userData = {};
 var searchResults = [];
@@ -27478,7 +27480,7 @@ AppDispatcher.register(function (payload) {
 module.exports = SearchStore;
 
 /***/ }),
-/* 256 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27496,7 +27498,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _courseStatus = __webpack_require__(247);
+var _courseStatus = __webpack_require__(248);
 
 var _courseStatus2 = _interopRequireDefault(_courseStatus);
 
@@ -27509,7 +27511,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TreeStore = __webpack_require__(93);
-var actions = __webpack_require__(229);
+var actions = __webpack_require__(230);
 
 var CourseInfo = function (_Component) {
 	_inherits(CourseInfo, _Component);
@@ -27553,7 +27555,6 @@ var CourseInfo = function (_Component) {
 			// Make sure that user and the course info has been loaded first
 			if (this.props.user && this.state.course) {
 				actions.deleteAllCourses(this.props.user.username, this.state.course.code);
-				console.log(this.state.course.preq);
 			}
 		}
 	}, {
@@ -27634,7 +27635,7 @@ var CourseInfo = function (_Component) {
 exports.default = CourseInfo;
 
 /***/ }),
-/* 257 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27652,7 +27653,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _treeProgressReq = __webpack_require__(258);
+var _treeProgressReq = __webpack_require__(259);
 
 var _treeProgressReq2 = _interopRequireDefault(_treeProgressReq);
 
@@ -27740,7 +27741,7 @@ var TreeProgress = function (_Component) {
 exports.default = TreeProgress;
 
 /***/ }),
-/* 258 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27760,7 +27761,7 @@ var _reactDom = __webpack_require__(16);
 
 var _rcProgress = __webpack_require__(204);
 
-var _treeProgressReqCourses = __webpack_require__(259);
+var _treeProgressReqCourses = __webpack_require__(260);
 
 var _treeProgressReqCourses2 = _interopRequireDefault(_treeProgressReqCourses);
 
@@ -27897,7 +27898,7 @@ function getReqCoursesStr(req) {
 exports.default = TreeProgressReq;
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27917,7 +27918,7 @@ var _reactDom = __webpack_require__(16);
 
 var _rcProgress = __webpack_require__(204);
 
-var _courseText = __webpack_require__(248);
+var _courseText = __webpack_require__(249);
 
 var _courseText2 = _interopRequireDefault(_courseText);
 
@@ -28041,7 +28042,7 @@ var TreeProgressReqCourses = function (_Component) {
 exports.default = TreeProgressReqCourses;
 
 /***/ }),
-/* 260 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28063,11 +28064,11 @@ var _reactSkylight = __webpack_require__(286);
 
 var _reactSkylight2 = _interopRequireDefault(_reactSkylight);
 
-var _treeProgress = __webpack_require__(257);
+var _treeProgress = __webpack_require__(258);
 
 var _treeProgress2 = _interopRequireDefault(_treeProgress);
 
-var _courseInfo = __webpack_require__(256);
+var _courseInfo = __webpack_require__(257);
 
 var _courseInfo2 = _interopRequireDefault(_courseInfo);
 
@@ -28081,11 +28082,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var AppDispatcher = __webpack_require__(58);
 var TreeStore = __webpack_require__(93);
-var actions = __webpack_require__(229);
+var actions = __webpack_require__(230);
 var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3', 'CSCD01H3', 'CSCD27H3'];
-// var counter = 0;
-// var nodes = [];
-// var edges = [];
 
 var Node = function Node(data) {
 	_classCallCheck(this, Node);
@@ -28345,7 +28343,7 @@ var Trees = function (_Component) {
 				_react2.default.createElement(
 					'div',
 					{ className: 'tree_graph' },
-					_react2.default.createElement('div', { id: 'cy' })
+					_react2.default.createElement('div', { className: 'tree_graph_display', id: 'cy' })
 				),
 				_react2.default.createElement(_treeProgress2.default, { programReq: this.state.program, taken: this.state.taken, allCourses: this.state.allCourses }),
 				_react2.default.createElement(
@@ -28474,7 +28472,6 @@ function getUser() {
 exports.default = Trees;
 
 /***/ }),
-/* 261 */,
 /* 262 */,
 /* 263 */,
 /* 264 */,
@@ -28512,7 +28509,7 @@ var _react = __webpack_require__(6);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mixin = __webpack_require__(237);
+var _mixin = __webpack_require__(238);
 
 var _mixin2 = _interopRequireDefault(_mixin);
 
@@ -28655,7 +28652,7 @@ var _react = __webpack_require__(6);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mixin = __webpack_require__(237);
+var _mixin = __webpack_require__(238);
 
 var _mixin2 = _interopRequireDefault(_mixin);
 
@@ -28749,7 +28746,7 @@ Object.defineProperty(exports, 'default', {
   }
 });
 
-var _skylightstateless = __webpack_require__(238);
+var _skylightstateless = __webpack_require__(239);
 
 Object.defineProperty(exports, 'SkyLightStateless', {
   enumerable: true,
@@ -28779,7 +28776,7 @@ var _react = __webpack_require__(6);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _skylightstateless = __webpack_require__(238);
+var _skylightstateless = __webpack_require__(239);
 
 var _skylightstateless2 = _interopRequireDefault(_skylightstateless);
 
@@ -28951,13 +28948,30 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(16);
 
-var _app = __webpack_require__(240);
+var _app = __webpack_require__(241);
 
 var _app2 = _interopRequireDefault(_app);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _reactDom.render)(_react2.default.createElement(_app2.default, null), document.getElementById("root"));
+
+document.getElementById("profile").addEventListener("click", function (e) {
+    var popover = document.getElementById("popover-arrow");
+    if (popover.classList.contains("hidden")) {
+        popover.classList.remove("hidden");
+    } else {
+        popover.classList.add("hidden");
+    }
+});
+
+document.addEventListener("click", function (e) {
+    var popover = document.getElementById("popover-arrow");
+    var menu = document.getElementById("menu");
+    if (!menu.contains(e.target) && !document.getElementById("profile").contains(e.target) || e.target == menu) {
+        popover.classList.add("hidden");
+    }
+});
 
 /***/ })
 /******/ ]);

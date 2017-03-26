@@ -9,9 +9,6 @@ var AppDispatcher = require('../dispatcher.jsx');
 var TreeStore = require("./treeStore.jsx");
 var actions = require("./treeActions.jsx");
 var compSciCore = ['CSCD43H3', 'CSCD27H3', 'CSCD58H3','CSCD01H3','CSCD27H3'];
-// var counter = 0;
-// var nodes = [];
-// var edges = [];
 
 class Node {
   	constructor(data) {
@@ -279,7 +276,7 @@ class Trees extends Component {
 	    return (
 	        <div>
 	        	<div className="tree_graph">
-	          		<div id="cy"></div>
+	          		<div className="tree_graph_display" id="cy"></div>
 	          	</div>
 	          	<TreeProgress programReq={this.state.program} taken={this.state.taken} allCourses={this.state.allCourses} />
 	          	<SkyLight hideOnOverlayClicked beforeOpen={this._beforePopupOpen.bind(this)} ref="courseInfo" 

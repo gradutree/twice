@@ -89,7 +89,7 @@ footer a:hover {
 
 .header_container {
 	
-	width: 75%;
+	width: 100%;
 	margin: auto;
 	transition: all 0.3s linear;
 }
@@ -769,6 +769,13 @@ footer {
 
 .tree_graph {
 	padding: 50px;
+	display: flex;
+	flex-direction: column;
+}
+
+.tree_graph_display {
+	align-self:center;
+	max-width: 900px;
 }
 
 .vote_active {

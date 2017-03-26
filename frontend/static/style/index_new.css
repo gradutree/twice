@@ -578,13 +578,13 @@ header nav ul {
 }
 
 .header_container {
-	
+	width: 100%;
 	background-size: cover;
 	background-position: 0 -100px;
 	background-repeat: no-repeat;
-	height: 100vh;
+	/*height: 100vh;*/
 	
-	min-height: 800px;
+	/*min-height: 800px;*/
 	transition: all 0.3s linear;
 	width: 100%;
 }
