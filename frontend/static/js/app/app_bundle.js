@@ -28099,8 +28099,8 @@ var Trees = function (_Component) {
 			allCourses: null,
 			nodeClicked: "",
 			nodeClickedIsTaken: false,
-			nodeClickedIsAllCourses: false
-			// cy: null
+			nodeClickedIsAllCourses: false,
+			cy: null
 		};
 		return _this;
 	}
@@ -28122,28 +28122,51 @@ var Trees = function (_Component) {
 			return this.setState({ nodeClickedIsAllCourses: false });
 		}
 	}, {
-		key: 'highlighto',
-		value: function highlighto(cy, courseCode) {
-			// console.log("courseCode: " + courseCode);
-			cy.nodes().forEach(function (e) {
-				// console.log(e.id());
-				if (e.id() == courseCode) {
-					// console.log(e);
-					e.addClass('highlighted');
-					e.data('marked', 1);
-					// edgeMarker(node);
-					return;
-				}
-			});
+		key: 'highlightUserCourses',
+		value: function highlightUserCourses() {
+			var thisComp = this;
+			if (this.state.user && this.state.cy) {
+				thisComp.state.user.allCourses.forEach(function (takenCourse) {
+					thisComp.state.cy.nodes().forEach(function (e) {
+						if (e.id() == takenCourse) {
+							if (thisComp.state.user.taken.indexOf(takenCourse) >= 0) {
+								e.addClass('highlighted');
+								e.data('marked', 1);
+								return;
+							} else {
+								e.addClass('highlightedAllCourses');
+								e.data('marked', 1);
+								return;
+							}
+						}
+					});
+				});
+
+				thisComp.state.cy.edges().forEach(function (edge) {
+					// var sourceId = edge.source().id(); 
+					if (thisComp.state.user.allCourses.indexOf(edge.source().id()) >= 0 && thisComp.state.user.allCourses.indexOf(edge.target().id()) >= 0) {
+						//
+						if (thisComp.state.user.taken.indexOf(edge.source().id()) >= 0) {
+							edge.addClass('highlighted');
+							edge.data('marked', 1);
+							return;
+						} else {
+							edge.addClass('highlightedAllCourses');
+							edge.data('marked', 1);
+							return;
+						}
+					}
+					// console.log("self: " + edge.source().id());
+					// console.log("target: " + edge.target().id());
+				});
+			}
 		}
 	}, {
 		key: 'createTree',
 		value: function createTree() {
 			var thisComp = this;
-
-			// $(function(){ // on dom ready
-
 			var ajaxCalls = compSciCore.map(actions.loadTreeInfo);
+
 			$.when.apply($, ajaxCalls).then(function () {
 
 				var findCourse = function findCourse(data) {
@@ -28193,6 +28216,12 @@ var Trees = function (_Component) {
 						'background-color': '#61bffc',
 						'line-color': '#61bffc',
 						'target-arrow-color': '#61bffc',
+						'transition-property': 'background-color, line-color, target-arrow-color',
+						'transition-duration': '0.5s'
+					}).selector('.highlightedAllCourses').css({
+						'background-color': '#FFA500',
+						'line-color': '#FFA500',
+						'target-arrow-color': '#FFA500',
 						'transition-property': 'background-color, line-color, target-arrow-color',
 						'transition-duration': '0.5s'
 					}),
@@ -28251,7 +28280,7 @@ var Trees = function (_Component) {
 
 					thisComp.refs.courseInfo.show();
 
-					thisComp.highlighto(cy, evt.cyTarget.id());
+					thisComp.highlightUserCourses();
 
 					actions.nodeClicked(evt.cyTarget.id());
 
@@ -28266,7 +28295,7 @@ var Trees = function (_Component) {
 					//  }
 				});
 
-				// thisComp.setState({cy: cy});
+				thisComp.setState({ cy: cy });
 			});
 		}
 	}, {
