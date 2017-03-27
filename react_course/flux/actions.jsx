@@ -43,6 +43,13 @@ var Actions = {
                     data: true
                 });
                 document.getElementById("review_form").reset();
+            },
+            error: function (xhr, status, error) {
+                console.log("ERROR");
+                Dispatcher.handleAction({
+                    actionType: Constants.SET_ERROR,
+                    data: xhr.responseText
+                });
             }
         })
     },

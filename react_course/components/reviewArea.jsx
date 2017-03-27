@@ -13,6 +13,7 @@ class ReviewArea extends Component {
             page: 0,
             hasReviewed: false,
             user_state: "hidden",
+            error: null
         };
     }
 
@@ -71,6 +72,7 @@ class ReviewArea extends Component {
 
                 </div>
                 <div className="review_footer flex-row hidden" id="review_footer">
+                    <div className="error">{this.state.error}</div>
                     <div style={{color: "#c0c0c0"}} id="cancel_review" onClick={ () => {
                         document.getElementById("review_area").classList.add("hidden");
                         document.getElementById("popover-arrow").classList.add("hidden");

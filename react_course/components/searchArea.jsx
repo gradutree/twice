@@ -34,7 +34,7 @@ class SearchArea extends Component {
                 <div className={"search_results"+((this.state.results.length == 0) ? " hidden" : "")}>
                     <div className="result_label">Results</div>
                     {this.state.results.map(function (item) {
-                        return <Result course={item}/>
+                        return <Result key={item._id} course={item}/>
                     })}
                     </div>
             </div>;

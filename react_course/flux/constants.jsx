@@ -8,5 +8,6 @@ module.exports = keyMirror({
     VOTE_REVIEW: null,
     SET_REVIEWED: null,
     LOAD_REC: null,
-    SEARCH: null
+    SEARCH: null,
+    SET_ERROR: null
 });

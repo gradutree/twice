@@ -896,6 +896,10 @@ h3 {
 
 }
 
+.error {
+	color: #df3320;
+}
+
 @media (min-width: 0px) and (max-width: 1200px) {
 	.search_screen {
 		background-size: cover !important;

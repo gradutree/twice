@@ -34,6 +34,10 @@ var appendReviews = function (data) {
     reviews.more = data.more;
 };
 
+var setError = function (error) {
+    reviews.error = error;
+};
+
 var loadRec = function (data) {
     rec.courses = data;
 };
@@ -122,6 +126,9 @@ Dispatcher.register(function(payload) {
             break;
         case Constants.SEARCH:
             loadResults(action.data);
+            break;
+        case Constants.SET_ERROR:
+            setError(action.data);
             break;
         default:
             return true;
