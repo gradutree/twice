@@ -81,4 +81,60 @@ var setupPreqs = function () {
     });
 };
 
+findPostReq = function (db, callback) {
+
+    db.collection("courses").find({}).toArray(function (err, data) {
+        if (err) {
+            callback();
+            return;
+        }
+
+        Promise.all(data.map(function (item, i) {
+            return new Promise(function (resolve, reject) {
+                db.collection("courses").find({ preq : {$elemMatch: {$elemMatch: { $in: [ item.code ] }}}}).toArray(function (err, courses) {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                        return;
+                    }
+                    if (!item.postreq) {
+                        item.postreq = [];
+                    }
+
+                    Promise.all(courses.map(function (course) {
+
+                        return new Promise(function (resolve2, reject2) {
+                            item.postreq.push(course.code);
+                            console.log(item.postreq.toString());
+                            resolve2();
+                        });
+                    })).then(function () {
+                        db.collection("courses").updateOne({ code: item.code }, item, function (err, num) {
+                            console.log("Finished adding postreqs for "+item.code);
+                            resolve();
+                        });
+
+                    });
+
+                });
+            });
+        })).then(function () {
+
+            callback();
+        });
+    });
+};
+
+var setPostReq = function () {
+    MongoClient.connect(dbURL, function (err, db) {
+
+        findPostReq(db, function () {
+            console.log("Done setting preqs for all courses");
+            db.close();
+        });
+
+    });
+};
+
 setupPreqs();
+setPostReq();
