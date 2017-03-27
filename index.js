@@ -7,7 +7,7 @@ var expressValidator = require('express-validator');
 var path = require("path");
 var backend = require("./backend");
 
-var dbURL = "mongodb://35.167.141.109:8000/c09v2"; //test url
+var dbUrl = "mongodb://35.167.141.109:8000/c09v2"; //test url
 var productionUrl = "mongodb://localhost:27017/"; // for production use
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
@@ -61,7 +61,7 @@ app.get("/dashboard", sessionRedirect, function(req, res, next) {
 });
 
 app.get("/course/:code", function (req, res) {
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(productionUrl, function (err, db) {
         if (err) {
             db.close("Server error, could not resolve request");
             return res.status(500).end("")
@@ -115,7 +115,7 @@ app.use(function (req, res, next) {
 // Response is an array of Course objects
 app.get('/api/courses/query/', function (req, res) {
     var result = [];
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(productionUrl, function (err, db) {
         db.collection("courses").find({code: {$regex : ".*"+req.query.code.toUpperCase()+".*"}}).toArray(function (err, data) {
             if (err) return res.status(500).end("Server error, could not resolve request");
 
@@ -168,7 +168,7 @@ app.get("/api/courses/:code/recommend", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             backend.findRecommended(db, req.params.code.toUpperCase(), function (data) {
                 db.close();
                 return res.json(data);
@@ -186,7 +186,7 @@ app.get('/api/programs/:name', function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("programs").findOne({name: req.params.name}, function (err, program) {
                 if (err) {
                     console.log("GET program error");
@@ -218,7 +218,7 @@ app.post('/api/login/', function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").findOne({username: req.body.username}, function (err, user) {
                 if (err) return res.status(500).end("Server error, could not resolve request");
                 if (!user || !checkPassword(user, req.body.password)) return res.status(403).end("Invalid username or password");
@@ -244,7 +244,7 @@ app.post("/api/user", function(req, res) {
             return res.status(400).end(result.array()[0].msg);
         }
         var user = new User(req.body);
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").findOne({username: req.body.username}, function (err, data) {
                 if (err) return res.status(500).end("Server error, could not resolve request");
                 if (data) {
@@ -278,7 +278,7 @@ app.get("/api/path/:start/post", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             if (err) return res.status(500).end("Server error, could not resolve request");
             var courses = {};
             backend.visualizePostreq(db, req.params.start.toUpperCase(), courses).then(function () {
@@ -297,7 +297,7 @@ app.get("/api/path/:start/pre", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             var courses = {};
             backend.visualizePreq(db, req.params.start.toUpperCase(), courses).then(function () {
                 res.json(courses);
@@ -319,7 +319,7 @@ app.get("/api/course/:code/review/:page", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("reviews").find({courseCode: req.params.code.toUpperCase()}, {
                 skip: page,
                 sort: [["timestamp", "desc"]],
@@ -353,7 +353,7 @@ app.get("/api/user/:username/info", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             if (err) return res.status(500).end("Server error, could not resolve request");
             db.collection("users").findOne({username: req.params.username}, function (err, data) {
                 if (err) return res.status(500).end("Server error, could not resolve request");
@@ -388,7 +388,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
             return res.status(400).end(result.array()[0].msg);
         }
         req.params.code = req.params.code.toUpperCase();
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             if (err) return res.status(500).end("Server error, could not resolve request");
             db.collection("courses").findOne({code: req.params.code}, function (err, course) {
                 switch (req.params.direction) {
@@ -440,7 +440,7 @@ app.post("/api/review", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             if (err) return res.status(500).end("Server error, could not resolve request");
             var review = {};
             review.author = req.session.user.username;
@@ -475,7 +475,7 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             if (err) return res.status(500).end("Server error, could not resolve request");
             db.collection("reviews").findOne({_id: new ObjectID(req.params.id)}, function (err, review) {
 
@@ -536,7 +536,7 @@ app.patch('/api/users/:username/taken/:course', function (req, res, next){
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").updateOne({username: req.params.username},
                 {$addToSet: {taken: req.params.course, allCourses: req.params.course}}, function (err, result) {
                     res.json({});
@@ -556,7 +556,7 @@ app.delete('/api/users/:username/taken/:course', function (req, res, next){
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").update({username: req.params.username},
                 {$pull: {taken: req.params.course, allCourses: req.params.course}}, function (err, result) {
                     res.end();
@@ -574,7 +574,7 @@ app.patch('/api/users/:username/allCourses/:course', function (req, res, next){
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").updateOne({username: req.params.username},
                 {$addToSet: {allCourses: req.params.course}}, function (err, result) {
                     res.json({});
@@ -593,7 +593,7 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
         if (!result.isEmpty()) {
             return res.status(400).end(result.array()[0].msg);
         }
-        MongoClient.connect(dbURL, function (err, db) {
+        MongoClient.connect(productionUrl, function (err, db) {
             db.collection("users").update({username: req.params.username},
                 {$pull: {allCourses: req.params.course}}, function (err, result) {
                     res.end();
