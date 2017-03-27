@@ -1,4 +1,5 @@
 var crypto = require("crypto");
+var fs = require("fs");
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -7,7 +8,7 @@ var path = require("path");
 var backend = require("./backend");
 
 var dbURL = "mongodb://35.167.141.109:8000/c09v2"; //test url
-var productionURL = "mongodb://localhost:27017/"; // for production use
+var productionUrl = "mongodb://localhost:27017/"; // for production use
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
 
@@ -61,11 +62,17 @@ app.get("/dashboard", sessionRedirect, function(req, res, next) {
 
 app.get("/course/:code", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
+        if (err) {
+            db.close("Server error, could not resolve request");
+            return res.status(500).end("")
+        }
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
                 req.session.redirectTo = req.originalUrl;
+                db.close();
                 return res.sendFile(path.resolve("frontend/views/course.html"));
             }
+            db.close();
             return res.redirect("/404");
         });
     });
@@ -148,6 +155,7 @@ app.get('/api/courses/query/', function (req, res) {
                 })
             })).then(function(){
                 res.json(result);
+                db.close();
             });
         });
     });
@@ -162,6 +170,7 @@ app.get("/api/courses/:code/recommend", function (req, res) {
         }
         MongoClient.connect(dbURL, function (err, db) {
             backend.findRecommended(db, req.params.code.toUpperCase(), function (data) {
+                db.close();
                 return res.json(data);
             });
         });
@@ -182,15 +191,19 @@ app.get('/api/programs/:name', function (req, res) {
                 if (err) {
                     console.log("GET program error");
                     res.json([]);
+                    db.close();
                     return;
                 }
 
                 // Trying to find specific specialization.
                 if (req.query.spec != null && req.query.post == "specialist") {
+
                     res.json(program[req.query.post].find(spec => spec.stream == req.query.spec).reqs);
+                    db.close();
                     return;
                 }
                 res.json(program[req.query.post]);
+                db.close();
                 return;
             });
         });
@@ -235,10 +248,12 @@ app.post("/api/user", function(req, res) {
             db.collection("users").findOne({username: req.body.username}, function (err, data) {
                 if (err) return res.status(500).end("Server error, could not resolve request");
                 if (data) {
+                    db.close();
                     return res.status(409).end("Username already exists");
                 }
                 db.collection("users").insertOne(user, function (err2, newUser) {
                     res.json({id: newUser._id});
+                    db.close();
                 });
             });
         });
@@ -268,6 +283,7 @@ app.get("/api/path/:start/post", function (req, res) {
             var courses = {};
             backend.visualizePostreq(db, req.params.start.toUpperCase(), courses).then(function () {
                 res.json(courses);
+                db.close();
             });
         });
     });
@@ -285,6 +301,7 @@ app.get("/api/path/:start/pre", function (req, res) {
             var courses = {};
             backend.visualizePreq(db, req.params.start.toUpperCase(), courses).then(function () {
                 res.json(courses);
+                db.close();
             });
         });
     });
@@ -318,6 +335,7 @@ app.get("/api/course/:code/review/:page", function (req, res) {
                 });
                 db.collection("reviews").count({courseCode: req.params.code.toUpperCase()}, function (err, count) {
                     res.json({data: data, page: page / 10, more: count > page + 10});
+                    db.close();
                 });
 
             });
@@ -346,6 +364,7 @@ app.get("/api/user/:username/info", function (req, res) {
                 info.taken = data.taken;
                 info.allCourses = data.allCourses;
                 res.json(info);
+                db.close();
             });
         });
     });
@@ -379,6 +398,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                             $pop: {disliked: req.session.user.username}
                         }, function (err, result) {
                             res.json({});
+                            db.close();
                         });
                         break;
                     case ("-1"):
@@ -387,6 +407,7 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                             $pop: {liked: req.session.user.username}
                         }, function (err, result) {
                             res.json({});
+                            db.close();
                         });
                         break;
                     case ("0"):
@@ -397,9 +418,11 @@ app.post("/api/course/:code/vote/:direction", function (req, res) {
                             }
                         }, function (err, result) {
                             res.json({});
+                            db.close();
                         });
                         break;
                     default:
+                        db.close();
                         return res.status(400).end("Invalid api direction");
                         break;
                 }
@@ -434,6 +457,7 @@ app.post("/api/review", function (req, res) {
                 if (data) return res.status(409).end("User already submitted a review for this course");
                 db.collection("reviews").insertOne(review, function (err, item) {
                     res.json({id: item._id});
+                    db.close();
                 });
             });
 
@@ -464,6 +488,7 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
                             $pop: {down: req.session.user.username}
                         }, function (err, item) {
                             res.json({});
+                            db.close();
                         });
                         break;
                     case ("-1"):
@@ -473,6 +498,7 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
                         }, function (err, item) {
 
                             res.json({});
+                            db.close();
                         });
                         break;
 
@@ -484,9 +510,11 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
                             }
                         }, function (err, result) {
                             res.json({});
+                            db.close();
                         });
                         break;
                     default:
+                        db.close();
                         return res.status(400).end("Invalid api action");
                         break;
                 }
@@ -512,6 +540,7 @@ app.patch('/api/users/:username/taken/:course', function (req, res, next){
             db.collection("users").updateOne({username: req.params.username},
                 {$addToSet: {taken: req.params.course, allCourses: req.params.course}}, function (err, result) {
                     res.json({});
+                    db.close();
                 });
         });
     });
@@ -531,6 +560,7 @@ app.delete('/api/users/:username/taken/:course', function (req, res, next){
             db.collection("users").update({username: req.params.username},
                 {$pull: {taken: req.params.course, allCourses: req.params.course}}, function (err, result) {
                     res.end();
+                    db.close();
                 });
         });
     });
@@ -548,6 +578,7 @@ app.patch('/api/users/:username/allCourses/:course', function (req, res, next){
             db.collection("users").updateOne({username: req.params.username},
                 {$addToSet: {allCourses: req.params.course}}, function (err, result) {
                     res.json({});
+                    db.close();
                 });
         });
     });
@@ -566,6 +597,7 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
             db.collection("users").update({username: req.params.username},
                 {$pull: {allCourses: req.params.course}}, function (err, result) {
                     res.end();
+                    db.close();
                 });
         });
     });
@@ -573,6 +605,13 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
 
 
 
-app.listen(8000, function () {
-    console.log('App listening on port 8000');
+var https = require("https");
+var privateKey = fs.readFileSync( 'server.key' );
+var certificate = fs.readFileSync( 'server.crt' );
+var config = {
+        key: privateKey,
+        cert: certificate
+};
+https.createServer(config, app).listen(8000, function () {
+    console.log('HTTPS on port 8030');
 });
