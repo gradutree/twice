@@ -5,7 +5,7 @@ Team Twice
 
 ### Setting up the database
 
-To run the app, the db must be populated first(make sure db c09 exists in mongodb), to do so, run `node ./scraper/scrapperv2.js` and `node ./scraper/prog_scrap.js`. Once finished you can now run the server with npm start.
+To run the app, the db must be populated first(make sure db c09 exists in mongodb), to do so, run go to ./scraper and run `node scrapperv2.js` and `node ./scraper/prog_scrap.js`. Once finished you can now run the server with npm start.
 
 ### Members
 - Mark Viola
