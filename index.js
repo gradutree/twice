@@ -6,8 +6,8 @@ var expressValidator = require('express-validator');
 var path = require("path");
 var backend = require("./backend");
 
-var dbURL = "mongodb://35.167.141.109:8000/c09v2";
-var cobaltURL = "mongodb://35.167.141.109:8000/cobalt";
+var dbURL = "mongodb://35.167.141.109:8000/c09v2"; //test url
+var productionURL = "mongodb://localhost:27017/"; // for production use
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
 
@@ -35,7 +35,6 @@ var User = function(user){
     this.spec = user.spec;
     this.taken = user.taken;
     this.allCourses = user.allCourses;
-    this.profileImage = "/media/user.png";
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
