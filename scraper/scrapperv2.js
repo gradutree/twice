@@ -74,6 +74,7 @@ var setupPreqs = function () {
                 db2.collection("courses").insertMany(courses, function (err, num) {
                     console.log(num.insertedCount+" course preqs have been parsed and added to db.");
                     db2.close();
+                    setPostReq();
                 });
             });
 
@@ -126,7 +127,7 @@ findPostReq = function (db, callback) {
 };
 
 var setPostReq = function () {
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(OutputURL, function (err, db) {
 
         findPostReq(db, function () {
             console.log("Done setting preqs for all courses");
@@ -137,4 +138,3 @@ var setPostReq = function () {
 };
 
 setupPreqs();
-setPostReq();
