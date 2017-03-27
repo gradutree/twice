@@ -297,7 +297,7 @@ app.get("/api/course/:code/review/:page", function (req, res) {
     req.checkParams("page", "Page must be a valid integer >= 0").notEmpty().isInt();
 
     var page = parseInt(req.params.page)*10;
-    if (page <= 0) return res.status(400).end("Page must be valid integer >= 0");
+    if (page < 0) return res.status(400).end("Page must be valid integer >= 0");
 
     req.getValidationResult().then(function(result) {
         if (!result.isEmpty()) {
@@ -326,16 +326,8 @@ app.get("/api/course/:code/review/:page", function (req, res) {
     });
 });
 
-app.get("*", function(req, res) {
-	res.redirect("/404");
-});
-
-app.use(function(req, res, next) {
-    if (!req.session.user) return res.status(401).end("Access denied");
-    return next();
-});
-
 app.get("/api/user/:username/info", function (req, res) {
+    if (!req.session.user) return res.status(401).end("Access denied");
     if (req.params.username != req.session.user.username) return res.status(403).end("Access forbidden");
 
     req.checkParams("username", "Username must be alphanumeric").notEmpty().isAlphanumeric();
@@ -345,6 +337,7 @@ app.get("/api/user/:username/info", function (req, res) {
             return res.status(400).end(result.array()[0].msg);
         }
         MongoClient.connect(dbURL, function (err, db) {
+            if (err) return res.status(500).end("Server error, could not resolve request");
             db.collection("users").findOne({username: req.params.username}, function (err, data) {
                 if (err) return res.status(500).end("Server error, could not resolve request");
                 var info = {};
@@ -357,6 +350,15 @@ app.get("/api/user/:username/info", function (req, res) {
             });
         });
     });
+});
+
+app.get("*", function(req, res) {
+	res.redirect("/404");
+});
+
+app.use(function(req, res, next) {
+    if (!req.session.user) return res.status(401).end("Access denied");
+    return next();
 });
 
 app.post("/api/course/:code/vote/:direction", function (req, res) {
