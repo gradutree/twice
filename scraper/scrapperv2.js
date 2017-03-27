@@ -2,7 +2,7 @@
 // rather than from utsc/uoft websites
 
 //const DbURL = "mongodb://35.167.141.109:8000/cobalt";
-const OutputURL = "mongodb://35.167.141.109:8000/c09v2";
+const OutputURL = "mongodb://localhost:27017/c09";
 const fs = require("fs");
 
 var MongoClient = require('mongodb').MongoClient;

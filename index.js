@@ -7,8 +7,8 @@ var expressValidator = require('express-validator');
 var path = require("path");
 var backend = require("./backend");
 
-var dbUrl = "mongodb://35.167.141.109:8000/c09v2"; //test url
-var productionUrl = "mongodb://localhost:27017/"; // for production use
+var dbUrl = "mongodb://35.167.141.109:8000/c09v2"; //test db
+var productionUrl = "mongodb://localhost:27017/c09"; // for production use
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require("mongodb").ObjectID;
 
