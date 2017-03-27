@@ -605,13 +605,6 @@ app.delete('/api/users/:username/allCourses/:course', function (req, res, next){
 
 
 
-var https = require("https");
-var privateKey = fs.readFileSync( 'server.key' );
-var certificate = fs.readFileSync( 'server.crt' );
-var config = {
-        key: privateKey,
-        cert: certificate
-};
-https.createServer(config, app).listen(8000, function () {
-    console.log('HTTPS on port 8030');
+app.listen(8000, function () {
+    console.log('App listening on port 8000');
 });
