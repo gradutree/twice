@@ -7,47 +7,30 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<link href="/style/dashboard.css" rel="stylesheet" type="text/css">
+<link href="/style/index_new.css" rel="stylesheet" type="text/css">
 	<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
 </head>
 
 <div class="container">
-  <div class="header_container">
-    <header class="header_bar"> 
-		
-      <nav class="navbar">
-	  <a class="header_text" href="/">
-			<h3>GraduTree</h3>
-		</a>
-        <ul class="btn_list" id="btn_list">
-          <li><a href="/">Create a new plan</a></li>
-          <li class="profile">
-			<div class="btn-group">
-				<button type="button" class="profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					
-					<img id="profile_img" src="/media/user.png">
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="/api/signout">Sign out</a></li>
 
-				</ul>
-			</div>
-		  </li>
-        </ul>
-      </nav>
-	  
-    </header>
-	<div id="search_box" class="flex-row flex_start">
-  		<input class="form_input" type="text" placeholder="Search courses">
-  		<button id="search_btn">Search</button>
-    </div>
+	  <header class="header_bar_green">
+		  <div class="cont">
+			  <nav class="navbar">
+				  <a class="header_text" href="/">
+					  <div class="logo"></div>
+				  </a>
+				  <div id="search_root"></div>
+				  <ul class="btn_list" id="btn_list">
+
+				  </ul>
+			  </nav>
+		  </div>
+	  </header>
   </div>
   
   
 
-  
-</div>
-<div id="content_container" style="height: 1000px; text-align: center;">
+<div id="content_container">
 
 
 

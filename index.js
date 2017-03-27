@@ -35,6 +35,7 @@ var User = function(user){
     this.spec = user.spec;
     this.taken = user.taken;
     this.allCourses = user.allCourses;
+    this.profileImage = "/media/user.png";
     this.salt = salt;
     this.saltedHash = hash.digest('base64');
 };
@@ -48,7 +49,6 @@ var checkPassword = function(user, password){
 
 var sessionRedirect = function(req, res, next) {
     if (!req.session.user && req.originalUrl !== "/favicon.ico") {
-        console.log(req.originalUrl);
         req.session.redirectTo = req.originalUrl;
         return res.redirect("/login");
     }
@@ -64,6 +64,7 @@ app.get("/course/:code", function (req, res) {
     MongoClient.connect(dbURL, function (err, db) {
         db.collection("courses").findOne({code: req.params.code.toUpperCase()}, function (err, data) {
             if (data) {
+                req.session.redirectTo = req.originalUrl;
                 return res.sendFile(path.resolve("frontend/views/course.html"));
             }
             return res.redirect("/404");
@@ -72,13 +73,11 @@ app.get("/course/:code", function (req, res) {
 });
 
 app.get("/trees", sessionRedirect, function(req, res) {
-    if (!req.session.user) return res.redirect("/login");
     return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
 });
 
-app.get("/search", sessionRedirect, function(req, res) {
-    if (!req.session.user) return res.redirect("/login");
-    return res.sendFile(path.resolve("frontend/static/dashboard/index.html"));
+app.get("/search", function(req, res) {
+    return res.sendFile(path.resolve("frontend/static/index.html"));
 });
 
 app.get("/login", function(req, res, next) {
@@ -91,16 +90,17 @@ app.get("/signup", function(req, res, next) {
     return next();
 });
 
-app.get("/search2", function(req, res) {
-    return res.sendFile(path.resolve("frontend/static/index.html"));
-});
-
 app.use(function (req, res, next){
     console.log("HTTP request", req.method, req.url, req.body);
     return next();
 });
 
 app.use(express.static('frontend/static'));
+
+app.use(function (req, res, next) {
+    if (!req.session.user) res.cookie('username', "", { expires: new Date() });
+    return next();
+});
 
 // API
 
@@ -124,24 +124,40 @@ app.get('/api/courses/query/', function (req, res) {
                     }
                     course.liked = course.liked.length;
                     course.disliked = course.disliked.length;
-                    db.collection("reviews").count({courseCode: course.code}, function (err, count) {
-                        course.commentCount = count;
-                        if (req.session.user) {
-                            db.collection("reviews").findOne({courseCode: course.code, author: req.session.user.username}, function (err, data) {
-                                if (data) course.hasReviewed = true;
-                                result.push(course);
-                                resolve();
+                    db.collection("users").count({taken : { $in: [course.code]}}, function (err, taken) {
+                        course.takenCount = taken;
+                        db.collection("users").findOne({taken: { $in: [course.code]}, username: ((req.session.user) ? req.session.user.username : "")}, function (err, hasTaken) {
+                            course.hasTaken = hasTaken != null;
+                            db.collection("reviews").count({courseCode: course.code}, function (err, count) {
+                                course.commentCount = count;
+                                if (req.session.user) {
+                                    db.collection("reviews").findOne({courseCode: course.code, author: req.session.user.username}, function (err, data) {
+                                        if (data) course.hasReviewed = true;
+                                        result.push(course);
+                                        resolve();
+                                    });
+                                } else {
+                                    result.push(course);
+                                    resolve();
+                                }
                             });
-                        } else {
-                            result.push(course);
-                            resolve();
-                        }
+                        });
+
                     });
+
 
                 })
             })).then(function(){
                 res.json(result);
             });
+        });
+    });
+});
+
+app.get("/api/courses/:code/recommend", function (req, res) {
+    MongoClient.connect(dbURL, function (err, db) {
+        backend.findRecommended(db, req.params.code.toUpperCase(), function (data) {
+            return res.json(data);
         });
     });
 });
@@ -208,7 +224,7 @@ app.post("/api/user", function(req, res) {
                 if (data) {
                     return res.status(409).end("Username already exists");
                 }
-                db.collection("users").insert(user, function (err2, newUser) {
+                db.collection("users").insertOne(user, function (err2, newUser) {
                     res.json({id: newUser._id});
                 });
             });
@@ -326,9 +342,13 @@ app.post("/api/review", function (req, res) {
         review.up = [];
         review.down = [];
         review.courseCode = req.body.code.toUpperCase();
-        db.collection("reviews").insertOne(review, function (err, item) {
-            res.json({id: item._id});
+        db.collection("reviews").findOne({author: req.session.user.username, courseCode: review.courseCode}, function (err, data) {
+            if (data) return res.status(409).end("User already submitted a review for this course");
+            db.collection("reviews").insertOne(review, function (err, item) {
+                res.json({id: item._id});
+            });
         });
+
     });
 });
 
@@ -366,6 +386,10 @@ app.post("/api/review/:id/vote/:direction", function (req, res) {
 
 
     });
+});
+
+app.post("/api/users/:username/profile", function (req, res) {
+
 });
 
 // Update user's list of taken courses with new course

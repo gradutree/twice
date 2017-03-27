@@ -92,7 +92,6 @@ class CourseTree extends Component {
                 edgeUnmarker(tapid);
             }
             else {
-                console.log("tap");
                 edgeMarker(tapid);
                 findconnected(tapid);
             }
@@ -123,7 +122,6 @@ class CourseTree extends Component {
                 }
             });
         };
-
 
         var edgeMarker = function(node){
             node.data('marked',1);
@@ -198,7 +196,6 @@ class CourseTree extends Component {
                 var courseAdderPost = function (data){
                     var i;
                     for(i=0; i<data.edgeNumbers; i++){
-                        console.log(data);
                         if(findCourse(data.postreq[i])==true) return;
                         else{
                             var newNode = new node(data.postreq[i]);
@@ -279,7 +276,6 @@ class CourseTree extends Component {
                                 cy.pan({ x:x/2, y:y });
                             }
                             //cy.$('#'+id).lock();
-                            console.log(levelCount);
                         }
 
 

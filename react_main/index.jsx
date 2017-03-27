@@ -25,7 +25,7 @@ var getCurrentUsername = function () {
 };
 
 
-if (!getCurrentUsername()) document.getElementById("btn_list").innerHTML = `<li><a href="login/">Login</a></li> <li><a href="signup/">Sign up</a></li><li><a href="#about">About</a></li>`;
+if (!getCurrentUsername()) document.getElementById("btn_list").innerHTML = `<li><a href="login/">Login</a></li> <li><a href="signup/">Sign up</a></li><li><a id="about_btn" style="cursor: pointer;">About</a></li>`;
 else  document.getElementById("btn_list").innerHTML = `<li><a href="/dashboard">Dashboard</a></li> <li class="profile"> <div class="btn-group"> <button id="profile" type="button"
  class="profile_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <img style="background-color: #fff;" id="profile_img" src="/media/user.png"> </button> <ul id="menu" class="dropdown-menu"
@@ -43,15 +43,25 @@ if (document.getElementById("profile")) {
             popover.classList.add("hidden");
         }
     });
+
+    document.addEventListener("click", function(e) {
+        var popover = document.getElementById("popover-arrow");
+        var menu = document.getElementById("menu");
+        if ((!menu.contains(e.target) && !document.getElementById("profile").contains(e.target)) || e.target == menu) {
+            popover.classList.add("hidden");
+        }
+    });
+} else {
+    document.getElementById("about_btn").addEventListener("click", function(e) {
+        $('html, body').animate({
+            scrollTop: $("#about").offset().top
+        }, 1000);
+
+    });
 }
 
-document.addEventListener("click", function(e) {
-    var popover = document.getElementById("popover-arrow");
-    var menu = document.getElementById("menu");
-    if ((!menu.contains(e.target) && !document.getElementById("profile").contains(e.target)) || e.target == menu) {
-        popover.classList.add("hidden");
-    }
-});
+
+
 
 if (window.location.href.toLowerCase().indexOf("search") != -1) {
     $('html, body').animate({

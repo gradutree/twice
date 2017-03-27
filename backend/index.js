@@ -152,6 +152,52 @@ var setPostReq = function () {
     });
 };
 
+backend.findRecommended = function (db, courseCode, callback) {
+    db.collection("users").find({ taken: { $in: [courseCode]}}).toArray(function (err, data) {
+       var count = data.length;
+       var courseCount = {};
+       data.forEach(function (item) {
+           item.taken.forEach(function (course) {
+               if (course == courseCode) return;
+               if (Object.keys(courseCount).indexOf(course) == -1) {
+                   courseCount[course] = 1;
+               } else {
+                   courseCount[course]++;
+               }
+           });
+
+       });
+
+       var sorted = {};
+       var i = 0;
+       Object.keys(courseCount).sort(function (a, b) {
+           return courseCount[b] - courseCount[a];
+       }).forEach(function (item) {
+           if (i == 5) {
+                return;
+           }
+           sorted[item] = courseCount[item]/count*100;
+           i++;
+
+       });
+
+
+
+       callback(sorted);
+    });
+};
+
+var testRecommend = function () {
+    MongoClient.connect(dbURL, function (err, db) {
+        backend.findRecommended(db, "CSCA08H3", function (data) {
+            Object.keys(data).forEach(function (item) {
+                console.log(item+" is taken by "+(data[item])+"% of people who have taken CSCA08H3");
+            });
+            db.close();
+        });
+    });
+};
+
 // proper setup order:
 // -create c09 database
 // -use scraper to get course data

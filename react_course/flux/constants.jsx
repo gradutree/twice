@@ -6,5 +6,7 @@ module.exports = keyMirror({
     APPEND_REVIEWS: null,
     VOTE: null,
     VOTE_REVIEW: null,
-    SET_REVIEWED: null
+    SET_REVIEWED: null,
+    LOAD_REC: null,
+    SEARCH: null
 });

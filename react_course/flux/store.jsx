@@ -5,13 +5,16 @@ var Constants = require('./constants.jsx');
 
 var courseData = {};
 var reviews = {};
+var rec = {};
+var results = {};
 
 var loadCourse = function (data) {
     courseData = data;
+    reviews.hasReviewed = courseData.hasReviewed;
+    reviews.user_state = courseData.user_state;
 };
 
 var loadReviews = function (data) {
-    console.log(courseData);
     reviews = data;
     reviews.hasReviewed = courseData.hasReviewed;
     reviews.user_state = courseData.user_state;
@@ -29,6 +32,14 @@ var appendReviews = function (data) {
     reviews.data = reviews.data.concat(data.data);
     reviews.page = data.page;
     reviews.more = data.more;
+};
+
+var loadRec = function (data) {
+    rec.courses = data;
+};
+
+var loadResults = function (data) {
+    results.results = data;
 };
 
 var setVoteData = function (dir) {
@@ -59,6 +70,14 @@ var Store = merge(EventEmitter.prototype, {
 
     getReviews: function() {
         return reviews;
+    },
+
+    getRec: function () {
+      return rec;
+    },
+
+    getResults: function () {
+        return results;
     },
 
     emitChange: function() {
@@ -97,6 +116,12 @@ Dispatcher.register(function(payload) {
             break;
         case Constants.SET_REVIEWED:
             setReviewed(action.data);
+            break;
+        case Constants.LOAD_REC:
+            loadRec(action.data);
+            break;
+        case Constants.SEARCH:
+            loadResults(action.data);
             break;
         default:
             return true;

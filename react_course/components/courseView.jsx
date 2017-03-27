@@ -39,7 +39,7 @@ class CourseView extends Component {
         return <div className={hidden}>
             <h3>{this.state.code}</h3>
 
-            {this.state.title}
+            {this.state.name}
             <div className="desc_box">
                 {this.state.description}
             </div>

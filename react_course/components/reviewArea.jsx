@@ -12,7 +12,7 @@ class ReviewArea extends Component {
             data: [],
             page: 0,
             hasReviewed: false,
-            user_state: "hidden"
+            user_state: "hidden",
         };
     }
 
@@ -36,23 +36,60 @@ class ReviewArea extends Component {
 
     renderTextArea() {
         if (this.state.user_state == "hidden") return;
-        if (!this.state.user_state) return <h4 className="box">Sign in to review this course.</h4>;
+        if (!this.state.user_state) return <div style={{marginTop: "10px"}} className="review_toggle flex-row flex-bet" id="review_toggle">
+            Sign in to leave a review.
+        </div>;
         if (!this.state.hasReviewed)
-            return (<div className="box review_area"> <label>Write a review</label>
-                        <textarea id="content_input" className="comment_area"></textarea>
-                <div className="submit_area">
-                    <input type="submit" className="btn" />
+            return (<form id="review_form" className="review_form" onSubmit={(e) => { e.preventDefault(); Actions.submitReview(this.props.code, document.getElementById("review_text").value) }}>
+
+                <div className="review_toggle flex-row flex-bet" id="review_toggle" onClick={ () => {
+                    var text = document.getElementById("review_area");
+                    var footer = document.getElementById("review_footer");
+                    var arrow = document.getElementById("popover-arrow");
+                    text.classList.toggle("hidden");
+                    footer.classList.toggle("hidden");
+                    arrow.classList.toggle("hidden");
+                }}>
+                    Leave a review...
+                    <div className="arrow"></div>
                 </div>
-            </div>);
-        else return <h4 className="box">You have already reviewed this course.</h4>;
+                <div className="review_wrapper hidden" id="review_area">
+                    <div className="flex-row flex-start">
+                        <img className="profile_btn" src="/media/user.png" style={{width: "40px", height: "40px", marginTop: "12px", marginLeft: "15px"}}/>
+                        <textarea id="review_text" className="review_input" placeholder="Write a review for this course" onInput={ ()=> {
+                            var text = document.getElementById("review_text");
+                            if (text.value == "") {
+                            document.getElementById("review_area").removeAttribute("style");
+                            text.removeAttribute("style");
+                            return;
+                        }
+                            if (text.scrollHeight < 93) return;
+                            document.getElementById("review_area").setAttribute('style','height:'+(text.scrollHeight+50)+'px');
+                            text.setAttribute('style','height:'+text.scrollHeight+'px');
+                        }}></textarea>
+                    </div>
+
+                </div>
+                <div className="review_footer flex-row hidden" id="review_footer">
+                    <div style={{color: "#c0c0c0"}} id="cancel_review" onClick={ () => {
+                        document.getElementById("review_area").classList.add("hidden");
+                        document.getElementById("popover-arrow").classList.add("hidden");
+                        document.getElementById("review_footer").classList.add("hidden");
+                    }}>CANCEL</div>
+                    <input value="POST" type="submit" style={{color: "#eb5e4b", border: "none", background: "none"}}/>
+                </div>
+
+                <div id="popover-arrow" className="popover-arrow_small hidden" style={{marginLeft: "28px", position: "absolute", top: "32px"}}></div>
+            </form>);
+        else return <div style={{marginTop: "10px"}} className="review_toggle flex-row flex-bet" id="review_toggle">
+            You have already reviewed this course.
+        </div>;
     }
 
     render() {
         var hidden = "box"+((this.state.more) ? "": " hidden");
         return <div>
-            <form id="review_form" onSubmit={(e) => { e.preventDefault(); Actions.submitReview(this.props.code, document.getElementById("content_input").value) }}>
-                    {this.renderTextArea()}
-            </form>
+            {this.renderTextArea()}
             <div id="review_container">
                 {this.state.data.map(function (item) { return <Review key={item._id} review={item} />; })}
             </div>
@@ -63,33 +100,41 @@ class ReviewArea extends Component {
     }
 }
 
+
 class Review extends Component {
+
+    static months(index) {
+        return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][index];
+    }
 
     constructor() {
         super();
     }
 
     render() {
+        var date = new Date(this.props.review.timestamp);
+        var dateString = Review.months(date.getMonth())+" "+date.getDate();
         var delId = "delComment_"+this.props.review._id;
-        var user_state = "box"+((this.props.review.user_state == "1") ? " vote_active" : "")+((this.props.review.user_state) ? "" : " hidden");
-        var user_state2 = "box"+((this.props.review.user_state == "-1") ? " vote_active" : "")+((this.props.review.user_state) ? "" : " hidden");
-        return <div className="comment flex_col">
-            <div className="flex-row flex_spaceb">
-                <div className="comment_author flex-row flex_start">
-                    <img src="/media/user.png"/>
-                        <div className="author_name">{this.props.review.author} says:</div>
-                        <div id="comment_time">{new Date(this.props.review.timestamp).toLocaleString()}</div>
-                </div>
-                <div id={delId} className="del_btn">Delete</div>
+        var user_state = "helpful_btn"+((this.props.review.user_state == "1") ? " helpful_active" : "");
+        var active = ((this.props.review.user_state == "1") ? "active1" : "");
+        var active2 = ((this.props.review.user_state == "-1") ? "active2" : "");
+        var user_state2 = "helpful_btn"+((this.props.review.user_state == "-1") ? " unhelpful_active" : "");
+        return <div className="review">
+            <div className="flex-row flex-start">
+            <img src="/media/user.png" className="profile_btn" style={{width: "40px", height: "40px", marginLeft: "1px"}}/>
+            <div className="flex-col detail_box">
+            <div className="author">{this.props.review.author}</div>
+            <div className="time">{dateString}</div>
+        </div>
+        </div>
+        <div className="content">{this.props.review.content}</div>
+        <div className="helpful flex-row flex-start">
+            <div className={user_state} onClick={() => { if (!getCurrentUsername()) return; var dir = ((this.props.review.user_state == "1") ? "0" : "1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Helpful</div>
+            <label className={active}>{this.props.review.up}</label>
+            <div className={user_state2} onClick={() => { if (!getCurrentUsername()) return; var dir = ((this.props.review.user_state == "-1") ? "0" : "-1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Unhelpful</div>
+            <label className={active2}>{this.props.review.down}</label>
             </div>
-            <div className="comment_message">{this.props.review.content}</div>
-            <div className="flex-row">
-                <div className={user_state} onClick={() => { var dir = ((this.props.review.user_state == "1") ? "0" : "1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Helpful</div>
-                <h4>{this.props.review.up}</h4>
-                <div className={user_state2} onClick={() => { var dir = ((this.props.review.user_state == "-1") ? "0" : "-1"); Actions.voteReview(this.props.review._id, dir); this.setVote(dir); this.forceUpdate();}}>Not helpful</div>
-                <h4>{this.props.review.down}</h4>
-            </div>
-        </div>;
+            </div>;
     }
 
     setVote(dir) {
@@ -113,5 +158,14 @@ class Review extends Component {
     }
 
 }
+
+var getCurrentUsername = function () {
+    var keyValuePairs = document.cookie.split('; ');
+    for(var i in keyValuePairs){
+        var keyValue = keyValuePairs[i].split('=');
+        if(keyValue[0]=== 'username') return keyValue[1];
+    }
+    return null;
+};
 
 module.exports = ReviewArea;

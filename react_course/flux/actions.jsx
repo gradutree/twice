@@ -56,7 +56,7 @@ var Actions = {
             url: "/api/course/"+code+"/vote/"+dir,
             method: "POST",
             success: function (result) {
-                console.log(result);
+
             }
         })
     },
@@ -66,8 +66,43 @@ var Actions = {
             url: "/api/review/"+id+"/vote/"+dir,
             method: "POST",
             success: function (result) {
-                console.log(result);
+
             }
+        })
+    },
+
+    loadRec: function (code) {
+        $.ajax({
+            url: "/api/courses/"+code+"/recommend",
+            success: function (result) {
+                Dispatcher.handleAction({
+                    actionType: Constants.LOAD_REC,
+                    data: result
+                });
+            }
+        })
+    },
+
+    searchCourses(query) {
+        if (query == "") {
+            Dispatcher.handleAction({
+                actionType: Constants.SEARCH,
+                data: []
+            });
+            return;
+        }
+        if (query.length < 3) return;
+        this.query = query;
+        $.ajax({
+            url: "/api/courses/query?code="+query,
+            success: function (results) {
+                if (this.query == query) {
+                    Dispatcher.handleAction({
+                        actionType: Constants.SEARCH,
+                        data: results
+                    });
+                }
+            }.bind(this)
         })
     }
 

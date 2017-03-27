@@ -8,6 +8,13 @@ var Actions = {
     query: null,
     
     searchCourses(query) {
+        if (query == "") {
+            Dispatcher.handleAction({
+                actionType: Constants.SEARCH,
+                data: []
+            });
+            return;
+        }
         if (query.length < 3) return;
         this.query = query;
         $.ajax({
