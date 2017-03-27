@@ -37,7 +37,7 @@ class SearchView extends Component {
 
     render() {
         return <div>
-            <input id="main_input" className="main_input srch_icon" type="text" placeholder="Course name or code" onInput={() => {Actions.searchCourses(document.getElementById("main_input").value); }}/>
+            <input id="main_input" className="main_input srch_icon" type="text" placeholder="Course code" onInput={() => {Actions.searchCourses(document.getElementById("main_input").value); }}/>
 
                 <Masonry
                     className="result_container"
