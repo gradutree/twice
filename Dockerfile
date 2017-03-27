@@ -4,5 +4,9 @@ COPY ./ /home/nodejs/app
 WORKDIR /home/nodejs/app
 RUN npm install --production
 EXPOSE 8000
-CMD node ./scraper/scrapperv2.js
-CMD npm start
+RUN apt-get update && apt-get install -y mongodb supervisor
+RUN mkdir -p /data/db
+EXPOSE 27017
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord"]
