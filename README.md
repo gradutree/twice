@@ -2,11 +2,6 @@
 
 Team Twice
 
-### Links
-
-[Gradutree Website](https://www.gradutree.me/)
-[Gradutree Video](https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be)
-
 ### Setting up the database
 
 To run the app, the db must be populated first(make sure db c09 exists in mongodb), to do so, run go to ./scraper and run `node scrapperv2.js` and `node ./scraper/prog_scrap.js`. Once finished you can now run the server with npm start.
@@ -18,6 +13,11 @@ To run the app, the db must be populated first(make sure db c09 exists in mongod
 - ZiXian Chen
 - Hyeong Ook Yu
 
+### Links
+
+- Check out our website: [Gradutree Website](https://www.gradutree.me/)
+- You can watch our introduction video here: [Gradutree Video](https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be)
+>>>>>>> 5e00408256108bdc5aa3f90b7a33e9467373a3c7
 
 ### Description
 
