@@ -2,6 +2,10 @@
 
 Team Twice
 
+### Links
+
+[Gradutree Website](https://www.gradutree.me/)
+[Gradutree Video](https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be)
 
 ### Setting up the database
 
