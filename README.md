@@ -11,10 +11,16 @@ Team Twice
 
 To run the app, the db must be populated first(make sure db c09 exists in mongodb), to do so, run go to ./scraper and run `node scrapperv2.js` and `node ./scraper/prog_scrap.js`. Once finished you can now run the server with npm start.
 
+
 ### Members
+
 - Mark Viola
 - ZiXian Chen
 - Hyeong Ook Yu
+
+### Introducing Video
+
+- You can watch in Youtube : https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be
 
 
 ### Description
