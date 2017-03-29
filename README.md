@@ -18,9 +18,10 @@ To run the app, the db must be populated first(make sure db c09 exists in mongod
 - ZiXian Chen
 - Hyeong Ook Yu
 
-### Introducing Video
+### Links
 
-- You can watch in Youtube : https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be
+- Check out our website: https://www.gradutree.me/
+- You can watch our introduction video herer: https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be
 
 
 ### Description
