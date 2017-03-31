@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documentation</title>
+    <link href="./style/doc.css" rel="stylesheet" type="text/css" />
+    <link href="./style/grid.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body>
+    <div class="mid">
+      <div class="docs" id="docs">
+  <div class="content grid-container">
+    <div id="doc_title" class="sidebar-header grid-100">
+      <div class="name">Getting Started: <span class="small">Contributing</span></div>
+      <div id="downarrow" class="arrow"></div>
+    </div>
+    <div class="sidebar grid-30">
+      <div id="uparrow" class="arrow expanded"></div>
+      <strong class="active">User API</strong>
+      <div class="group">
+        <a href="./index.html" class="active">POST login</a>
+        <a href="./documentation/get_signout.html">GET signout</a>
+        <a href="./documentation/post_user.html">POST user</a>
+        <a href="./documentation/get_user_info.html">GET user/:username/info</a>
+        <a href="./documentation/patch_user_taken.html">PATCH users/:username/taken/:course</a>
+        <a href="./documentation/delete_user_taken.html">DELETE users/:username/taken/:course</a>
+        <a href="./documentation/patch_user_allCourses.html">PATCH users/:username/allCourses/:course</a>
+        <a href="./documentation/delete_user_allCourses.html">DELETE users/:username/allCourses/:course</a>
+      </div>
+
+      <strong>Program API</strong>
+      <div class="group">
+        <a href="./documentation/get_program.html">GET programs/:name</a>
+      </div>
+
+      <strong>Course API</strong>
+      <div class="group">
+        <a href="./documentation/get_course_query.html">GET courses/query</a>
+        <a href="./documentation/get_course_recommend.html">GET courses/:code/recommend</a>
+        <a href="./documentation/get_course_review_page.html">GET course/:code/review/:page</a>
+        <a href="./documentation/post_course_vote.html">POST course/:code/vote/:direction</a>
+        <a href="./documentation/get_path_post.html">GET path/:start/post</a>
+        <a href="./documentation/get_path_pre.html">GET path/:start/pre</a>
+      </div>
+
+      <strong>Review API</strong>
+      <div class="group">
+        <a href="./documentation/post_review.html">POST review</a>
+        <a href="./documentation/post_review_vote.html">POST review/:id/vote/:direction</a>
+      </div>
+    </div>
+    <div class="main grid-70">
+    <div class="main grid-70">
+<h1>GET api/login/</h1>
+<p>Returns a list of courses.</p>
+
+<h2>URL</h2>
+<pre><code>https://gradutree.me/api/login
+</code></pre>
+
+<h2>Body</h2>
+<p><code>username</code> <em>(required)</em><br>
+The user's username
+<hr>
+<p><code>password</code> <em>(required)</em><br>
+The user's password
+
+<h2>Example</h2>
+<pre><code>curl -H "Content-type: application/json" -X POST https://gradutree.me/api/login -d {"username":"user", "password": "pass"}
+</code></pre>
+
+<h2>Return object</h2>
+<p><code>username</code><br>
+The username of the sucessfully logged in user</p>
+<hr>
+      
+  </div>
+</div>
+    </div>
+
+  </body>
+</html>

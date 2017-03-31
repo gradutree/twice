@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documentation</title>
+    <link href="../style/doc.css" rel="stylesheet" type="text/css" />
+    <link href="../style/grid.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body>
+    <div class="mid">
+      <div class="docs" id="docs">
+  <div class="content grid-container">
+    <div id="doc_title" class="sidebar-header grid-100">
+      <div class="name">Getting Started: <span class="small">Contributing</span></div>
+      <div id="downarrow" class="arrow"></div>
+    </div>
+    <div class="sidebar grid-30">
+      <div id="uparrow" class="arrow expanded"></div>
+      <strong>User API</strong>
+      <div class="group">
+        <a href="../index.html">POST login</a>
+        <a href="./get_signout.html">GET signout</a>
+        <a href="./post_user.html">POST user</a>
+        <a href="./get_user_info.html">GET user/:username/info</a>
+        <a href="./patch_user_taken.html">PATCH users/:username/taken/:course</a>
+        <a href="./delete_user_taken.html">DELETE users/:username/taken/:course</a>
+        <a href="./patch_user_allCourses.html">PATCH users/:username/allCourses/:course</a>
+        <a href="./delete_user_allCourses.html">DELETE users/:username/allCourses/:course</a>
+      </div>
+
+      <strong>Program API</strong>
+      <div class="group">
+        <a href="./get_program.html">GET programs/:name</a>
+      </div>
+
+      <strong class="active">Course API</strong>
+      <div class="group">
+        <a href="./get_course_query.html">GET courses/query</a>
+        <a href="./get_course_recommend.html">GET courses/:code/recommend</a>
+        <a href="./get_course_review_page.html">GET course/:code/review/:page</a>
+        <a href="./post_course_vote.html">POST course/:code/vote/:direction</a>
+        <a href="./get_path_post.html">GET path/:start/post</a>
+        <a href="./get_path_pre.html" class="active">GET path/:start/pre</a>
+      </div>
+
+      <strong>Review API</strong>
+      <div class="group">
+        <a href="./post_review.html">POST review</a>
+        <a href="./post_review_vote.html">POST review/:id/vote/:direction</a>
+      </div>
+    </div>
+    <div class="main grid-70">
+<h1>GET api/path/:start/pre</h1>
+<p>Returns an object that contains the course name and code of the start course, as well as its prerequisites.</p>
+
+<h2>URL</h2>
+<pre><code>https://gradutree.me/api/path/:start/pre
+</code></pre>
+
+<h2>Parameters</h2>
+<p><code>start</code> <em>(required)</em><br>
+The course code of the course which you want to generate prereqs</p>
+
+<h2>Example</h2>
+<pre><code>curl https://gradutree.me/api/path/CSCC09H3/pre
+</code></pre>
+
+<h2>Return object</h2>
+<p><code>courseId</code><br>
+The course code of the queried course.
+<hr>
+<p><code>postreq</code><br>
+The array of courses that are dependant on this course as a prerequisite. Each of these course objects have a property for their own postreqs. 
+
+      
+  </div>
+</div>
+    </div>
+
+  </body>
+</html>

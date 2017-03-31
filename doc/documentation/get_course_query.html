@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documentation</title>
+    <link href="../style/doc.css" rel="stylesheet" type="text/css" />
+    <link href="../style/grid.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body>
+    <div class="mid">
+      <div class="docs" id="docs">
+  <div class="content grid-container">
+    <div id="doc_title" class="sidebar-header grid-100">
+      <div class="name">Getting Started: <span class="small">Contributing</span></div>
+      <div id="downarrow" class="arrow"></div>
+    </div>
+    <div class="sidebar grid-30">
+      <div id="uparrow" class="arrow expanded"></div>
+      <strong>User API</strong>
+      <div class="group">
+        <a href="../index.html">POST login</a>
+        <a href="./get_signout.html">GET signout</a>
+        <a href="./post_user.html">POST user</a>
+        <a href="./get_user_info.html">GET user/:username/info</a>
+        <a href="./patch_user_taken.html">PATCH users/:username/taken/:course</a>
+        <a href="./delete_user_taken.html">DELETE users/:username/taken/:course</a>
+        <a href="./patch_user_allCourses.html">PATCH users/:username/allCourses/:course</a>
+        <a href="./delete_user_allCourses.html">DELETE users/:username/allCourses/:course</a>
+      </div>
+
+      <strong>Program API</strong>
+      <div class="group">
+        <a href="./get_program.html">GET programs/:name</a>
+      </div>
+
+      <strong class="active">Course API</strong>
+      <div class="group">
+        <a href="./get_course_query.html" class="active">GET courses/query</a>
+        <a href="./get_course_recommend.html">GET courses/:code/recommend</a>
+        <a href="./get_course_review_page.html">GET course/:code/review/:page</a>
+        <a href="./post_course_vote.html">POST course/:code/vote/:direction</a>
+        <a href="./get_path_post.html">GET path/:start/post</a>
+        <a href="./get_path_pre.html">GET path/:start/pre</a>
+      </div>
+
+      <strong>Review API</strong>
+      <div class="group">
+        <a href="./post_review.html">POST review</a>
+        <a href="./post_review_vote.html">POST review/:id/vote/:direction</a>
+      </div>
+    </div>
+    <div class="main grid-70">
+<h1>GET api/courses/query</h1>
+<p>Returns an array of Course objects that contain the query string</p>
+
+<h2>URL</h2>
+<pre><code>https://gradutree.me/api/courses/query
+</code></pre>
+
+<h2>Parameters</h2>
+<p><code>code</code> <em>(required)</em><br>
+The string of the course you are trying to find.</p>
+
+<h2>Example</h2>
+<pre><code>curl https://gradutree.me/api/courses/query?code=CSCC09
+</code></pre>
+
+<h2>Return object</h2>
+<p><code>_id</code><br>
+Unique id for the course object in the database</p>
+<hr>
+<p><code>code</code><br>
+The course code</p>
+<hr>
+<p><code>prerequisites</code><br>
+The course prerequisites, as written on the school web page</p>
+<hr>
+<p><code>name</code><br>
+The name of the course</p>
+<hr>
+<p><code>level</code><br>
+The course level (100/200/300/400)</p>
+<hr>
+<p><code>description</code><br>
+A description of the course</p>
+<hr>
+<p><code>department</code><br>
+The course's department</p>
+<hr>
+<p><code>campus</code><br>
+The University of Toronto campus where the course can be taken</p>
+<hr>
+<p><code>term</code><br>
+The term that this course is available</p>
+<hr>
+<p><code>liked</code><br>
+The number of people who like this course</p>
+<hr>
+<p><code>disliked</code><br>
+The number of people who disliked this course</p>
+<hr>
+<p><code>prereq</code><br>
+An array of codes codes that are prerequisites for this course</p>
+<hr>
+<p><code>postreq</code><br>
+An array of codes codes that are dependant on this course</p>
+<hr>
+<p><code>takenCount</code><br>
+The number of people who have taken this course</p>
+<hr>
+<p><code>commentCount</code><br>
+The number of reviews for this course</p>
+<hr>
+
+      
+<!-- <div class="highlight highlight-source-json"><pre>[
+  {
+    <span class="pl-s"><span class="pl-pds">"</span>_id<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>IRE346H1F20159<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>IRE346H1F<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Human Resource Planning<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>An understanding is developed of how essential elements of the human resource planning process support organizational goals and strategies. Topics such as environmental influences, job analysis, forecasting human resource needs and ascertaining supply, succession planning, downsizing and restructuring, mergers and acquisitions, outsourcing, and strategic international issues are examined.<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>division<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Faculty of Arts and Science<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>department<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Centre for Industrial Relations and Human Resources<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>prerequisites<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>IRE240H1/WDW240H1/IRE244H1/WDW244H1/IRE260H1/WDW260H1/<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>exclusions<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>WDW346H1<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>level<span class="pl-pds">"</span></span>:<span class="pl-c1">300</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>campus<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>UTSG<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>term<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>2015 Fall<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>meeting_sections<span class="pl-pds">"</span></span>:[
+      {
+        <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>L5101<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>:<span class="pl-c1">65</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>enrolment<span class="pl-pds">"</span></span>:<span class="pl-c1">0</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>times<span class="pl-pds">"</span></span>:[
+          {
+            <span class="pl-s"><span class="pl-pds">"</span>day<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>TUESDAY<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>start<span class="pl-pds">"</span></span>:<span class="pl-c1">18</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>end<span class="pl-pds">"</span></span>:<span class="pl-c1">21</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>duration<span class="pl-pds">"</span></span>:<span class="pl-c1">3</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>WW 126<span class="pl-pds">"</span></span>
+          }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>instructors<span class="pl-pds">"</span></span>:[
+          <span class="pl-s"><span class="pl-pds">"</span>E Mock<span class="pl-pds">"</span></span>
+        ]
+      }
+    ],
+    <span class="pl-s"><span class="pl-pds">"</span>breadths<span class="pl-pds">"</span></span>:[
+      <span class="pl-c1">3</span>
+    ]
+  },
+  {
+    <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>ENG370H1S20161<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>ENG370H1S<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Postcolonial and Transnational Discourses<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>This course focuses on recent theorizations of postcoloniality and transnationality through readings of fictional and non-fictional texts, along with analyses of contemporary films and media representations.<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>division<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Faculty of Arts and Science<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>department<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>English<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>prerequisites<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>2.0 ENG FCE and any 4.0 FCE<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>exclusions<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>level<span class="pl-pds">"</span></span>:<span class="pl-c1">300</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>campus<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>UTSG<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>term<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>2016 Winter<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>meeting_sections<span class="pl-pds">"</span></span>:[
+      {
+        <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>L0101<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>:<span class="pl-c1">45</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>enrolment<span class="pl-pds">"</span></span>:<span class="pl-c1">0</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>times<span class="pl-pds">"</span></span>:[
+          {
+            <span class="pl-s"><span class="pl-pds">"</span>day<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>TUESDAY<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>start<span class="pl-pds">"</span></span>:<span class="pl-c1">11</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>end<span class="pl-pds">"</span></span>:<span class="pl-c1">12</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>duration<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>BF 323<span class="pl-pds">"</span></span>
+          },
+          {
+            <span class="pl-s"><span class="pl-pds">"</span>day<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>THURSDAY<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>start<span class="pl-pds">"</span></span>:<span class="pl-c1">11</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>end<span class="pl-pds">"</span></span>:<span class="pl-c1">13</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>duration<span class="pl-pds">"</span></span>:<span class="pl-c1">2</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>BF 323<span class="pl-pds">"</span></span>
+          }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>instructors<span class="pl-pds">"</span></span>:[
+          <span class="pl-s"><span class="pl-pds">"</span>C Suzack<span class="pl-pds">"</span></span>
+        ]
+      }
+    ],
+    <span class="pl-s"><span class="pl-pds">"</span>breadths<span class="pl-pds">"</span></span>:[
+      <span class="pl-c1">1</span>
+    ]
+  }
+]</pre></div> -->
+  </div>
+</div>
+    </div>
+<!--     <div id="footer" class="footer">
+      <div class="grid-container">
+        <div class="grid-50 copyright-holder">
+          <div class="copyright">&copy; 2014-2017 <strong>Cobalt</strong></div>
+          <span class="recognition">
+            Maintained by our
+            <a href="/contributors">contributors</a>.
+          </span>
+        </div>
+        <div class="grid-50 sponsor-holder">
+          <div class="sponsor">Sponsored by</div>
+          <a href="http://thinkdataworks.com" class="link-sponsor">
+            <img src="/assets/img/thinkdata.svg" class="logo-sponsor" />
+          </a>
+        </div>
+      </div>
+    </div> -->
+
+  </body>
+</html>

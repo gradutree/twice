@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documentation</title>
+    <link href="../style/doc.css" rel="stylesheet" type="text/css" />
+    <link href="../style/grid.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body>
+    <div class="mid">
+      <div class="docs" id="docs">
+  <div class="content grid-container">
+    <div id="doc_title" class="sidebar-header grid-100">
+      <div class="name">Getting Started: <span class="small">Contributing</span></div>
+      <div id="downarrow" class="arrow"></div>
+    </div>
+    <div class="sidebar grid-30">
+      <div id="uparrow" class="arrow expanded"></div>
+      <strong class="active">User API</strong>
+      <div class="group">
+        <a href="../index.html">POST login</a>
+        <a href="./get_signout.html">GET signout</a>
+        <a href="./post_user.html">POST user</a>
+        <a href="./get_user_info.html">GET user/:username/info</a>
+        <a href="./patch_user_taken.html">PATCH users/:username/taken/:course</a>
+        <a href="./delete_user_taken.html">DELETE users/:username/taken/:course</a>
+        <a href="./patch_user_allCourses.html">PATCH users/:username/allCourses/:course</a>
+        <a href="./delete_user_allCourses.html" class="active">DELETE users/:username/allCourses/:course</a>
+      </div>
+
+      <strong>Program API</strong>
+      <div class="group">
+        <a href="./get_program.html">GET programs/:name</a>
+      </div>
+
+      <strong>Course API</strong>
+      <div class="group">
+        <a href="./get_course_query.html">GET courses/query</a>
+        <a href="./get_course_recommend.html">GET courses/:code/recommend</a>
+        <a href="./get_course_review_page.html">GET course/:code/review/:page</a>
+        <a href="./post_course_vote.html">POST course/:code/vote/:direction</a>
+        <a href="./get_path_post.html">GET path/:start/post</a>
+        <a href="./get_path_pre.html">GET path/:start/pre</a>
+      </div>
+
+      <strong>Review API</strong>
+      <div class="group">
+        <a href="./post_review.html">POST review</a>
+        <a href="./post_review_vote.html">POST review/:id/vote/:direction</a>
+      </div>
+    </div>
+    <div class="main grid-70">
+<h1>DELETE api/user/:username/allCourses/:course</h1>
+<p>Delete a course from the list of courses a user has taken or wants to take.</p>
+
+<h2>URL</h2>
+<pre><code>https://gradutree.me/api/user/:username/allCourses/:course
+</code></pre>
+
+<h2>Parameters</h2>
+<p><code>username</code> <em>(required)</em><br>
+The username of user we want to delete course from.</p>
+<hr>
+<p><code>course</code> <em>(required)</em><br>
+The course we want to delete from user.</p>
+<hr>
+
+<h2>Example</h2>
+<pre><code>curl -X DELETE https://gradutree.me/api/user/newuser/allCourses/CSCC09H3
+</code></pre>
+
+<h2>Return object</h2>
+<p><code>N/A</code><br>
+
+      
+  </div>
+</div>
+    </div>
+
+  </body>
+</html>
