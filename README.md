@@ -14,7 +14,7 @@ To run the app, the db must be populated first(make sure db c09 exists in mongod
 - Hyeong Ook Yu
 
 ### Links
-
+- [API documentation](https://www.gradutree.me/doc/)
 - Check out our website: [Gradutree](https://www.gradutree.me/) 
 - You can watch our introduction video here: [Gradutree Video](https://www.youtube.com/watch?v=2o3K9oEM6Ls&feature=youtu.be)
 
